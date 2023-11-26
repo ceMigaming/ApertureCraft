@@ -3,7 +3,9 @@
 	"package": "com.cemi.mixin.client",
 	"compatibilityLevel": "JAVA_17",
 	"client": [
-		"ExampleClientMixin"
+		"InGameOverlayRendererMixin",
+		"BackgroundRendererMixin",
+		"CameraAccessor"
 	],
 	"injectors": {
 		"defaultRequire": 1

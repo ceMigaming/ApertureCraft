@@ -8,6 +8,7 @@ import com.cemi.fluid.ApertureFluids;
 import com.cemi.item.ApertureItemGroups;
 import com.cemi.item.ApertureItems;
 import com.cemi.particle.ApertureParticleTypes;
+import com.cemi.registry.tag.ApertureFluidTags;
 import net.fabricmc.api.ModInitializer;
 
 public class ApertureCraft implements ModInitializer {
@@ -28,6 +29,7 @@ public class ApertureCraft implements ModInitializer {
 
 		ApertureParticleTypes.registerParticles();
 		ApertureFluids.registerFluids();
+		ApertureFluidTags.registerFluidTags();
 		ApertureItems.registerItems();
 		ApertureBlockEntities.registerBlockEntities();
 		ApertureBlocks.registerBlocks();
