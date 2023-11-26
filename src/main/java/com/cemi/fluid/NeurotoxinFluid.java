@@ -32,14 +32,17 @@ import net.minecraft.world.WorldView;
 public abstract class NeurotoxinFluid extends FlowableFluid {
     public NeurotoxinFluid() {}
 
+    @Override
     public Fluid getFlowing() {
         return ApertureFluids.FLOWING_NEUROTOXIN;
     }
 
+    @Override
     public Fluid getStill() {
-        return ApertureFluids.NEUROTOXIN_STILL;
+        return ApertureFluids.STILL_NEUROTOXIN;
     }
 
+    @Override
     public Item getBucketItem() {
         return ApertureItems.NEUROTOXIN_BUCKET;
     }
@@ -66,46 +69,56 @@ public abstract class NeurotoxinFluid extends FlowableFluid {
         return ApertureParticleTypes.DRIPPING_NEUROTOXIN;
     }
 
+    @Override
     protected boolean isInfinite(World world) {
         return world.getGameRules().getBoolean(GameRules.WATER_SOURCE_CONVERSION);
     }
 
+    @Override
     protected void beforeBreakingBlock(WorldAccess world, BlockPos pos, BlockState state) {
         BlockEntity blockEntity = state.hasBlockEntity() ? world.getBlockEntity(pos) : null;
         Block.dropStacks(state, world, pos, blockEntity);
     }
 
+    @Override
     public int getFlowSpeed(WorldView world) {
         return 4;
     }
 
+    @Override
     public BlockState toBlockState(FluidState state) {
         return (BlockState) ApertureBlocks.NEUROTOXIN.getDefaultState().with(FluidBlock.LEVEL,
                 getBlockStateLevel(state));
     }
 
+    @Override
     public boolean matchesType(Fluid fluid) {
         return fluid == ApertureFluids.FLOWING_NEUROTOXIN
-                || fluid == ApertureFluids.NEUROTOXIN_STILL;
+                || fluid == ApertureFluids.STILL_NEUROTOXIN;
     }
 
+    @Override
     public int getLevelDecreasePerBlock(WorldView world) {
         return 1;
     }
 
+    @Override
     public int getTickRate(WorldView world) {
         return 5;
     }
 
+    @Override
     public boolean canBeReplacedWith(FluidState state, BlockView world, BlockPos pos, Fluid fluid,
             Direction direction) {
         return direction == Direction.DOWN && !fluid.isIn(FluidTags.WATER);
     }
 
+    @Override
     protected float getBlastResistance() {
         return 100.0F;
     }
 
+    @Override
     public Optional<SoundEvent> getBucketFillSound() {
         return Optional.of(SoundEvents.ITEM_BUCKET_FILL);
     }
@@ -113,10 +126,12 @@ public abstract class NeurotoxinFluid extends FlowableFluid {
     public static class Still extends NeurotoxinFluid {
         public Still() {}
 
+        @Override
         public int getLevel(FluidState state) {
             return 8;
         }
 
+        @Override
         public boolean isStill(FluidState state) {
             return true;
         }
@@ -125,15 +140,18 @@ public abstract class NeurotoxinFluid extends FlowableFluid {
     public static class Flowing extends NeurotoxinFluid {
         public Flowing() {}
 
+        @Override
         protected void appendProperties(StateManager.Builder<Fluid, FluidState> builder) {
             super.appendProperties(builder);
             builder.add(new Property[] {LEVEL});
         }
 
+        @Override
         public int getLevel(FluidState state) {
             return (Integer) state.get(LEVEL);
         }
 
+        @Override
         public boolean isStill(FluidState state) {
             return false;
         }

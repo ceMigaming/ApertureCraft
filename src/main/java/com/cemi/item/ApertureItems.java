@@ -16,7 +16,7 @@ public class ApertureItems {
     public static void registerItems() {
         NEUROTOXIN_BUCKET = Registry.register(Registries.ITEM,
                 new Identifier(ApertureCraft.MOD_ID, "neurotoxin_bucket"),
-                new BucketItem(ApertureFluids.NEUROTOXIN_STILL,
+                new BucketItem(ApertureFluids.STILL_NEUROTOXIN,
                         new Item.Settings().recipeRemainder(Items.BUCKET).maxCount(1)));
         for (ApertureItem item : ITEMS) {
             item.register();

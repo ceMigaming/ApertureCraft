@@ -3,7 +3,9 @@ package com.cemi;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.cemi.block.ApertureBlocks;
+import com.cemi.block.entity.ApertureBlockEntities;
 import com.cemi.fluid.ApertureFluids;
+import com.cemi.item.ApertureItemGroups;
 import com.cemi.item.ApertureItems;
 import com.cemi.particle.ApertureParticleTypes;
 import net.fabricmc.api.ModInitializer;
@@ -27,7 +29,9 @@ public class ApertureCraft implements ModInitializer {
 		ApertureParticleTypes.registerParticles();
 		ApertureFluids.registerFluids();
 		ApertureItems.registerItems();
+		ApertureBlockEntities.registerBlockEntities();
 		ApertureBlocks.registerBlocks();
+		ApertureItemGroups.registerItemGroups();
 
 		LOGGER.info("Now you're thinking with portals!");
 	}
