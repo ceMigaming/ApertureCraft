@@ -1,6 +1,8 @@
 package com.cemi.block;
 
 import com.cemi.ApertureCraft;
+import com.cemi.entity.ApertureEntities;
+import com.cemi.entity.GhostBlockEntity;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -39,6 +41,10 @@ public class BlockCollumn extends ApertureBlock {
             world.setBlockState(pos, state.with(BlockCollumn.UPPER, true));
             world.setBlockState(lowerBlockPos, state.with(UPPER, false));
         } else {
+            GhostBlockEntity upperGhostBlockEntity = ApertureEntities.GHOSTBLOCK.create(world);
+            upperGhostBlockEntity.setPos(upperBlockPos.toCenterPos().getX(),
+                    upperBlockPos.toCenterPos().getY(), upperBlockPos.toCenterPos().getZ());
+            world.spawnEntity(upperGhostBlockEntity);
             placer.sendMessage(Text.translatable(ApertureCraft.MOD_ID + ".block_collumn.no_space")
                     .setStyle(Style.EMPTY.withColor(Formatting.RED)));
             return;

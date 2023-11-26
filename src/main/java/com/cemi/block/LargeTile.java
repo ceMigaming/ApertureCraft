@@ -2,6 +2,8 @@ package com.cemi.block;
 
 import com.cemi.ApertureCraft;
 import com.cemi.block.entity.LargeTileEntity;
+import com.cemi.entity.ApertureEntities;
+import com.cemi.entity.GhostBlockEntity;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockEntityProvider;
 import net.minecraft.block.BlockState;
@@ -14,10 +16,7 @@ import net.minecraft.state.StateManager.Builder;
 import net.minecraft.state.property.IntProperty;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
-import net.minecraft.util.ActionResult;
 import net.minecraft.util.Formatting;
-import net.minecraft.util.Hand;
-import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
@@ -79,6 +78,31 @@ public class LargeTile extends ApertureBlock implements BlockEntityProvider {
                 placer.sendMessage(Text.translatable(ApertureCraft.MOD_ID + ".large_tile.no_space")
                         .setStyle(Style.EMPTY.withColor(Formatting.RED)));
                 world.setBlockState(pos, Blocks.AIR.getDefaultState());
+                if (!world.isAir(upperRightBlockPos)) {
+                    GhostBlockEntity upperRightGhostBlockEntity =
+                            ApertureEntities.GHOSTBLOCK.create(world);
+                    upperRightGhostBlockEntity.setPos(upperRightBlockPos.toCenterPos().getX(),
+                            upperRightBlockPos.toCenterPos().getY(),
+                            upperRightBlockPos.toCenterPos().getZ());
+                    world.spawnEntity(upperRightGhostBlockEntity);
+                }
+                if (!world.isAir(lowerLeftBlockPos)) {
+                    GhostBlockEntity lowerLeftGhostBlockEntity =
+                            ApertureEntities.GHOSTBLOCK.create(world);
+                    lowerLeftGhostBlockEntity.setPos(lowerLeftBlockPos.toCenterPos().getX(),
+                            lowerLeftBlockPos.toCenterPos().getY(),
+                            lowerLeftBlockPos.toCenterPos().getZ());
+                    world.spawnEntity(lowerLeftGhostBlockEntity);
+                }
+                if (!world.isAir(lowerRightBlockPos)) {
+
+                    GhostBlockEntity lowerRightGhostBlockEntity =
+                            ApertureEntities.GHOSTBLOCK.create(world);
+                    lowerRightGhostBlockEntity.setPos(lowerRightBlockPos.toCenterPos().getX(),
+                            lowerRightBlockPos.toCenterPos().getY(),
+                            lowerRightBlockPos.toCenterPos().getZ());
+                    world.spawnEntity(lowerRightGhostBlockEntity);
+                }
                 return;
             }
             world.setBlockState(pos, state.with(SIDE, 0));
@@ -137,13 +161,6 @@ public class LargeTile extends ApertureBlock implements BlockEntityProvider {
     public void onBroken(WorldAccess world, BlockPos pos, BlockState state) {
 
         super.onBroken(world, pos, state);
-    }
-
-    @Override
-    public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player,
-            Hand hand, BlockHitResult hit) {
-        BlockEntity blockEntity = world.getBlockEntity(pos);
-        return super.onUse(state, world, pos, player, hand, hit);
     }
 
     @Override

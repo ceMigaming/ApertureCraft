@@ -29,6 +29,8 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldAccess;
 import net.minecraft.world.WorldView;
 
+// TODO find the method that makes player's screen green when in neurotoxin
+
 public abstract class NeurotoxinFluid extends FlowableFluid {
     public NeurotoxinFluid() {}
 

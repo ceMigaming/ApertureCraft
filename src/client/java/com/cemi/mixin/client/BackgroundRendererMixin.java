@@ -40,7 +40,6 @@ public class BackgroundRendererMixin {
 			Vec3d pos = ((CameraAccessor) camera).getPos();
 			BlockView area = ((CameraAccessor) camera).getArea();
 			FluidState fluidState = area.getFluidState(blockPos);
-			ApertureCraft.LOGGER.info(fluidState.getFluid().toString());
 			if (fluidState.isIn(ApertureFluidTags.NEUROTOXIN)
 					&& pos.y < (double) ((float) blockPos.getY()
 							+ fluidState.getHeight(area, blockPos))) {
@@ -48,7 +47,6 @@ public class BackgroundRendererMixin {
 				green = 0.2F;
 				blue = 0.1F;
 				lastWaterFogColorUpdateTime = -1L;
-				ApertureCraft.LOGGER.info("Neurotoxin detected!");
 				RenderSystem.clearColor(red, green, blue, 0.0F);
 			}
 		}
