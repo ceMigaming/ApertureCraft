@@ -6,7 +6,7 @@ import net.minecraft.client.render.RenderLayer;
 
 public class ApertureRenderLayers {
     public static void registerRenderLayers() {
-        // BlockRenderLayerMap.INSTANCE.putBlock(ApertureBlocks.INDICATOR_LIGHT,
-        //         RenderLayer.getCutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(ApertureBlocks.INDICATOR_LIGHT,
+                RenderLayer.getCutout());
     }
 }

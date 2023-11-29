@@ -3,6 +3,7 @@ package com.cemi.block.entity;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
+import com.cemi.block.BlockIndicatorLight;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.nbt.NbtCompound;
@@ -25,6 +26,7 @@ public class IndicatorLightEntity extends BlockEntity {
 
     public void setPowered(boolean powered) {
         isPowered = powered;
+        markDirty();
     }
 
     public boolean isMaster() {
@@ -33,6 +35,7 @@ public class IndicatorLightEntity extends BlockEntity {
 
     public void setMaster(boolean master) {
         isMaster = master;
+        markDirty();
     }
 
     public ArrayList<BlockPos> getConnectedBlocks() {
@@ -41,10 +44,12 @@ public class IndicatorLightEntity extends BlockEntity {
 
     public void setConnectedBlocks(ArrayList<BlockPos> connectedBlocks) {
         this.connectedBlocks = connectedBlocks;
+        markDirty();
     }
 
     public void addConnectedBlock(BlockPos pos) {
         connectedBlocks.add(pos);
+        markDirty();
     }
 
     public void removeConnectedBlockRecursive(BlockPos pos) {
@@ -56,6 +61,7 @@ public class IndicatorLightEntity extends BlockEntity {
                 removeConnectedBlockRecursive(newPos);
             }
         }
+        markDirty();
     }
 
     public Set<BlockPos> getConnectedBlocksRecursive(BlockPos pos) {
@@ -64,6 +70,9 @@ public class IndicatorLightEntity extends BlockEntity {
         Direction[] directions = Direction.values();
         for (Direction direction : directions) {
             BlockPos newPos = pos.offset(direction);
+            if (!(world.getBlockState(newPos).getBlock() instanceof BlockIndicatorLight)) {
+                continue;
+            }
             if (!connectedBlocks.contains(newPos)) {
                 connectedBlocks.addAll(getConnectedBlocksRecursive(newPos, connectedBlocks));
             }
@@ -79,6 +88,9 @@ public class IndicatorLightEntity extends BlockEntity {
         Direction[] directions = Direction.values();
         for (Direction direction : directions) {
             BlockPos newPos = pos.offset(direction);
+            if (!(world.getBlockState(newPos).getBlock() instanceof BlockIndicatorLight)) {
+                continue;
+            }
             if (!connectedBlocks.contains(newPos)) {
                 connectedBlocks.addAll(getConnectedBlocksRecursive(newPos, connectedBlocks));
             }
@@ -87,21 +99,26 @@ public class IndicatorLightEntity extends BlockEntity {
     }
 
     public BlockPos findMasterBlock() {
-        Direction[] directions = Direction.values();
-        for (Direction direction : directions) {
-            BlockPos newPos = pos.offset(direction);
-            if (world.getBlockEntity(newPos) instanceof IndicatorLightEntity) {
-                IndicatorLightEntity entity = (IndicatorLightEntity) world.getBlockEntity(newPos);
-                if (entity.isMaster()) {
-                    return newPos;
+        if (isMaster) {
+            return pos;
+        }
+        Set<BlockPos> connectedBlocks = getConnectedBlocksRecursive(pos);
+        for (BlockPos connectedBlock : connectedBlocks) {
+            BlockEntity blockEntity = world.getBlockEntity(connectedBlock);
+            if (blockEntity instanceof IndicatorLightEntity) {
+                IndicatorLightEntity indicatorLightEntity = (IndicatorLightEntity) blockEntity;
+                if (indicatorLightEntity.isMaster()) {
+                    return connectedBlock;
                 }
             }
         }
+
         return null;
     }
 
     public void clearConnectedBlocks() {
         connectedBlocks.clear();
+        markDirty();
     }
 
     @Override

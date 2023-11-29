@@ -1,25 +1,28 @@
 package com.cemi.block;
 
 import java.util.Map;
+import com.cemi.ApertureCraft;
 import com.cemi.block.entity.IndicatorLightEntity;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockEntityProvider;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.ShapeContext;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.enums.WireConnection;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.state.StateManager.Builder;
 import net.minecraft.state.property.BooleanProperty;
 import net.minecraft.state.property.EnumProperty;
 import net.minecraft.state.property.Properties;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.Hand;
+import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.util.shape.VoxelShapes;
-import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 
 public class BlockIndicatorLight extends ApertureBlock implements BlockEntityProvider {
@@ -92,14 +95,15 @@ public class BlockIndicatorLight extends ApertureBlock implements BlockEntityPro
     @Override
     protected void appendProperties(Builder<Block, BlockState> builder) {
         builder.add(WIRE_CONNECTION_NORTH, WIRE_CONNECTION_EAST, WIRE_CONNECTION_SOUTH,
-                WIRE_CONNECTION_WEST, POWERED);
+                WIRE_CONNECTION_WEST, WIRE_CONNECTION_UP, WIRE_CONNECTION_DOWN, POWERED);
     }
 
-    @Override
-    public VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos,
-            ShapeContext context) {
-        return (VoxelShape) SHAPES.get(state.with(POWERED, false));
-    }
+    // TODO not working
+    // @Override
+    // public VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos,
+    // ShapeContext context) {
+    // return (VoxelShape) SHAPES.get(state.with(POWERED, false));
+    // }
 
     @Override
     public void onBlockAdded(BlockState state, World world, BlockPos pos, BlockState oldState,
@@ -108,22 +112,26 @@ public class BlockIndicatorLight extends ApertureBlock implements BlockEntityPro
             boolean otherIndicators = false;
             Direction[] directions = Direction.values();
             for (Direction direction : directions) {
-                BlockPos neighbouringPos = pos.offset(direction);
-                if (!(world.getBlockState(neighbouringPos)
+                BlockPos neighboringPos = pos.offset(direction);
+                if (!(world.getBlockState(neighboringPos)
                         .getBlock() instanceof BlockIndicatorLight)) {
                     continue;
                 }
-                BlockEntity blockEntity = world.getBlockEntity(neighbouringPos);
+                BlockEntity blockEntity = world.getBlockEntity(neighboringPos);
                 if (blockEntity instanceof IndicatorLightEntity) {
                     IndicatorLightEntity indicatorLightEntity = (IndicatorLightEntity) blockEntity;
-                    //indicatorLightEntity.addConnectedBlock(pos);
-                    //indicatorLightEntity.getConnectedBlocksRecursive(pos);
+                    // indicatorLightEntity.addConnectedBlock(pos);
+                    indicatorLightEntity.getConnectedBlocksRecursive(pos);
                     otherIndicators = true;
+                    System.out.println("Found another indicator light!");
                 }
             }
-            if(!otherIndicators) {
-                IndicatorLightEntity indicatorLightEntity = (IndicatorLightEntity) world.getBlockEntity(pos);
-                //indicatorLightEntity.setMaster(true);
+            if (!otherIndicators) {
+                System.out.println("First indicator light!");
+                IndicatorLightEntity indicatorLightEntity =
+                        (IndicatorLightEntity) world.getBlockEntity(pos);
+                indicatorLightEntity.setMaster(true);
+                System.out.println(indicatorLightEntity.findMasterBlock().toString());
             }
         }
     }

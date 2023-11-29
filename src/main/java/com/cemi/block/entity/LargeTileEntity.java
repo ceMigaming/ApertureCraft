@@ -1,6 +1,5 @@
 package com.cemi.block.entity;
 
-import com.cemi.ApertureCraft;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.nbt.NbtCompound;

@@ -1,6 +1,5 @@
 package com.cemi;
 
-import java.util.function.Supplier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.cemi.block.ApertureBlocks;
@@ -13,6 +12,7 @@ import com.cemi.particle.ApertureParticleTypes;
 import com.cemi.registry.tag.ApertureFluidTags;
 import net.fabricmc.api.ModInitializer;
 
+// TODO STILL NOT WORKING
 public class ApertureCraft implements ModInitializer {
 	public static final String MOD_ID = "aperturecraft";
 	public static final String MOD_NAME = "ApertureCraft";
@@ -22,6 +22,8 @@ public class ApertureCraft implements ModInitializer {
 
 	@Override
 	public void onInitialize() {
+
+
 		ApertureParticleTypes.registerParticles();
 		ApertureFluids.registerFluids();
 		ApertureFluidTags.registerFluidTags();
