@@ -2,7 +2,7 @@
 	"credit": "Made with Blockbench",
 	"texture_size": [60, 60],
 	"textures": {
-		"2": "portalreloaded:items/storage_cube"
+		"2": "aperturecraft:item/storage_cube"
 	},
 	"elements": [
 		{

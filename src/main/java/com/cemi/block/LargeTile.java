@@ -31,6 +31,8 @@ public class LargeTile extends ApertureBlock implements BlockEntityProvider {
         setDefaultState(getDefaultState().with(SIDE, 0));
     }
 
+
+    // TODO move most of it to onBlockAdded
     @Override
     public void onPlaced(World world, BlockPos pos, BlockState state, LivingEntity placer,
             ItemStack itemStack) {

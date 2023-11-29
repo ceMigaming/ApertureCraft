@@ -12,12 +12,9 @@ public class ApertureBlock extends Block {
 
     protected String name;
     protected boolean canPlacePortals = true;
-    // protected boolean isChiselable = true;
 
     public ApertureBlock(String name, Settings settings) {
         super(settings);
-        // TODO Auto-generated constructor stub
-
         this.name = name;
         if (name.contains("metal")) {
             canPlacePortals = false;
@@ -26,7 +23,6 @@ public class ApertureBlock extends Block {
 
     public void register() {
         Registry.register(Registries.BLOCK, new Identifier(ApertureCraft.MOD_ID, name), this);
-        // register itemblock
         Registry.register(Registries.ITEM, new Identifier(ApertureCraft.MOD_ID, name),
                 new BlockItem(this, new FabricItemSettings()));
     }

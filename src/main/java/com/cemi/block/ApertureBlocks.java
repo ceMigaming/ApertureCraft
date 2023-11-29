@@ -36,10 +36,13 @@ public class ApertureBlocks {
     public static final BlockCollumn METAL_PILLAR =
             new BlockCollumn("metal_pillar", FabricBlockSettings.create().strength(4.f));
 
+    // logic blocks
+    public static final BlockIndicatorLight INDICATOR_LIGHT = new BlockIndicatorLight(
+            "indicator_light", FabricBlockSettings.copy(Blocks.REDSTONE_WIRE));
 
-    private static final ApertureBlock[] BLOCKS =
-            {SMALL_CONCRETE_TILE, MEDIUM_CONCRETE_TILE, CONCRETE_LARGE_TILE, CONCRETE_PILLAR,
-                    SMALL_METAL_TILE, MEDIUM_METAL_TILE, METAL_LARGE_TILE, METAL_PILLAR};
+    private static final ApertureBlock[] BLOCKS = {SMALL_CONCRETE_TILE, MEDIUM_CONCRETE_TILE,
+            CONCRETE_LARGE_TILE, CONCRETE_PILLAR, SMALL_METAL_TILE, MEDIUM_METAL_TILE,
+            METAL_LARGE_TILE, METAL_PILLAR, INDICATOR_LIGHT};
 
     public static void registerBlocks() {
         NEUROTOXIN = Registry.register(Registries.BLOCK,

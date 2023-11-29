@@ -15,6 +15,12 @@ public class ApertureBlockEntities {
                     FabricBlockEntityTypeBuilder
                             .create(LargeTileEntity::new, ApertureBlocks.CONCRETE_LARGE_TILE)
                             .build());
+    public static final BlockEntityType<IndicatorLightEntity> INDICATOR_LIGHT_ENTITY =
+            Registry.register(Registries.BLOCK_ENTITY_TYPE,
+                    new Identifier(ApertureCraft.MOD_ID, "indicator_light_entity"),
+                    FabricBlockEntityTypeBuilder
+                            .create(IndicatorLightEntity::new, ApertureBlocks.INDICATOR_LIGHT)
+                            .build());
 
     public static void registerBlockEntities() {}
 }
