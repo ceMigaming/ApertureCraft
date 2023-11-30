@@ -16,6 +16,16 @@ public class ApertureEntities {
             FabricEntityTypeBuilder.create(SpawnGroup.MISC, GhostBlockEntity::new)
                     .dimensions(EntityDimensions.fixed(1.0f, 1.0f)).build());
 
+    public static final EntityType<RadioEntity> RADIO =
+            Registry.register(Registries.ENTITY_TYPE, new Identifier(ApertureCraft.MOD_ID, "radio"),
+                    FabricEntityTypeBuilder.create(SpawnGroup.MISC, RadioEntity::new)
+                            .dimensions(EntityDimensions.fixed(1.0f, 1.0f)).build());
+
+    public static final EntityType<StorageCubeEntity> STORAGE_CUBE = Registry.register(
+            Registries.ENTITY_TYPE, new Identifier(ApertureCraft.MOD_ID, "storage_cube"),
+            FabricEntityTypeBuilder.create(SpawnGroup.MISC, StorageCubeEntity::new)
+                    .dimensions(EntityDimensions.fixed(1.0f, 1.0f)).build());
+
     public static void registerEntities() {}
 
 }

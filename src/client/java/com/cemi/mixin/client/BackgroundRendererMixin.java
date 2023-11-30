@@ -35,9 +35,9 @@ public class BackgroundRendererMixin {
 		CameraSubmersionType cameraSubmersionType = camera.getSubmersionType();
 
 		if (cameraSubmersionType == CameraSubmersionType.NONE) {
-			BlockPos blockPos = ((CameraAccessor) camera).getBlockPos();
-			Vec3d pos = ((CameraAccessor) camera).getPos();
-			BlockView area = ((CameraAccessor) camera).getArea();
+			BlockPos blockPos = ((CameraMixin) camera).getBlockPos();
+			Vec3d pos = ((CameraMixin) camera).getPos();
+			BlockView area = ((CameraMixin) camera).getArea();
 			FluidState fluidState = area.getFluidState(blockPos);
 			if (fluidState.isIn(ApertureFluidTags.NEUROTOXIN)
 					&& pos.y < (double) ((float) blockPos.getY()

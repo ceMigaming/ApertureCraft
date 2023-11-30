@@ -24,7 +24,7 @@ import net.minecraft.util.shape.VoxelShapes;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 
-public class BlockIndicatorLight extends ApertureBlock {
+public class IndicatorLightBlock extends ApertureBlock {
 
     public static final EnumProperty<WireConnection> WIRE_CONNECTION_NORTH;
     public static final EnumProperty<WireConnection> WIRE_CONNECTION_EAST;
@@ -72,7 +72,7 @@ public class BlockIndicatorLight extends ApertureBlock {
         COLORS = new Vec3d[] {new Vec3d(0.09f, 0.69f, 0.82f), new Vec3d(1.f, 1.f, 0.13f)};
     }
 
-    public BlockIndicatorLight(String name, Settings settings) {
+    public IndicatorLightBlock(String name, Settings settings) {
         super(name, settings);
         this.setDefaultState(
                 this.stateManager.getDefaultState().with(WIRE_CONNECTION_NORTH, WireConnection.NONE)
@@ -177,6 +177,7 @@ public class BlockIndicatorLight extends ApertureBlock {
         }
     }
 
+    // TODO fix this
     @Override
     public void neighborUpdate(BlockState state, World world, BlockPos pos, Block sourceBlock,
             BlockPos sourcePos, boolean notify) {
@@ -186,10 +187,26 @@ public class BlockIndicatorLight extends ApertureBlock {
         if (isReceivingPower && !isAlreadyPowered) {
             world.scheduleBlockTick(pos, this, 4);
             world.setBlockState(pos, (BlockState) state.with(POWERED, true), 2);
-            setPowerRecursive(world, pos, true);
+            Iterator horizontalDirections = Type.HORIZONTAL.iterator();
+            while (horizontalDirections.hasNext()) {
+                Direction direction = (Direction) horizontalDirections.next();
+                BlockState otherBlockState = world.getBlockState(pos.offset(direction));
+                if (otherBlockState.getBlock().equals(this)) {
+                    world.setBlockState(pos.offset(direction),
+                            otherBlockState.with(POWERED, true));
+                }
+            }
         } else if (isAlreadyPowered) {
             world.setBlockState(pos, (BlockState) state.with(POWERED, false), 2);
-            setPowerRecursive(world, pos, false);
+            Iterator horizontalDirections = Type.HORIZONTAL.iterator();
+            while (horizontalDirections.hasNext()) {
+                Direction direction = (Direction) horizontalDirections.next();
+                BlockState otherBlockState = world.getBlockState(pos.offset(direction));
+                if (otherBlockState.getBlock().equals(this)) {
+                    world.setBlockState(pos.offset(direction),
+                            otherBlockState.with(POWERED, false));
+                }
+            }
         }
     }
 
@@ -212,22 +229,6 @@ public class BlockIndicatorLight extends ApertureBlock {
     public void onStateReplaced(BlockState state, World world, BlockPos pos, BlockState newState,
             boolean moved) {
         System.out.println("onStateReplaced");
-    }
-
-    public void setPowerRecursive(World world, BlockPos pos, boolean powered) {
-        BlockState state = world.getBlockState(pos);
-        if (state.getBlock().equals(this)) {
-            world.setBlockState(pos, (BlockState) state.with(POWERED, powered), 2);
-            Direction[] directions = Direction.values();
-            for (Direction dir : directions) {
-                BlockState otherBlockState = world.getBlockState(pos.offset(dir));
-                if (otherBlockState.getBlock().equals(this)) {
-                    if (otherBlockState.get(POWERED) != powered) {
-                        setPowerRecursive(world, pos.offset(dir), powered);
-                    }
-                }
-            }
-        }
     }
 
     @Override

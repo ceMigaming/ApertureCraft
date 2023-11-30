@@ -8,7 +8,9 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.BlockView;
 
 @Mixin(Camera.class)
-public interface CameraAccessor {
+public interface CameraMixin {
+
+    
 
     @Accessor
     public BlockView getArea();

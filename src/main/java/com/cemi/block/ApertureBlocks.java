@@ -37,7 +37,7 @@ public class ApertureBlocks {
             new BlockCollumn("metal_pillar", FabricBlockSettings.create().strength(4.f));
 
     // logic blocks
-    public static final BlockIndicatorLight INDICATOR_LIGHT = new BlockIndicatorLight(
+    public static final IndicatorLightBlock INDICATOR_LIGHT = new IndicatorLightBlock(
             "indicator_light", FabricBlockSettings.copy(Blocks.REDSTONE_WIRE));
 
     private static final ApertureBlock[] BLOCKS = {SMALL_CONCRETE_TILE, MEDIUM_CONCRETE_TILE,

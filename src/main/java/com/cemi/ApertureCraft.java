@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.cemi.block.ApertureBlocks;
 import com.cemi.block.entity.ApertureBlockEntities;
+import com.cemi.entity.ApertureAttributes;
 import com.cemi.entity.ApertureEntities;
 import com.cemi.fluid.ApertureFluids;
 import com.cemi.item.ApertureItemGroups;
@@ -32,6 +33,7 @@ public class ApertureCraft implements ModInitializer {
 		ApertureBlocks.registerBlocks();
 		ApertureItemGroups.registerItemGroups();
 		ApertureEntities.registerEntities();
+		ApertureAttributes.registerAttributes();
 
 		LOGGER.info("Now you're thinking with portals!");
 	}
