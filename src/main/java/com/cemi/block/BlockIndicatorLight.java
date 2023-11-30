@@ -154,13 +154,25 @@ public class BlockIndicatorLight extends ApertureBlock {
     public void onBlockAdded(BlockState state, World world, BlockPos pos, BlockState oldState,
             boolean notify) {
         Direction[] directions = Direction.values();
+        boolean makeVerticalConnection = false;
+        boolean verticalConnection = false;
         for (Direction dir : directions) {
             BlockState otherBlockState = world.getBlockState(pos.offset(dir));
             if (otherBlockState.getBlock().equals(this)) {
-                world.setBlockState(pos.offset(dir),
-                        otherBlockState.with(
+                if (dir == Direction.UP || dir == Direction.DOWN) {
+                    makeVerticalConnection = true;
+                } else {
+                    world.setBlockState(pos.offset(dir),
+                            otherBlockState.with(
+                                    DIRECTION_TO_WIRE_CONNECTION_PROPERTY.get(dir.getOpposite()),
+                                    WireConnection.SIDE));
+                    if (makeVerticalConnection && !verticalConnection) {
+                        world.setBlockState(pos.offset(dir), otherBlockState.with(
                                 DIRECTION_TO_WIRE_CONNECTION_PROPERTY.get(dir.getOpposite()),
-                                WireConnection.SIDE));
+                                WireConnection.UP));
+                        verticalConnection = true;
+                    }
+                }
             }
         }
     }
@@ -179,6 +191,27 @@ public class BlockIndicatorLight extends ApertureBlock {
             world.setBlockState(pos, (BlockState) state.with(POWERED, false), 2);
             setPowerRecursive(world, pos, false);
         }
+    }
+
+    private void updateNeighbors(World world, BlockPos pos) {
+        if (world.getBlockState(pos).isOf(this)) {
+            world.updateNeighborsAlways(pos, this);
+            Direction[] var3 = Direction.values();
+            int var4 = var3.length;
+
+            for (int var5 = 0; var5 < var4; ++var5) {
+                Direction direction = var3[var5];
+                world.updateNeighborsAlways(pos.offset(direction), this);
+            }
+
+        }
+    }
+
+    // TODO notify neighbors
+    @Override
+    public void onStateReplaced(BlockState state, World world, BlockPos pos, BlockState newState,
+            boolean moved) {
+        System.out.println("onStateReplaced");
     }
 
     public void setPowerRecursive(World world, BlockPos pos, boolean powered) {
