@@ -175,7 +175,7 @@ public class BlockIndicatorLight extends ApertureBlock {
             world.scheduleBlockTick(pos, this, 4);
             world.setBlockState(pos, (BlockState) state.with(POWERED, true), 2);
             setPowerRecursive(world, pos, true);
-        } else if (!isReceivingPower && isAlreadyPowered) {
+        } else if (isAlreadyPowered) {
             world.setBlockState(pos, (BlockState) state.with(POWERED, false), 2);
             setPowerRecursive(world, pos, false);
         }
