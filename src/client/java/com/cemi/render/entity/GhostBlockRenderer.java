@@ -1,8 +1,8 @@
-package com.cemi.render;
+package com.cemi.render.entity;
 
 import com.cemi.ApertureCraft;
 import com.cemi.entity.GhostBlockEntity;
-import com.cemi.render.model.GhostBlockModel;
+import com.cemi.render.entity.model.GhostBlockModel;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;
@@ -15,7 +15,7 @@ public class GhostBlockRenderer extends EntityRenderer<GhostBlockEntity> {
 
     protected GhostBlockModel model;
 
-    protected GhostBlockRenderer(Context ctx) {
+    public GhostBlockRenderer(Context ctx) {
         super(ctx);
         model = new GhostBlockModel(GhostBlockModel.getTexturedModelData().createModel());
     }

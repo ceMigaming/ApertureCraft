@@ -21,9 +21,29 @@ public class ApertureEntities {
                     FabricEntityTypeBuilder.create(SpawnGroup.MISC, RadioEntity::new)
                             .dimensions(EntityDimensions.fixed(1.0f, 1.0f)).build());
 
+    public static final EntityType<StorageCubeEntity> RUSTY_STORAGE_CUBE = Registry.register(
+            Registries.ENTITY_TYPE, new Identifier(ApertureCraft.MOD_ID, "rusty_storage_cube"),
+            FabricEntityTypeBuilder.create(SpawnGroup.MISC, StorageCubeEntity::new)
+                    .dimensions(EntityDimensions.fixed(1.0f, 1.0f)).build());
+
     public static final EntityType<StorageCubeEntity> STORAGE_CUBE = Registry.register(
             Registries.ENTITY_TYPE, new Identifier(ApertureCraft.MOD_ID, "storage_cube"),
             FabricEntityTypeBuilder.create(SpawnGroup.MISC, StorageCubeEntity::new)
+                    .dimensions(EntityDimensions.fixed(1.0f, 1.0f)).build());
+
+    public static final EntityType<StorageCubeEntity> OLD_STORAGE_CUBE = Registry.register(
+            Registries.ENTITY_TYPE, new Identifier(ApertureCraft.MOD_ID, "old_storage_cube"),
+            FabricEntityTypeBuilder.create(SpawnGroup.MISC, StorageCubeEntity::new)
+                    .dimensions(EntityDimensions.fixed(1.0f, 1.0f)).build());
+
+    public static final EntityType<StorageCubeEntity> COMPANION_CUBE = Registry.register(
+            Registries.ENTITY_TYPE, new Identifier(ApertureCraft.MOD_ID, "companion_cube"),
+            FabricEntityTypeBuilder.create(SpawnGroup.MISC, StorageCubeEntity::new)
+                    .dimensions(EntityDimensions.fixed(1.0f, 1.0f)).build());
+
+    public static final EntityType<TurretEntity> TURRET = Registry.register(Registries.ENTITY_TYPE,
+            new Identifier(ApertureCraft.MOD_ID, "turret"),
+            FabricEntityTypeBuilder.create(SpawnGroup.MISC, TurretEntity::new)
                     .dimensions(EntityDimensions.fixed(1.0f, 1.0f)).build());
 
     public static void registerEntities() {}

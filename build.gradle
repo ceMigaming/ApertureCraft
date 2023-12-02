@@ -11,15 +11,33 @@ base {
 }
 
 repositories {
+	mavenCentral()
 	maven {
 		name = 'GeckoLib'
         url 'https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/' 
 	}
-	// Add repositories to retrieve artifacts from in here.
-	// You should only use this when depending on other mods because
-	// Loom adds the essential maven repositories to download Minecraft and libraries from automatically.
-	// See https://docs.gradle.org/current/userguide/declaring_repositories.html
-	// for more information about repositories.
+	maven { url 'https://jitpack.io' }
+
+	maven { url "https://maven.shedaniel.me/" }
+	maven { url "https://maven.terraformersmc.com/releases/" }
+
+	maven {
+		name = "Modrinth"
+		url = "https://api.modrinth.com/maven"
+		content {
+			includeGroup "maven.modrinth"
+		}
+	}
+
+	// for parchment
+	maven {
+		url = "https://maven.parchmentmc.org"
+	}
+
+	maven {
+		name = 'Ladysnake'
+		url = 'https://maven.ladysnake.org/releases'
+	}
 }
 
 loom {
@@ -70,6 +88,15 @@ dependencies {
 	// modImplementation "net.fabricmc.fabric-api:fabric-api-deprecated:${project.fabric_version}""
 	modImplementation 'software.bernie.geckolib:geckolib-fabric-1.20.1:4.2.2'
 
+	modImplementation ("com.github.iPortalTeam.ImmersivePortalsMod:imm_ptl_core:${immptl_version}")
+    modImplementation ("com.github.iPortalTeam.ImmersivePortalsMod:q_misc_util:${immptl_version}")
+    modImplementation ("com.github.iPortalTeam.ImmersivePortalsMod:build:${immptl_version}")
+
+	modImplementation("me.shedaniel.cloth:cloth-config-fabric:${cloth_config_version}") {
+		exclude(group: "net.fabricmc.fabric-api")
+	}
+
+	include "me.shedaniel.cloth:cloth-config-fabric:${cloth_config_version}" 
 
 }
 

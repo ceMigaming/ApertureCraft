@@ -4,8 +4,17 @@ import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRe
 
 public class ApertureAttributes {
     public static void registerAttributes() {
+        FabricDefaultAttributeRegistry.register(ApertureEntities.RUSTY_STORAGE_CUBE,
+                StorageCubeEntity.createMobAttributes());
         FabricDefaultAttributeRegistry.register(ApertureEntities.STORAGE_CUBE,
-                StorageCubeEntity.createLivingAttributes());
-
+                StorageCubeEntity.createMobAttributes());
+        FabricDefaultAttributeRegistry.register(ApertureEntities.OLD_STORAGE_CUBE,
+                StorageCubeEntity.createMobAttributes());
+        FabricDefaultAttributeRegistry.register(ApertureEntities.COMPANION_CUBE,
+                StorageCubeEntity.createMobAttributes());
+        FabricDefaultAttributeRegistry.register(ApertureEntities.TURRET,
+                TurretEntity.createMobAttributes());
+        FabricDefaultAttributeRegistry.register(ApertureEntities.RADIO,
+                RadioEntity.createLivingAttributes());
     }
 }

@@ -1,4 +1,4 @@
-package com.cemi.render.model;
+package com.cemi.render.entity.model;
 
 import com.cemi.ApertureCraft;
 import com.cemi.entity.StorageCubeEntity;

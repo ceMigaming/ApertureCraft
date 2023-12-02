@@ -110,6 +110,7 @@ public abstract class NeurotoxinFluid extends FlowableFluid {
     }
 
     @Override
+    @SuppressWarnings("deprecation")
     public boolean canBeReplacedWith(FluidState state, BlockView world, BlockPos pos, Fluid fluid,
             Direction direction) {
         return direction == Direction.DOWN && !fluid.isIn(FluidTags.WATER);

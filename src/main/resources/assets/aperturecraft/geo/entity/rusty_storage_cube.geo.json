@@ -3,21 +3,14 @@
 	"minecraft:geometry": [
 		{
 			"description": {
-				"identifier": "geometry.unknown",
+				"identifier": "geometry.StorageCubeModel",
 				"texture_width": 60,
 				"texture_height": 36,
-				"visible_bounds_width": 2,
+				"visible_bounds_width": 3,
 				"visible_bounds_height": 2.5,
 				"visible_bounds_offset": [0, 0.75, 0]
 			},
 			"bones": [
-				{
-					"name": "bb_main",
-					"pivot": [0, 0, 0],
-					"cubes": [
-						{"origin": [-7, 1, -7], "size": [14, 14, 14], "uv": [0, 8]}
-					]
-				},
 				{
 					"name": "pboczki",
 					"pivot": [0, 0, 0],
@@ -37,13 +30,13 @@
 					"pivot": [0, 0, 0]
 				},
 				{
-					"name": "konty",
+					"name": "corners",
 					"parent": "front",
 					"pivot": [0, 0, 0]
 				},
 				{
 					"name": "lg",
-					"parent": "konty",
+					"parent": "corners",
 					"pivot": [0, 0, 0],
 					"cubes": [
 						{"origin": [-8, 13, -8], "size": [5, 3, 1], "uv": [0, 0]},
@@ -59,7 +52,7 @@
 				},
 				{
 					"name": "pg",
-					"parent": "konty",
+					"parent": "corners",
 					"pivot": [11, 0, 0],
 					"cubes": [
 						{"origin": [3, 13, -8], "size": [5, 3, 1], "uv": [0, 0]},
@@ -75,7 +68,7 @@
 				},
 				{
 					"name": "ld",
-					"parent": "konty",
+					"parent": "corners",
 					"pivot": [0, -11, 0],
 					"cubes": [
 						{"origin": [-8, 0, -8], "size": [5, 3, 1], "uv": [0, 0]},
@@ -91,7 +84,7 @@
 				},
 				{
 					"name": "pd",
-					"parent": "konty",
+					"parent": "corners",
 					"pivot": [11, -11, 0],
 					"cubes": [
 						{"origin": [3, 0, -8], "size": [5, 3, 1], "uv": [0, 0]},
@@ -106,7 +99,7 @@
 					]
 				},
 				{
-					"name": "boczki",
+					"name": "sides",
 					"parent": "front",
 					"pivot": [0, 0, 0],
 					"cubes": [
@@ -123,16 +116,16 @@
 				{
 					"name": "back",
 					"pivot": [0, 0, 0],
-					"rotation": [0, 180, 0]
+					"rotation": [0, 180.00042, 0]
 				},
 				{
-					"name": "konty2",
+					"name": "sides2",
 					"parent": "back",
 					"pivot": [0, 0, 0]
 				},
 				{
 					"name": "lg2",
-					"parent": "konty2",
+					"parent": "sides2",
 					"pivot": [0, 0, 0],
 					"cubes": [
 						{"origin": [-8, 13, -8], "size": [5, 3, 1], "uv": [0, 0]},
@@ -148,7 +141,7 @@
 				},
 				{
 					"name": "pg2",
-					"parent": "konty2",
+					"parent": "sides2",
 					"pivot": [11, 0, 0],
 					"cubes": [
 						{"origin": [3, 13, -8], "size": [5, 3, 1], "uv": [0, 0]},
@@ -164,7 +157,7 @@
 				},
 				{
 					"name": "ld2",
-					"parent": "konty2",
+					"parent": "sides2",
 					"pivot": [0, -11, 0],
 					"cubes": [
 						{"origin": [-8, 0, -8], "size": [5, 3, 1], "uv": [0, 0]},
@@ -180,7 +173,7 @@
 				},
 				{
 					"name": "pd2",
-					"parent": "konty2",
+					"parent": "sides2",
 					"pivot": [11, -11, 0],
 					"cubes": [
 						{"origin": [3, 0, -8], "size": [5, 3, 1], "uv": [0, 0]},
@@ -195,7 +188,7 @@
 					]
 				},
 				{
-					"name": "boczki3",
+					"name": "sides3",
 					"parent": "back",
 					"pivot": [0, 0, 0],
 					"cubes": [
@@ -207,6 +200,13 @@
 						{"origin": [-2, 0, -8], "size": [4, 3, 1], "uv": [0, 0]},
 						{"origin": [-8, 6, -8], "size": [3, 4, 1], "uv": [0, 0]},
 						{"origin": [-8, 6, -7], "size": [1, 4, 2], "uv": [0, 0]}
+					]
+				},
+				{
+					"name": "bb_main",
+					"pivot": [0, 8, 0],
+					"cubes": [
+						{"origin": [-7, 1, -7], "size": [14, 14, 14], "uv": [0, 8]}
 					]
 				}
 			]

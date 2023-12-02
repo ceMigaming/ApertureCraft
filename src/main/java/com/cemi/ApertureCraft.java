@@ -13,7 +13,6 @@ import com.cemi.particle.ApertureParticleTypes;
 import com.cemi.registry.tag.ApertureFluidTags;
 import net.fabricmc.api.ModInitializer;
 
-// TODO STILL NOT WORKING
 public class ApertureCraft implements ModInitializer {
 	public static final String MOD_ID = "aperturecraft";
 	public static final String MOD_NAME = "ApertureCraft";

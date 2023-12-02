@@ -1,7 +1,7 @@
-package com.cemi.render;
+package com.cemi.render.entity;
 
 import com.cemi.entity.StorageCubeEntity;
-import com.cemi.render.model.StorageCubeModel;
+import com.cemi.render.entity.model.StorageCubeModel;
 import net.minecraft.client.render.entity.EntityRendererFactory.Context;
 import software.bernie.geckolib.renderer.GeoEntityRenderer;
 

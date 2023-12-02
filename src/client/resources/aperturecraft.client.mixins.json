@@ -5,7 +5,7 @@
 	"client": [
 		"InGameOverlayRendererMixin",
 		"BackgroundRendererMixin",
-		"CameraAccessor"
+		"CameraMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1

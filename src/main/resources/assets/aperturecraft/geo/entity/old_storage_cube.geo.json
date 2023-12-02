@@ -1,0 +1,149 @@
+{
+	"format_version": "1.12.0",
+	"minecraft:geometry": [
+		{
+			"description": {
+				"identifier": "geometry.unknown",
+				"texture_width": 60,
+				"texture_height": 60,
+				"visible_bounds_width": 2,
+				"visible_bounds_height": 2.5,
+				"visible_bounds_offset": [0, 0.75, 0]
+			},
+			"bones": [
+				{
+					"name": "rama",
+					"pivot": [0, 0, 0],
+					"cubes": [
+						{"origin": [-7.5, 0.5, -7.5], "size": [15, 15, 15], "uv": [0, 30]}
+					]
+				},
+				{
+					"name": "front",
+					"parent": "rama",
+					"pivot": [0, 0, 0]
+				},
+				{
+					"name": "konty",
+					"parent": "front",
+					"pivot": [0, 0, 0]
+				},
+				{
+					"name": "lg",
+					"parent": "konty",
+					"pivot": [0, 0, 0],
+					"cubes": [
+						{"origin": [-8, 13, -8], "size": [5, 3, 1], "uv": [48, 31]},
+						{"origin": [-8, 11, -8], "size": [3, 2, 1], "uv": [46, 39]},
+						{"origin": [-8, 13, -7], "size": [1, 3, 4], "uv": [50, 38]},
+						{"origin": [-8, 11, -7], "size": [1, 2, 2], "uv": [54, 24]},
+						{"origin": [-7, 15, -5], "size": [2, 1, 2], "uv": [52, 35]},
+						{"origin": [-7, 15, -7], "size": [4, 1, 2], "uv": [48, 28]}
+					]
+				},
+				{
+					"name": "pg",
+					"parent": "konty",
+					"pivot": [11, 0, 0],
+					"cubes": [
+						{"origin": [3, 13, -8], "size": [5, 3, 1], "uv": [26, 26]},
+						{"origin": [5, 11, -8], "size": [3, 2, 1], "uv": [38, 20]},
+						{"origin": [7, 13, -7], "size": [1, 3, 4], "uv": [30, 7]},
+						{"origin": [7, 11, -7], "size": [1, 2, 2], "uv": [45, 10]},
+						{"origin": [5, 15, -5], "size": [2, 1, 2], "uv": [34, 23]},
+						{"origin": [3, 15, -7], "size": [4, 1, 2], "uv": [34, 15]}
+					]
+				},
+				{
+					"name": "ld",
+					"parent": "konty",
+					"pivot": [0, -11, 0],
+					"cubes": [
+						{"origin": [-8, 0, -8], "size": [5, 3, 1], "uv": [28, 3]},
+						{"origin": [-8, 3, -8], "size": [3, 2, 1], "uv": [42, 4]},
+						{"origin": [-8, 0, -7], "size": [1, 3, 4], "uv": [36, 3]},
+						{"origin": [-8, 3, -7], "size": [1, 2, 2], "uv": [44, 16]},
+						{"origin": [-5, 0, -7], "size": [2, 1, 2], "uv": [46, 7]},
+						{"origin": [-7, 0, -7], "size": [2, 1, 4], "uv": [37, 10]}
+					]
+				},
+				{
+					"name": "pd",
+					"parent": "konty",
+					"pivot": [11, -11, 0],
+					"cubes": [
+						{"origin": [3, 0, -8], "size": [5, 3, 1], "uv": [16, 22]},
+						{"origin": [5, 3, -8], "size": [3, 2, 1], "uv": [21, 15]},
+						{"origin": [7, 0, -7], "size": [1, 3, 4], "uv": [16, 6]},
+						{"origin": [7, 3, -7], "size": [1, 2, 2], "uv": [23, 18]},
+						{"origin": [5, 0, -5], "size": [2, 1, 2], "uv": [7, 39]},
+						{"origin": [3, 0, -7], "size": [4, 1, 2], "uv": [3, 42]}
+					]
+				},
+				{
+					"name": "back",
+					"parent": "rama",
+					"pivot": [0, 0, 0],
+					"rotation": [0, 180, 0]
+				},
+				{
+					"name": "konty2",
+					"parent": "back",
+					"pivot": [0, 0, 0]
+				},
+				{
+					"name": "lg2",
+					"parent": "konty2",
+					"pivot": [0, 0, 0],
+					"cubes": [
+						{"origin": [-8, 13, -8], "size": [5, 3, 1], "uv": [14, 26]},
+						{"origin": [-8, 11, -8], "size": [3, 2, 1], "uv": [28, 22]},
+						{"origin": [-8, 13, -7], "size": [1, 3, 4], "uv": [22, 3]},
+						{"origin": [-8, 11, -7], "size": [1, 2, 2], "uv": [27, 16]},
+						{"origin": [-7, 15, -5], "size": [2, 1, 2], "uv": [31, 18]},
+						{"origin": [-7, 15, -7], "size": [4, 1, 2], "uv": [18, 0]}
+					]
+				},
+				{
+					"name": "pg2",
+					"parent": "konty2",
+					"pivot": [11, 0, 0],
+					"cubes": [
+						{"origin": [3, 13, -8], "size": [5, 3, 1], "uv": [48, 14]},
+						{"origin": [5, 11, -8], "size": [3, 2, 1], "uv": [52, 11]},
+						{"origin": [7, 13, -7], "size": [1, 3, 4], "uv": [50, 0]},
+						{"origin": [7, 11, -7], "size": [1, 2, 2], "uv": [54, 7]},
+						{"origin": [5, 15, -5], "size": [2, 1, 2], "uv": [52, 21]},
+						{"origin": [3, 15, -7], "size": [4, 1, 2], "uv": [48, 18]}
+					]
+				},
+				{
+					"name": "ld2",
+					"parent": "konty2",
+					"pivot": [0, -11, 0],
+					"cubes": [
+						{"origin": [-8, 0, -8], "size": [5, 3, 1], "uv": [2, 25]},
+						{"origin": [-8, 3, -8], "size": [3, 2, 1], "uv": [6, 29]},
+						{"origin": [-8, 0, -7], "size": [1, 3, 4], "uv": [5, 32]},
+						{"origin": [-8, 3, -7], "size": [1, 2, 2], "uv": [3, 32]},
+						{"origin": [-5, 0, -7], "size": [2, 1, 2], "uv": [15, 19]},
+						{"origin": [-7, 0, -7], "size": [2, 1, 4], "uv": [5, 18]}
+					]
+				},
+				{
+					"name": "pd2",
+					"parent": "konty2",
+					"pivot": [11, -11, 0],
+					"cubes": [
+						{"origin": [3, 0, -8], "size": [5, 3, 1], "uv": [42, 0]},
+						{"origin": [5, 3, -8], "size": [3, 2, 1], "uv": [46, 24]},
+						{"origin": [7, 0, -7], "size": [1, 3, 4], "uv": [38, 23]},
+						{"origin": [7, 3, -7], "size": [1, 2, 2], "uv": [45, 35]},
+						{"origin": [5, 0, -5], "size": [2, 1, 2], "uv": [44, 21]},
+						{"origin": [3, 0, -7], "size": [4, 1, 2], "uv": [30, 0]}
+					]
+				}
+			]
+		}
+	]
+}

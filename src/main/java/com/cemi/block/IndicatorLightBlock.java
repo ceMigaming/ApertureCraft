@@ -14,11 +14,9 @@ import net.minecraft.state.StateManager.Builder;
 import net.minecraft.state.property.BooleanProperty;
 import net.minecraft.state.property.EnumProperty;
 import net.minecraft.state.property.Properties;
-import net.minecraft.state.property.Property;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Direction.Type;
-import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.util.shape.VoxelShapes;
 import net.minecraft.world.BlockView;
@@ -36,7 +34,6 @@ public class IndicatorLightBlock extends ApertureBlock {
     private static final Map<Direction, VoxelShape> DIRECTION_TO_SIDE_SHAPE;
     private static final Map<Direction, VoxelShape> DIRECTION_TO_UP_SHAPE;
     private static final Map<BlockState, VoxelShape> SHAPES;
-    private static final Vec3d[] COLORS;
 
     static {
         WIRE_CONNECTION_NORTH = Properties.NORTH_WIRE_CONNECTION;
@@ -69,7 +66,6 @@ public class IndicatorLightBlock extends ApertureBlock {
                         VoxelShapes.union((VoxelShape) DIRECTION_TO_SIDE_SHAPE.get(Direction.WEST),
                                 Block.createCuboidShape(0.0, 0.0, 3.0, 1.0, 16.0, 13.0))));
         SHAPES = Maps.newHashMap();
-        COLORS = new Vec3d[] {new Vec3d(0.09f, 0.69f, 0.82f), new Vec3d(1.f, 1.f, 0.13f)};
     }
 
     public IndicatorLightBlock(String name, Settings settings) {
@@ -79,7 +75,8 @@ public class IndicatorLightBlock extends ApertureBlock {
                         .with(WIRE_CONNECTION_EAST, WireConnection.NONE)
                         .with(WIRE_CONNECTION_SOUTH, WireConnection.NONE)
                         .with(WIRE_CONNECTION_WEST, WireConnection.NONE).with(POWERED, false));
-        UnmodifiableIterator shapeIterator = this.getStateManager().getStates().iterator();
+        UnmodifiableIterator<BlockState> shapeIterator =
+                this.getStateManager().getStates().iterator();
 
         while (shapeIterator.hasNext()) {
             BlockState blockState = (BlockState) shapeIterator.next();
@@ -103,12 +100,14 @@ public class IndicatorLightBlock extends ApertureBlock {
 
     private VoxelShape getShapeForState(BlockState state) {
         VoxelShape voxelShape = DOT_SHAPE;
-        Iterator var3 = Type.HORIZONTAL.iterator();
+        Iterator<Direction> var3 = Type.HORIZONTAL.iterator();
 
         while (var3.hasNext()) {
             Direction direction = (Direction) var3.next();
             WireConnection wireConnection = (WireConnection) state
-                    .get((Property) DIRECTION_TO_WIRE_CONNECTION_PROPERTY.get(direction));
+                    .get((EnumProperty<WireConnection>) DIRECTION_TO_WIRE_CONNECTION_PROPERTY
+                            .get(direction));
+
             if (wireConnection == WireConnection.SIDE) {
                 voxelShape = VoxelShapes.union(voxelShape,
                         (VoxelShape) DIRECTION_TO_SIDE_SHAPE.get(direction));
@@ -187,18 +186,17 @@ public class IndicatorLightBlock extends ApertureBlock {
         if (isReceivingPower && !isAlreadyPowered) {
             world.scheduleBlockTick(pos, this, 4);
             world.setBlockState(pos, (BlockState) state.with(POWERED, true), 2);
-            Iterator horizontalDirections = Type.HORIZONTAL.iterator();
+            Iterator<Direction> horizontalDirections = Type.HORIZONTAL.iterator();
             while (horizontalDirections.hasNext()) {
                 Direction direction = (Direction) horizontalDirections.next();
                 BlockState otherBlockState = world.getBlockState(pos.offset(direction));
                 if (otherBlockState.getBlock().equals(this)) {
-                    world.setBlockState(pos.offset(direction),
-                            otherBlockState.with(POWERED, true));
+                    world.setBlockState(pos.offset(direction), otherBlockState.with(POWERED, true));
                 }
             }
         } else if (isAlreadyPowered) {
             world.setBlockState(pos, (BlockState) state.with(POWERED, false), 2);
-            Iterator horizontalDirections = Type.HORIZONTAL.iterator();
+            Iterator<Direction> horizontalDirections = Type.HORIZONTAL.iterator();
             while (horizontalDirections.hasNext()) {
                 Direction direction = (Direction) horizontalDirections.next();
                 BlockState otherBlockState = world.getBlockState(pos.offset(direction));
@@ -210,25 +208,23 @@ public class IndicatorLightBlock extends ApertureBlock {
         }
     }
 
-    private void updateNeighbors(World world, BlockPos pos) {
-        if (world.getBlockState(pos).isOf(this)) {
-            world.updateNeighborsAlways(pos, this);
-            Direction[] var3 = Direction.values();
-            int var4 = var3.length;
+    // private void updateNeighbors(World world, BlockPos pos) {
+    //     if (world.getBlockState(pos).isOf(this)) {
+    //         world.updateNeighborsAlways(pos, this);
+    //         Direction[] var3 = Direction.values();
+    //         int var4 = var3.length;
 
-            for (int var5 = 0; var5 < var4; ++var5) {
-                Direction direction = var3[var5];
-                world.updateNeighborsAlways(pos.offset(direction), this);
-            }
+    //         for (int var5 = 0; var5 < var4; ++var5) {
+    //             Direction direction = var3[var5];
+    //             world.updateNeighborsAlways(pos.offset(direction), this);
+    //         }
 
-        }
-    }
+    //     }
+    // }
 
-    // TODO notify neighbors
     @Override
     public void onStateReplaced(BlockState state, World world, BlockPos pos, BlockState newState,
             boolean moved) {
-        System.out.println("onStateReplaced");
     }
 
     @Override
