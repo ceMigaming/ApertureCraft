@@ -16,8 +16,6 @@ import net.minecraft.world.World;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.core.animation.AnimatableManager;
-import software.bernie.geckolib.core.animation.AnimationState;
-import software.bernie.geckolib.core.object.PlayState;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 public class StorageCubeEntity extends MobEntity implements GeoEntity, Pickable {
@@ -94,7 +92,7 @@ public class StorageCubeEntity extends MobEntity implements GeoEntity, Pickable 
     @Override
     public void tick() {
         if (holder != null) {
-            handlePickedUp(holder, this);
+            handlePickedUp(getWorld(), holder, this);
         }
         super.tick();
     }

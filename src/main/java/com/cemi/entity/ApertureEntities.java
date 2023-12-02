@@ -46,6 +46,11 @@ public class ApertureEntities {
             FabricEntityTypeBuilder.create(SpawnGroup.MISC, TurretEntity::new)
                     .dimensions(EntityDimensions.fixed(1.0f, 1.0f)).build());
 
+    public static final EntityType<RocketTurretEntity> ROCKET_TURRET = Registry.register(
+            Registries.ENTITY_TYPE, new Identifier(ApertureCraft.MOD_ID, "rocket_turret"),
+            FabricEntityTypeBuilder.create(SpawnGroup.MISC, RocketTurretEntity::new)
+                    .dimensions(EntityDimensions.fixed(1.0f, 1.0f)).build());
+
     public static void registerEntities() {}
 
 }

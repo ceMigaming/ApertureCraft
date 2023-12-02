@@ -1,0 +1,11 @@
+{
+    "radio_loop": {
+        "subtitle": "subtitles.aperturecraft.radioloop",
+        "sounds": [
+            {
+                "name": "aperturecraft:radio_loop",
+                "stream": true
+            }
+        ]
+    }
+}
