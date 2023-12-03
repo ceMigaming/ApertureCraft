@@ -17,12 +17,16 @@ public class RadioSoundInstance extends MovingSoundInstance {
 
     @Override
     public void tick() {
-        System.out.println(radio.isPlaying());
         if (radio.isPlaying()) {
             this.volume = 1.0F;
         } else {
             this.setDone();
         }
+    }
+
+    @Override
+    public boolean isRepeatable() {
+        return true;
     }
 
     @Override

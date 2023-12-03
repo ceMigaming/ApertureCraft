@@ -101,14 +101,14 @@ public class RadioEntity extends MobEntity implements GeoEntity, Pickable {
             }
             return ActionResult.SUCCESS;
         }
-        if (getWorld().isClient())
-            return ActionResult.SUCCESS;
         PacketByteBuf buf = PacketByteBufs.create();
         buf.writeInt(this.getId());
         if (isPlaying) {
             isPlaying = false;
         } else {
             isPlaying = true;
+            if (getWorld().isClient())
+                return ActionResult.SUCCESS;
             getWorld().getPlayers().forEach(p -> {
                 ServerPlayNetworking.send((ServerPlayerEntity) p,
                         ApertureNetworkingConstants.RADIO_PLAY_ID, buf);
