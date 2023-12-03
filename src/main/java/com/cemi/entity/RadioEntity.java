@@ -137,4 +137,9 @@ public class RadioEntity extends MobEntity implements GeoEntity, Pickable {
         }
         super.tick();
     }
+
+    @Override
+    public float getEntityRotationWhenHolding() {
+        return 180;
+    }
 }
