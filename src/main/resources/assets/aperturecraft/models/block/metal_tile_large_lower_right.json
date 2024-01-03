@@ -1,0 +1,6 @@
+{
+  "parent": "block/cube_all",
+  "textures": {
+    "all": "aperturecraft:block/metal_tile_large_lower_right"
+  }
+}

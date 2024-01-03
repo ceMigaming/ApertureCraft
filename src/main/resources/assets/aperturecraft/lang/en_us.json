@@ -1,0 +1,16 @@
+{
+    "aperturecraft.block_collumn.no_space": "No space for collumn",
+    "aperturecraft.large_tile.no_space": "No space for large tile",
+    "itemGroup.aperturecraft.aperture_blocks": "ApertureCraft Blocks",
+    "block.aperturecraft.concrete_tile_small": "Small Concrete Tile",
+    "block.aperturecraft.concrete_tile_medium": "Medium Concrete Tile",
+    "block.aperturecraft.concrete_tile_large": "Large Concrete Tile",
+    "block.aperturecraft.concrete_pillar": "Concrete Pillar",
+    "block.aperturecraft.small_metal_tile": "Small Metal Tile",
+    "block.aperturecraft.medium_metal_tile": "Medium Metal Tile",
+    "block.aperturecraft.large_metal_tile": "Large Metal Tile",
+    "block.aperturecraft.metal_pillar": "Metal Pillar",
+    "itemGroup.aperturecraft.aperture_items": "ApertureCraft Items",
+    "item.aperturecraft.neurotoxin_bucket": "Neurotoxin Bucket",
+    "subtitles.aperturecraft.radioloop": "Still Alive (Radio Loop)"
+}

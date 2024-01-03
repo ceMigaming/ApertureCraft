@@ -1,0 +1,13 @@
+{
+	"required": true,
+	"package": "com.cemi.client.mixin",
+	"compatibilityLevel": "JAVA_17",
+	"client": [
+		"InGameOverlayRendererMixin",
+		"BackgroundRendererMixin",
+		"CameraMixin"
+	],
+	"injectors": {
+		"defaultRequire": 1
+	}
+}

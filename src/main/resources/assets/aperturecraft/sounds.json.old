@@ -1,0 +1,10 @@
+{
+  "radio": {
+    "category" : "music",
+    "sounds": [{
+        "name": "PortalReloaded:radio",
+        "stream": true
+      }
+    ]
+  }
+}

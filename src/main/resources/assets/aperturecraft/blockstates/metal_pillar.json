@@ -1,0 +1,6 @@
+{
+    "variants": {
+        "upper=true": {"model": "aperturecraft:block/metal_pillar_upper"},
+        "upper=false": {"model": "aperturecraft:block/metal_pillar_lower"}
+    }
+}

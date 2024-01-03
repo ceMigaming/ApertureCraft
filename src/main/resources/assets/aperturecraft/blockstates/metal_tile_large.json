@@ -1,0 +1,8 @@
+{
+    "variants": {
+        "side=0": {"model": "aperturecraft:block/metal_tile_large_lower_left"},
+        "side=1": {"model": "aperturecraft:block/metal_tile_large_upper_right"},
+        "side=2": {"model": "aperturecraft:block/metal_tile_large_upper_left"},
+        "side=3": {"model": "aperturecraft:block/metal_tile_large_lower_right"}
+    }
+}
