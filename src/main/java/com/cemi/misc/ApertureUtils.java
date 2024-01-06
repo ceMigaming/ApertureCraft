@@ -1,18 +1,5 @@
 package com.cemi.misc;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-import javax.annotation.Nullable;
-import org.jetbrains.annotations.NotNull;
-import net.minecraft.entity.Entity;
-import net.minecraft.util.Pair;
-import net.minecraft.util.hit.BlockHitResult;
-import net.minecraft.util.hit.HitResult;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
-
 public class ApertureUtils {
 
     // public static record PortalAwareRaytraceResult(World world, BlockHitResult hitResult,
