@@ -17,6 +17,7 @@ repositories {
         url 'https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/' 
 	}
     maven { url 'https://jitpack.io' }
+    maven { url 'https://maven.shedaniel.me' }
 
 	// Add repositories to retrieve artifacts from in here.
 	// You should only use this when depending on other mods because
@@ -43,8 +44,8 @@ dependencies {
 
 	// modImplementation "net.fabricmc.fabric-api:fabric-api-deprecated:${project.fabric_version}"
     modImplementation 'software.bernie.geckolib:geckolib-fabric-1.20.4:4.3.1'
-    implementation 'com.github.iPortalTeam:ImmersivePortalsMod:v5.0.2-mc1.20.4'
-
+    
+    // modImplementation 'com.github.iPortalTeam:ImmersivePortalsMod:v5.0.3-mc1.20.4'
 }
 
 processResources {
@@ -57,10 +58,6 @@ processResources {
 
 tasks.withType(JavaCompile).configureEach {
 	it.options.release = 17
-}
-
-tasks.withType(JavaCompile) {
-    options.fork = true
 }
 
 java {
