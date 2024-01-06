@@ -18,6 +18,14 @@ repositories {
 	}
     maven { url 'https://jitpack.io' }
     maven { url 'https://maven.shedaniel.me' }
+    
+    maven {
+        name = "Modrinth"
+        url = "https://api.modrinth.com/maven"
+        content {
+            includeGroup "maven.modrinth"
+        }
+    }
 
 	// Add repositories to retrieve artifacts from in here.
 	// You should only use this when depending on other mods because
@@ -45,7 +53,7 @@ dependencies {
 	// modImplementation "net.fabricmc.fabric-api:fabric-api-deprecated:${project.fabric_version}"
     modImplementation 'software.bernie.geckolib:geckolib-fabric-1.20.4:4.3.1'
     
-    // modImplementation 'com.github.iPortalTeam:ImmersivePortalsMod:v5.0.3-mc1.20.4'
+    modImplementation ("com.github.iPortalTeam:ImmersivePortalsMod:v5.1.0-mc1.20.4")
 }
 
 processResources {
