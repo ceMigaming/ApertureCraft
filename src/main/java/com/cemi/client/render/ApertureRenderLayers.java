@@ -8,5 +8,7 @@ public class ApertureRenderLayers {
     public static void registerRenderLayers() {
         BlockRenderLayerMap.INSTANCE.putBlock(ApertureBlocks.INDICATOR_LIGHT,
                 RenderLayer.getCutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(ApertureBlocks.GLASS_WALL,
+                RenderLayer.getTranslucent());
     }
 }
