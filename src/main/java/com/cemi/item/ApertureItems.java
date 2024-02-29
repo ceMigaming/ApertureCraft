@@ -13,7 +13,7 @@ import net.minecraft.util.Identifier;
 
 public class ApertureItems {
     public static BucketItem NEUROTOXIN_BUCKET;
-    public static PortalGun PORTAL_GUN = new PortalGun();
+    public static PortalGunItem PORTAL_GUN = new PortalGunItem();
     private static final ApertureItem[] ITEMS = {PORTAL_GUN};
 
     public static void registerItems() {

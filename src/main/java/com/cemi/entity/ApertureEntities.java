@@ -8,8 +8,13 @@ import net.minecraft.entity.SpawnGroup;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.util.Identifier;
+import qouteall.imm_ptl.core.portal.Portal;
 
 public class ApertureEntities {
+
+    public static final EntityType<AperturePortal> APERTURE_PORTAL = Registry.register(
+            Registries.ENTITY_TYPE, new Identifier(ApertureCraft.MOD_ID, "aperture_portal"),
+            Portal.createPortalEntityType(AperturePortal::new));
 
     public static final EntityType<GhostBlockEntity> GHOSTBLOCK = Registry.register(
             Registries.ENTITY_TYPE, new Identifier(ApertureCraft.MOD_ID, "ghostblock"),
@@ -50,6 +55,11 @@ public class ApertureEntities {
             Registries.ENTITY_TYPE, new Identifier(ApertureCraft.MOD_ID, "rocket_turret"),
             FabricEntityTypeBuilder.create(SpawnGroup.MISC, RocketTurretEntity::new)
                     .dimensions(EntityDimensions.fixed(1.0f, 1.0f)).build());
+
+    public static final EntityType<PortalProjectileEntity> PORTAL_PROJECTILE = Registry.register(
+            Registries.ENTITY_TYPE, new Identifier(ApertureCraft.MOD_ID, "portal_projectile"),
+            FabricEntityTypeBuilder.create(SpawnGroup.MISC, PortalProjectileEntity::new)
+                    .dimensions(EntityDimensions.fixed(.5f, .5f)).build());
 
     public static void registerEntities() {}
 
