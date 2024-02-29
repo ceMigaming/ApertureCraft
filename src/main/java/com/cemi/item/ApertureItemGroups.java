@@ -24,6 +24,11 @@ public class ApertureItemGroups {
                                 entries.add(ApertureBlocks.MEDIUM_METAL_TILE);
                                 entries.add(ApertureBlocks.METAL_PILLAR);
                                 entries.add(ApertureBlocks.METAL_LARGE_TILE);
+                                entries.add(ApertureBlocks.GLASS_PANE);
+                                entries.add(ApertureBlocks.GLASS_PANE_SEEMED);
+                                entries.add(ApertureBlocks.GLASS_BLOCK);
+                                entries.add(ApertureBlocks.GLASS_BLOCK_SEEMED);
+
                         }).build();
         private static final ItemGroup APERTURE_ITEMS = FabricItemGroup.builder()
                         .icon(() -> new ItemStack(ApertureItems.NEUROTOXIN_BUCKET))
