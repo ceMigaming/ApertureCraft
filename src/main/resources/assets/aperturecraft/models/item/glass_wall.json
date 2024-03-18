@@ -1,6 +1,0 @@
-{
-    "parent": "item/generated",
-    "textures": {
-        "layer0": "aperturecraft:block/glass_pane"
-    }
-}
