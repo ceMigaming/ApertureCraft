@@ -123,10 +123,20 @@ public class PortalProjectileEntity extends ProjectileEntity {
                 AperturePortal portal = ApertureEntities.APERTURE_PORTAL.create(getWorld());
                 Direction lookDirection = Direction.fromRotation((float) this.getYaw());
                 if (result.getSide() == Direction.UP || result.getSide() == Direction.DOWN) {
-                    portal.setOriginPos(result.getBlockPos().toCenterPos()
+                    Vec3d pos = result.getBlockPos().toCenterPos()
                             .add(new Vec3d(result.getSide().getUnitVector().mul(0.501f)))
-                            .add(new Vec3d(lookDirection.getUnitVector().mul(0.5f))));
-                    System.out.println(result.getSide().getUnitVector());
+                            .add(new Vec3d(lookDirection.getUnitVector().mul(0.5f)));
+                    if (!getWorld().isAir(BlockPos.ofFloored(pos))) {
+                        if (getWorld().isAir(BlockPos.ofFloored(pos.add(0, 1, 0)))
+                                && getWorld().isAir(result.getBlockPos().up())) {
+                            pos = pos.add(0, 1, 0);
+                        } else {
+                            portal.kill();
+                            this.kill();
+                            return;
+                        }
+                    }
+                    portal.setOriginPos(pos);
                     int invert = result.getSide() == Direction.UP ? -1 : 1;
                     portal.setOrientationAndSize(
                             new Vec3d(result.getSide().rotateClockwise(Axis.X).getUnitVector()),

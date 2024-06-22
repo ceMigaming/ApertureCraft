@@ -17,7 +17,7 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.BlockView;
 
 @Mixin(BackgroundRenderer.class)
-public class BackgroundRendererMixin {
+public class MixinBackgroundRenderer {
 
 	@Shadow
 	private static float red;
@@ -35,9 +35,9 @@ public class BackgroundRendererMixin {
 		CameraSubmersionType cameraSubmersionType = camera.getSubmersionType();
 
 		if (cameraSubmersionType == CameraSubmersionType.NONE) {
-			BlockPos blockPos = ((CameraMixin) camera).getBlockPos();
-			Vec3d pos = ((CameraMixin) camera).getPos();
-			BlockView area = ((CameraMixin) camera).getArea();
+			BlockPos blockPos = ((MixinCamera) camera).getBlockPos();
+			Vec3d pos = ((MixinCamera) camera).getPos();
+			BlockView area = ((MixinCamera) camera).getArea();
 			FluidState fluidState = area.getFluidState(blockPos);
 			if (fluidState.isIn(ApertureFluidTags.NEUROTOXIN)
 					&& pos.y < (double) ((float) blockPos.getY()

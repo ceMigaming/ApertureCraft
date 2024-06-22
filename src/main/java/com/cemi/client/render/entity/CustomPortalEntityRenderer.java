@@ -17,7 +17,6 @@ import net.minecraft.client.render.VertexFormat.DrawMode;
 import net.minecraft.client.render.VertexFormats;
 import net.minecraft.client.render.entity.EntityRendererFactory.Context;
 import net.minecraft.client.render.entity.model.EntityModelLayer;
-import net.minecraft.client.texture.TextureManager;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
@@ -99,11 +98,11 @@ public class CustomPortalEntityRenderer extends PortalEntityRenderer {
             time += (tickDelta - prevTickDelta) * 0.1F;
         }
         prevTickDelta = tickDelta;
-        // TODO add switch to disable shader and adjust the overlay so its not hidden behind the portal, also add a second layer of overlay
+        // TODO add switch to disable shader and adjust the overlay so its not hidden behind the
+        // portal, also add a second layer of overlay
         if (useShader) {
             PortalShader program = ShaderHelper.getPortalShader();
             RenderSystem.setShader(() -> program);
-            TextureManager textureManager = this.dispatcher.textureManager;
             MinecraftClient.getInstance().getTextureManager().bindTexture(portalClosed);
             RenderSystem.enableBlend();
 

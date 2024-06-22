@@ -1,4 +1,4 @@
-package com.cemi.client.render.models;
+package com.cemi.client.render.model;
 
 import com.cemi.ApertureCraft;
 import com.cemi.item.PortalGunItem;

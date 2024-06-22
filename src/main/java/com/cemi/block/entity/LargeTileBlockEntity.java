@@ -5,15 +5,15 @@ import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.util.math.BlockPos;
 
-public class LargeTileEntity extends BlockEntity {
+public class LargeTileBlockEntity extends BlockEntity {
 
     BlockPos upperLeftBlockPos;
     BlockPos upperRightBlockPos;
     BlockPos lowerLeftBlockPos;
     BlockPos lowerRightBlockPos;
 
-    public LargeTileEntity(BlockPos pos, BlockState state) {
-        super(ApertureBlockEntities.CONCRETE_LARGE_TILE_ENTITY, pos, state);
+    public LargeTileBlockEntity(BlockPos pos, BlockState state) {
+        super(ApertureBlockEntities.CONCRETE_LARGE_TILE, pos, state);
     }
 
     @Override

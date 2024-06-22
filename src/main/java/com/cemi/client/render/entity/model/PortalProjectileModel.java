@@ -1,6 +1,6 @@
 package com.cemi.client.render.entity.model;
 
-import com.cemi.entity.GhostBlockEntity;
+import com.cemi.entity.PortalProjectileEntity;
 import com.google.common.collect.ImmutableList;
 import net.minecraft.client.model.ModelData;
 import net.minecraft.client.model.ModelPart;
@@ -13,7 +13,7 @@ import net.minecraft.client.render.entity.model.EntityModel;
 import net.minecraft.client.render.entity.model.EntityModelPartNames;
 import net.minecraft.client.util.math.MatrixStack;
 
-public class PortalProjectileModel extends EntityModel<GhostBlockEntity> {
+public class PortalProjectileModel extends EntityModel<PortalProjectileEntity> {
     private final ModelPart base;
 
     public PortalProjectileModel(ModelPart modelPart) {
@@ -30,16 +30,15 @@ public class PortalProjectileModel extends EntityModel<GhostBlockEntity> {
     }
 
     @Override
-    public void setAngles(GhostBlockEntity entity, float limbAngle, float limbDistance,
+    public void setAngles(PortalProjectileEntity entity, float limbAngle, float limbDistance,
             float animationProgress, float headYaw, float headPitch) {}
 
     @Override
     public void render(MatrixStack matrices, VertexConsumer vertices, int light, int overlay,
             float red, float green, float blue, float alpha) {
-        ImmutableList.of(this.base).forEach((modelRenderer) -> {
+        ImmutableList.of(base).forEach((modelRenderer) -> {
             modelRenderer.render(matrices, vertices, light, overlay, red, green, blue, alpha);
         });
     }
-
 
 }

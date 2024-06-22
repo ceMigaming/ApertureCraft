@@ -1,7 +1,7 @@
 package com.cemi.block;
 
 import com.cemi.ApertureCraft;
-import com.cemi.block.entity.LargeTileEntity;
+import com.cemi.block.entity.LargeTileBlockEntity;
 import com.cemi.entity.ApertureEntities;
 import com.cemi.entity.GhostBlockEntity;
 import net.minecraft.block.Block;
@@ -118,17 +118,17 @@ public class LargeTile extends ApertureBlock implements BlockEntityProvider {
             BlockEntity lowerRightBlockEntity = world.getBlockEntity(lowerRightBlockPos);
 
             if (world.getBlockState(pos).get(SIDE) == 0) {
-                if (upperLeftBlockEntity instanceof LargeTileEntity
-                        && upperRightBlockEntity instanceof LargeTileEntity
-                        && lowerLeftBlockEntity instanceof LargeTileEntity
-                        && lowerRightBlockEntity instanceof LargeTileEntity) {
-                    ((LargeTileEntity) upperLeftBlockEntity).setBlockPoses(pos, upperRightBlockPos,
+                if (upperLeftBlockEntity instanceof LargeTileBlockEntity
+                        && upperRightBlockEntity instanceof LargeTileBlockEntity
+                        && lowerLeftBlockEntity instanceof LargeTileBlockEntity
+                        && lowerRightBlockEntity instanceof LargeTileBlockEntity) {
+                    ((LargeTileBlockEntity) upperLeftBlockEntity).setBlockPoses(pos, upperRightBlockPos,
                             lowerLeftBlockPos, lowerRightBlockPos);
-                    ((LargeTileEntity) upperRightBlockEntity).setBlockPoses(pos, upperRightBlockPos,
+                    ((LargeTileBlockEntity) upperRightBlockEntity).setBlockPoses(pos, upperRightBlockPos,
                             lowerLeftBlockPos, lowerRightBlockPos);
-                    ((LargeTileEntity) lowerLeftBlockEntity).setBlockPoses(pos, upperRightBlockPos,
+                    ((LargeTileBlockEntity) lowerLeftBlockEntity).setBlockPoses(pos, upperRightBlockPos,
                             lowerLeftBlockPos, lowerRightBlockPos);
-                    ((LargeTileEntity) lowerRightBlockEntity).setBlockPoses(pos, upperRightBlockPos,
+                    ((LargeTileBlockEntity) lowerRightBlockEntity).setBlockPoses(pos, upperRightBlockPos,
                             lowerLeftBlockPos, lowerRightBlockPos);
                 }
             }
@@ -140,15 +140,15 @@ public class LargeTile extends ApertureBlock implements BlockEntityProvider {
     public BlockState onBreak(World world, BlockPos pos, BlockState state, PlayerEntity player) {
         if (!world.isClient()) {
             BlockEntity currentBlockEntity = world.getBlockEntity(pos);
-            if (currentBlockEntity instanceof LargeTileEntity) {
+            if (currentBlockEntity instanceof LargeTileBlockEntity) {
                 BlockPos upperLeftBlockPos =
-                        ((LargeTileEntity) currentBlockEntity).getUpperLeftBlockPos();
+                        ((LargeTileBlockEntity) currentBlockEntity).getUpperLeftBlockPos();
                 BlockPos upperRightBlockPos =
-                        ((LargeTileEntity) currentBlockEntity).getUpperRightBlockPos();
+                        ((LargeTileBlockEntity) currentBlockEntity).getUpperRightBlockPos();
                 BlockPos lowerLeftBlockPos =
-                        ((LargeTileEntity) currentBlockEntity).getLowerLeftBlockPos();
+                        ((LargeTileBlockEntity) currentBlockEntity).getLowerLeftBlockPos();
                 BlockPos lowerRightBlockPos =
-                        ((LargeTileEntity) currentBlockEntity).getLowerRightBlockPos();
+                        ((LargeTileBlockEntity) currentBlockEntity).getLowerRightBlockPos();
 
                 world.removeBlock(upperLeftBlockPos, false);
                 world.removeBlock(upperRightBlockPos, false);
@@ -173,6 +173,6 @@ public class LargeTile extends ApertureBlock implements BlockEntityProvider {
 
     @Override
     public BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
-        return new LargeTileEntity(pos, state);
+        return new LargeTileBlockEntity(pos, state);
     }
 }

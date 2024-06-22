@@ -1,5 +1,7 @@
 package com.cemi.client.render;
 
+import com.cemi.block.entity.ApertureBlockEntities;
+import com.cemi.client.render.block.HEPLauncherBlockEntityRenderer;
 import com.cemi.client.render.entity.CompanionCubeRenderer;
 import com.cemi.client.render.entity.CustomPortalEntityRenderer;
 import com.cemi.client.render.entity.GhostBlockRenderer;
@@ -12,9 +14,11 @@ import com.cemi.client.render.entity.StorageCubeRenderer;
 import com.cemi.client.render.entity.TurretRenderer;
 import com.cemi.client.render.entity.model.PortalOverlayModel;
 import com.cemi.entity.ApertureEntities;
+import net.fabricmc.fabric.api.client.rendering.v1.BlockEntityRendererRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
 
+@SuppressWarnings("deprecation")
 public class ApertureRenderers {
 
     public static void registerRenderers() {
@@ -33,6 +37,10 @@ public class ApertureRenderers {
         EntityRendererRegistry.register(ApertureEntities.RADIO, RadioRenderer::new);
         EntityRendererRegistry.register(ApertureEntities.TURRET, TurretRenderer::new);
         EntityRendererRegistry.register(ApertureEntities.ROCKET_TURRET, RocketTurretRenderer::new);
+
+        // Block Entities
+        BlockEntityRendererRegistry.register(ApertureBlockEntities.HEP_LAUNCHER,
+                HEPLauncherBlockEntityRenderer::new);
 
         // Render Layers
         EntityModelLayerRegistry.registerModelLayer(CustomPortalEntityRenderer.OVERLAY_MODEL_LAYER,
