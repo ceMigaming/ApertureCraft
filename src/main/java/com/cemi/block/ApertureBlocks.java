@@ -44,7 +44,7 @@ public class ApertureBlocks {
     public static final IndicatorLightBlock INDICATOR_LIGHT = new IndicatorLightBlock(
             "indicator_light", FabricBlockSettings.copy(Blocks.REDSTONE_WIRE));
     public static final HEPLauncherBlock HEP_LAUNCHER =
-            new HEPLauncherBlock("hep_launcher", FabricBlockSettings.copy(Blocks.DISPENSER));
+            new HEPLauncherBlock("hep_launcher", FabricBlockSettings.copy(Blocks.DISPENSER).nonOpaque());
 
     private static final ApertureBlock[] BLOCKS = {SMALL_CONCRETE_TILE, MEDIUM_CONCRETE_TILE,
             CONCRETE_LARGE_TILE, CONCRETE_PILLAR, SMALL_METAL_TILE, MEDIUM_METAL_TILE,

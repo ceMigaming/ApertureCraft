@@ -31,7 +31,6 @@ public class ShaderHelper {
                         "portal", VertexFormats.POSITION_COLOR);
                 resultConsumer.accept(shader);
                 portalShader = shader;
-                System.out.println("TEST!!!!!");
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }

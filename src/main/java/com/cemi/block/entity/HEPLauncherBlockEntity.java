@@ -1,5 +1,6 @@
 package com.cemi.block.entity;
 
+import com.cemi.ApertureCraft;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.util.math.BlockPos;
@@ -15,7 +16,7 @@ import software.bernie.geckolib.util.GeckoLibUtil;
 public class HEPLauncherBlockEntity extends BlockEntity implements GeoBlockEntity {
 
     protected static final RawAnimation DEPLOY =
-            RawAnimation.begin().thenPlay("misc.deploy").thenLoop("misc.idle");
+            RawAnimation.begin().thenPlay("animation.hep_launcher.shoot").thenLoop("animation.hep_launcher.idle");
 
     private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
 

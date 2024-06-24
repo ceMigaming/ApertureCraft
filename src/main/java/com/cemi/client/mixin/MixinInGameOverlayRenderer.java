@@ -10,9 +10,9 @@ import net.minecraft.client.util.math.MatrixStack;
 
 @Mixin(InGameOverlayRenderer.class)
 public class MixinInGameOverlayRenderer {
-	@Inject(at = @At("HEAD"),
-			method = "renderOverlays(Lnet/minecraft/client/MinecraftClient;Lnet/minecraft/client/util/math/MatrixStack;)V",
-			cancellable = true)
-	private static void renderOverlays(MinecraftClient client, MatrixStack matrices,
-			CallbackInfo info) {}
+    @Inject(at = @At("HEAD"),
+            method = "renderOverlays(Lnet/minecraft/client/MinecraftClient;Lnet/minecraft/client/util/math/MatrixStack;)V",
+            cancellable = true)
+    private static void renderOverlays(MinecraftClient client, MatrixStack matrices,
+            CallbackInfo info) {}
 }
