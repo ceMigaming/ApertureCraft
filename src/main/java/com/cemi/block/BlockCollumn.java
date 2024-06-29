@@ -72,9 +72,4 @@ public class BlockCollumn extends ApertureBlock {
         builder.add(UPPER);
     }
 
-    @Override
-    public int getWeakRedstonePower(BlockState state, BlockView world, BlockPos pos,
-            Direction direction) {
-        return 31;
-    }
 }

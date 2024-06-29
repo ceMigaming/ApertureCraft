@@ -27,6 +27,12 @@ public class ApertureBlockEntities {
                     FabricBlockEntityTypeBuilder
                             .create(IndicatorLightBlockEntity::new, ApertureBlocks.INDICATOR_LIGHT)
                             .build());
+    public static final BlockEntityType<ApertureDoorBlockEntity> DOOR =
+            Registry.register(Registries.BLOCK_ENTITY_TYPE,
+                    new Identifier(ApertureCraft.MOD_ID, "aperture_door_block_entity"),
+                    FabricBlockEntityTypeBuilder
+                            .create(ApertureDoorBlockEntity::new, ApertureBlocks.DOOR)
+                            .build());
 
     public static void registerBlockEntities() {}
 }

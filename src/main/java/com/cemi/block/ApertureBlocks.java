@@ -49,10 +49,13 @@ public class ApertureBlocks {
     public static final ApertureBlock INDICATOR =
             new IndicatorBlock(FabricBlockSettings.copy(Blocks.STONE_BUTTON).nonOpaque());
 
+    public static final ApertureDoorBlock DOOR =
+            new ApertureDoorBlock(FabricBlockSettings.copy(Blocks.IRON_DOOR));
+
 
     private static final ApertureBlock[] BLOCKS = {SMALL_CONCRETE_TILE, MEDIUM_CONCRETE_TILE,
             CONCRETE_LARGE_TILE, CONCRETE_PILLAR, SMALL_METAL_TILE, MEDIUM_METAL_TILE,
-            METAL_LARGE_TILE, METAL_PILLAR, INDICATOR_LIGHT, GLASS_WALL, HEP_LAUNCHER, INDICATOR};
+            METAL_LARGE_TILE, METAL_PILLAR, INDICATOR_LIGHT, GLASS_WALL, HEP_LAUNCHER, INDICATOR, DOOR};
 
     public static void registerBlocks() {
         NEUROTOXIN = Registry.register(Registries.BLOCK,
