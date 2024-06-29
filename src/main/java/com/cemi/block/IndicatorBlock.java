@@ -55,7 +55,6 @@ public class IndicatorBlock extends ApertureBlock {
         if (powered != state.get(POWERED)) {
             world.setBlockState(pos, state.with(POWERED, powered), 3);
         }
-        super.neighborUpdate(state, world, pos, sourceBlock, sourcePos, notify);
     }
 
     @Override
