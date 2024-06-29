@@ -21,6 +21,11 @@ public class ApertureEntities {
             FabricEntityTypeBuilder.create(SpawnGroup.MISC, GhostBlockEntity::new)
                     .dimensions(EntityDimensions.fixed(1.0f, 1.0f)).build());
 
+    public static final EntityType<HighEnergyPelletEntity> HIGH_ENERGY_PELLET = Registry.register(
+            Registries.ENTITY_TYPE, new Identifier(ApertureCraft.MOD_ID, "high_energy_pellet"),
+            FabricEntityTypeBuilder.create(SpawnGroup.MISC, HighEnergyPelletEntity::new)
+                    .dimensions(EntityDimensions.fixed(.5f, .5f)).build());
+
     public static final EntityType<RadioEntity> RADIO =
             Registry.register(Registries.ENTITY_TYPE, new Identifier(ApertureCraft.MOD_ID, "radio"),
                     FabricEntityTypeBuilder.create(SpawnGroup.MISC, RadioEntity::new)

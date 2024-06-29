@@ -23,6 +23,7 @@ import net.minecraft.util.math.MathHelper;
 import qouteall.imm_ptl.core.portal.Portal;
 import qouteall.imm_ptl.core.render.PortalEntityRenderer;
 
+// TODO major cleanup and optimization needed
 public class CustomPortalEntityRenderer extends PortalEntityRenderer {
 
     MinecraftClient client = MinecraftClient.getInstance();

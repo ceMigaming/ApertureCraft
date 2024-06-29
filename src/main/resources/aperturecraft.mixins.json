@@ -3,7 +3,8 @@
     "package": "com.cemi.mixin",
     "compatibilityLevel": "JAVA_17",
     "mixins": [
-        "EntityMixin"
+        "EntityMixin",
+        "RedstoneViewMixin"
     ],
     "injectors": {
         "defaultRequire": 1

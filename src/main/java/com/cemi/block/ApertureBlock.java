@@ -10,7 +10,7 @@ import net.minecraft.util.Identifier;
 
 public class ApertureBlock extends Block {
 
-    protected String name;
+    protected String name; 
     protected boolean canPlacePortals = true;
 
     public ApertureBlock(String name, Settings settings) {

@@ -15,6 +15,8 @@ import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Direction;
+import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 
 public class BlockCollumn extends ApertureBlock {
@@ -68,5 +70,11 @@ public class BlockCollumn extends ApertureBlock {
     @Override
     protected void appendProperties(Builder<Block, BlockState> builder) {
         builder.add(UPPER);
+    }
+
+    @Override
+    public int getWeakRedstonePower(BlockState state, BlockView world, BlockPos pos,
+            Direction direction) {
+        return 31;
     }
 }

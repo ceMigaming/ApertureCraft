@@ -5,6 +5,7 @@ import com.cemi.client.render.block.HEPLauncherBlockEntityRenderer;
 import com.cemi.client.render.entity.CompanionCubeRenderer;
 import com.cemi.client.render.entity.CustomPortalEntityRenderer;
 import com.cemi.client.render.entity.GhostBlockRenderer;
+import com.cemi.client.render.entity.HighEnergyPelletRenderer;
 import com.cemi.client.render.entity.OldStorageCubeRenderer;
 import com.cemi.client.render.entity.PortalProjectileRenderer;
 import com.cemi.client.render.entity.RadioRenderer;
@@ -25,6 +26,8 @@ public class ApertureRenderers {
         EntityRendererRegistry.register(ApertureEntities.APERTURE_PORTAL,
                 CustomPortalEntityRenderer::new);
         EntityRendererRegistry.register(ApertureEntities.GHOSTBLOCK, GhostBlockRenderer::new);
+        EntityRendererRegistry.register(ApertureEntities.HIGH_ENERGY_PELLET,
+                HighEnergyPelletRenderer::new);
         EntityRendererRegistry.register(ApertureEntities.PORTAL_PROJECTILE,
                 PortalProjectileRenderer::new);
         EntityRendererRegistry.register(ApertureEntities.RUSTY_STORAGE_CUBE,
