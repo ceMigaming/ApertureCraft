@@ -13,9 +13,13 @@ base {
 repositories {
     mavenCentral()
     maven {
-		name = 'GeckoLib'
-        url 'https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/' 
-	}
+        name = 'GeckoLib'
+        url 'https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/'
+        content {
+                includeGroupByRegex("software\\.bernie.*")
+                includeGroup("com.eliotlash.mclib")
+        }
+    }
     maven { url 'https://jitpack.io' }
     maven { url 'https://maven.shedaniel.me' }
     
@@ -51,7 +55,8 @@ dependencies {
 	// These are included in the Fabric API production distribution and allow you to update your mod to the latest modules at a later more convenient time.
 
 	// modImplementation "net.fabricmc.fabric-api:fabric-api-deprecated:${project.fabric_version}"
-    modImplementation 'software.bernie.geckolib:geckolib-fabric-1.20.4:4.3.1'
+    modImplementation("software.bernie.geckolib:geckolib-fabric-${minecraft_version}:${geckolib_version}")
+    // implementation("com.eliotlash.mclib:mclib:20")
     
     modImplementation ("com.github.iPortalTeam:ImmersivePortalsMod:v5.1.0-mc1.20.4")
 }

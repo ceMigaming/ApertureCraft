@@ -25,12 +25,10 @@ public class IndicatorLightBlockEntity extends BlockEntity {
     @Override
     public void readNbt(NbtCompound nbt) {
         power = nbt.getInt("power");
-        super.readNbt(nbt);
     }
 
     @Override
     protected void writeNbt(NbtCompound nbt) {
         nbt.putInt("power", power);
-        super.writeNbt(nbt);
     }
 }
