@@ -7,9 +7,7 @@ import net.minecraft.util.math.BlockPos;
 import software.bernie.geckolib.animatable.GeoBlockEntity;
 import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.core.animation.AnimatableManager;
-import software.bernie.geckolib.core.animation.Animation.LoopType;
 import software.bernie.geckolib.core.animation.AnimationController;
-import software.bernie.geckolib.core.animation.AnimationState;
 import software.bernie.geckolib.core.animation.RawAnimation;
 import software.bernie.geckolib.core.object.PlayState;
 import software.bernie.geckolib.util.GeckoLibUtil;
@@ -19,7 +17,7 @@ public class ApertureDoorBlockEntity extends BlockEntity implements GeoBlockEnti
     protected static final RawAnimation OPEN =
             RawAnimation.begin().thenPlayAndHold("animation.door.open");
     protected static final RawAnimation CLOSE =
-            RawAnimation.begin().then("animation.door.close", LoopType.PLAY_ONCE);
+            RawAnimation.begin().thenPlayAndHold("animation.door.close");
 
     private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
 
@@ -29,13 +27,8 @@ public class ApertureDoorBlockEntity extends BlockEntity implements GeoBlockEnti
 
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
-        controllers.add(new AnimationController<>(this, "controller", this::deployAnimController)
+        controllers.add(new AnimationController<>(this, "controller", e -> PlayState.STOP)
                 .triggerableAnim("open", OPEN).triggerableAnim("close", CLOSE));
-    }
-
-    protected <E extends ApertureDoorBlockEntity> PlayState deployAnimController(
-            final AnimationState<E> state) {
-        return state.setAndContinue(OPEN);
     }
 
     @Override

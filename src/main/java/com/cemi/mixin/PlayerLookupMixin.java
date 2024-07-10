@@ -13,6 +13,7 @@ import net.minecraft.util.math.ChunkPos;
 @Mixin(PlayerLookup.class)
 public class PlayerLookupMixin {
 
+    @SuppressWarnings("resource") // false positive
     @Inject(method = "tracking", at = @At("RETURN"), cancellable = true)
     private static void tracking(ServerWorld world, ChunkPos pos,
             CallbackInfoReturnable<Collection<ServerPlayerEntity>> cir) {

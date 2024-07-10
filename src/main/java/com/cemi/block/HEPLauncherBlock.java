@@ -1,6 +1,5 @@
 package com.cemi.block;
 
-import com.cemi.ApertureCraft;
 import com.cemi.block.entity.HEPLauncherBlockEntity;
 import com.cemi.entity.ApertureEntities;
 import com.cemi.entity.HighEnergyPelletEntity;
@@ -74,10 +73,7 @@ public class HEPLauncherBlock extends ApertureBlock implements BlockEntityProvid
             return;
         }
         HEPLauncherBlockEntity be = (HEPLauncherBlockEntity) world.getBlockEntity(pos);
-        // System.out.println(be);
         be.triggerAnim("controller", "shoot");
-        // be.triggerAnim(null, "shoot");
-        // be.shootPellet();
         HighEnergyPelletEntity hep = ApertureEntities.HIGH_ENERGY_PELLET.create(world);
         hep.setPos(pos.getX() + 0.5 + state.get(FACING).getOffsetX(),
                 pos.getY() + 0.5 + state.get(FACING).getOffsetY(),
