@@ -13,7 +13,7 @@ import net.minecraft.world.World;
 
 public class ApertureItem extends Item {
 
-    private final String name;
+    protected final String name;
 
     public ApertureItem(String name, Settings settings) {
         super(settings);
@@ -33,11 +33,11 @@ public class ApertureItem extends Item {
     public void onRightClick(World world, PlayerEntity user, Hand hand) {
         // System.out.println("Right click");
     }
-    
+
     public void onLeftClick(World world, PlayerEntity user, Hand hand) {
         // System.out.println("Left click");
     }
-    
+
     public void onScrollClick(World world, PlayerEntity user, Hand hand) {
         // System.out.println("Middle click");
     }

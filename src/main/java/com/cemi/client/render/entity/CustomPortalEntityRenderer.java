@@ -27,6 +27,7 @@ import qouteall.imm_ptl.core.render.PortalEntityRenderer;
 public class CustomPortalEntityRenderer extends PortalEntityRenderer {
 
     MinecraftClient client = MinecraftClient.getInstance();
+    protected boolean useShader;
 
     private final PortalOverlayModel model;
     public static final EntityModelLayer OVERLAY_MODEL_LAYER =
@@ -43,6 +44,7 @@ public class CustomPortalEntityRenderer extends PortalEntityRenderer {
     public CustomPortalEntityRenderer(Context context) {
         super(context);
         model = new PortalOverlayModel(context.getPart(OVERLAY_MODEL_LAYER));
+        useShader = ApertureCraft.getConfig().isEnableShaders();
     }
 
     @Override
@@ -93,7 +95,6 @@ public class CustomPortalEntityRenderer extends PortalEntityRenderer {
         // System.out.println(ShaderHelper.getPortalShader());
         Matrix4f matrix = matrixStack.peek().getPositionMatrix();
         matrix.rotate(entity.getOrientationRotation().toMcQuaternion());
-        boolean useShader = true;
         int pass = 0;
         if (prevTickDelta < tickDelta) {
             time += (tickDelta - prevTickDelta) * 0.1F;

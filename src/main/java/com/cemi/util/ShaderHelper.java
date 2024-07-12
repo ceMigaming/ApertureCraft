@@ -25,6 +25,10 @@ public class ShaderHelper {
     private static PortalShader portalShader;
 
     public static void initShaders() {
+        if (!ApertureCraft.getConfig().isEnableShaders()) {
+            portalShader = null;
+            return;
+        }
         loadShaderSignal.connect((resourceManager, resultConsumer) -> {
             try {
                 PortalShader shader = new PortalShader(getResourceFactory(resourceManager),
@@ -32,7 +36,10 @@ public class ShaderHelper {
                 resultConsumer.accept(shader);
                 portalShader = shader;
             } catch (IOException e) {
-                throw new RuntimeException(e);
+                portalShader = null;
+                ApertureCraft.getConfigHolder()
+                        .setConfig(ApertureCraft.getConfig().withEnableShaders(false));
+                // throw new RuntimeException(e);
             }
         });
     }

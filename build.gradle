@@ -22,6 +22,7 @@ repositories {
     }
     maven { url 'https://jitpack.io' }
     maven { url 'https://maven.shedaniel.me' }
+    maven { url "https://maven.terraformersmc.com/releases/" }
     
     maven {
         name = "Modrinth"
@@ -59,6 +60,10 @@ dependencies {
     implementation("com.eliotlash.mclib:mclib:20")
     
     modImplementation ("com.github.iPortalTeam:ImmersivePortalsMod:v5.1.0-mc1.20.4")
+
+    modApi("me.shedaniel.cloth:cloth-config-fabric:13.0.121") {
+        exclude(group: "net.fabricmc.fabric-api")
+    }
 }
 
 processResources {

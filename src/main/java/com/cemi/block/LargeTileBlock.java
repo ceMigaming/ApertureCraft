@@ -22,11 +22,11 @@ import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldAccess;
 
-public class LargeTile extends ApertureBlock implements BlockEntityProvider {
+public class LargeTileBlock extends ApertureBlock implements BlockEntityProvider {
 
     public static final IntProperty SIDE = IntProperty.of("side", 0, 3);
 
-    public LargeTile(String name, Settings settings) {
+    public LargeTileBlock(String name, Settings settings) {
         super(name, settings);
         setDefaultState(getDefaultState().with(SIDE, 0));
     }
@@ -36,8 +36,7 @@ public class LargeTile extends ApertureBlock implements BlockEntityProvider {
     @Override
     public void onPlaced(World world, BlockPos pos, BlockState state, LivingEntity placer,
             ItemStack itemStack) {
-        if (!world.isClient()) {
-            super.onPlaced(world, pos, state, placer, itemStack);
+        if (world.isClient()) {
             return;
         }
         Direction facing = Direction.getEntityFacingOrder(placer)[0];
