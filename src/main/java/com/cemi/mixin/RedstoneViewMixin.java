@@ -23,16 +23,17 @@ public interface RedstoneViewMixin {
 
     @Inject(method = "getReceivedRedstonePower", at = @At("HEAD"), cancellable = true)
     private void onGetReceivedRedstonePower(BlockPos pos, CallbackInfoReturnable<Integer> info) {
-        ApertureCraft.LOGGER.info("Block at " + pos + " is " + ((World) (Object) this).getBlockState(pos).getBlock().getName().getString());
         int maxRedstonePower = 0;
         Direction[] var3 = DIRECTIONS;
         int var4 = var3.length;
 
         for (int var5 = 0; var5 < var4; ++var5) {
             Direction direction = var3[var5];
-            int currentRedstonePower = this.getEmittedRedstonePower(pos.offset(direction), direction);
+            int currentRedstonePower =
+                    this.getEmittedRedstonePower(pos.offset(direction), direction);
 
-            if(currentRedstonePower >= 15 && ((World) (Object) this).getBlockState(pos).getBlock() != ApertureBlocks.INDICATOR_LIGHT) {
+            if (currentRedstonePower >= 15 && ((World) (Object) this).getBlockState(pos)
+                    .getBlock() != ApertureBlocks.INDICATOR_LIGHT) {
                 info.setReturnValue(15);
                 info.cancel();
                 return;
@@ -44,7 +45,8 @@ public interface RedstoneViewMixin {
         }
 
 
-        ApertureCraft.LOGGER.info("RedstoneViewMixin: getReceivedRedstonePower: " + maxRedstonePower);
+        ApertureCraft.LOGGER
+                .info("RedstoneViewMixin: getReceivedRedstonePower: " + maxRedstonePower);
 
         info.setReturnValue(maxRedstonePower);
         info.cancel();
