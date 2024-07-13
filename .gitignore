@@ -52,6 +52,7 @@ bin/
 
 ### Gradle ###
 .gradle
+./gradle/
 build/
 **/build/
 !src/**/build/

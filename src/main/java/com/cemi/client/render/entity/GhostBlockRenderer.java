@@ -33,8 +33,6 @@ public class GhostBlockRenderer extends EntityRenderer<GhostBlockEntity> {
         RenderLayer renderLayer = RenderLayer.getOutline(getTexture(entity));
         if (renderLayer != null) {
             VertexConsumer vertexConsumer = vertexConsumers.getBuffer(renderLayer);
-            System.out.println(lifeTime / 10);
-            System.out.println((lifeTime / 10) % 2 == 0);
             if ((lifeTime / 10) % 2 == 0)
                 model.render(matrices, vertexConsumer, light, 0, 1.0f, .5f, .5f, 0.5f);
         }

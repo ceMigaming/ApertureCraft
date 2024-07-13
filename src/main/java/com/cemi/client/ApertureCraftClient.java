@@ -1,11 +1,12 @@
 package com.cemi.client;
 
 import com.cemi.client.fluid.ApertureFluidsClient;
+import com.cemi.client.networking.AperturePacketHandler;
 import com.cemi.client.render.ApertureColorProviders;
 import com.cemi.client.render.ApertureRenderLayers;
 import com.cemi.client.render.ApertureRenderers;
-import com.cemi.networking.AperturePacketHandler;
 import com.cemi.particle.ApertureParticlesClient;
+import com.cemi.util.ShaderHelper;
 import net.fabricmc.api.ClientModInitializer;
 
 public class ApertureCraftClient implements ClientModInitializer {
@@ -17,5 +18,7 @@ public class ApertureCraftClient implements ClientModInitializer {
         ApertureFluidsClient.registerFluids();
         ApertureColorProviders.registerColorProviders();
         AperturePacketHandler.registerPacketHandlers();
+        ApertureCraftInput.registerInput();
+        ShaderHelper.initShaders();
     }
 }

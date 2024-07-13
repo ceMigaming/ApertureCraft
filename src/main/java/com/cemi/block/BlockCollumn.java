@@ -47,6 +47,7 @@ public class BlockCollumn extends ApertureBlock {
             world.spawnEntity(upperGhostBlockEntity);
             placer.sendMessage(Text.translatable(ApertureCraft.MOD_ID + ".block_collumn.no_space")
                     .setStyle(Style.EMPTY.withColor(Formatting.RED)));
+            world.setBlockState(pos, Blocks.AIR.getDefaultState());
             return;
         }
         super.onPlaced(world, pos, state, placer, itemStack);
@@ -68,4 +69,5 @@ public class BlockCollumn extends ApertureBlock {
     protected void appendProperties(Builder<Block, BlockState> builder) {
         builder.add(UPPER);
     }
+
 }

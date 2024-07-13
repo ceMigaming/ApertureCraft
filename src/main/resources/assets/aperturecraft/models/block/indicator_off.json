@@ -1,0 +1,23 @@
+{
+	"credit": "Made with Blockbench",
+	"texture_size": [64, 64],
+	"textures": {
+		"0": "aperturecraft:block/indicator",
+		"particle": "aperturecraft:block/indicator"
+	},
+	"elements": [
+		{
+			"from": [4, 4, 15.5],
+			"to": [12, 12, 16],
+			"rotation": {"angle": 0, "axis": "y", "origin": [7, 2, 14]},
+			"faces": {
+				"north": {"uv": [8, 0, 16, 8], "texture": "#0"},
+				"east": {"uv": [0, 8, 0.25, 12], "texture": "#0"},
+				"south": {"uv": [0, 8, 4, 12], "texture": "#0"},
+				"west": {"uv": [0, 8, 0.25, 12], "texture": "#0"},
+				"up": {"uv": [4, 8.25, 0, 8], "texture": "#0"},
+				"down": {"uv": [4, 8, 0, 8.25], "texture": "#0"}
+			}
+		}
+	]
+}
