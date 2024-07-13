@@ -19,8 +19,10 @@ public class ApertureDoorBlockEntity extends BlockEntity implements GeoBlockEnti
     BlockPos lowerLeftBlockPos;
     BlockPos lowerRightBlockPos;
 
-    protected static final RawAnimation OPEN = RawAnimation.begin().thenPlayAndHold("animation.door.open");
-    protected static final RawAnimation CLOSE = RawAnimation.begin().thenPlayAndHold("animation.door.close");
+    protected static final RawAnimation OPEN =
+            RawAnimation.begin().thenPlayAndHold("animation.door.open");
+    protected static final RawAnimation CLOSE =
+            RawAnimation.begin().thenPlayAndHold("animation.door.close");
 
     private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
 
@@ -65,13 +67,33 @@ public class ApertureDoorBlockEntity extends BlockEntity implements GeoBlockEnti
     }
 
     @Override
-    public void readNbt(NbtCompound nbt) {
-        super.readNbt(nbt);
+    protected void writeNbt(NbtCompound nbt) {
+        nbt.putIntArray("upperLeftBlockPos", new int[] {upperLeftBlockPos.getX(),
+                upperLeftBlockPos.getY(), upperLeftBlockPos.getZ()});
+        nbt.putIntArray("upperRightBlockPos", new int[] {upperRightBlockPos.getX(),
+                upperRightBlockPos.getY(), upperRightBlockPos.getZ()});
+        nbt.putIntArray("lowerLeftBlockPos", new int[] {lowerLeftBlockPos.getX(),
+                lowerLeftBlockPos.getY(), lowerLeftBlockPos.getZ()});
+        nbt.putIntArray("lowerRightBlockPos", new int[] {lowerRightBlockPos.getX(),
+                lowerRightBlockPos.getY(), lowerRightBlockPos.getZ()});
+        super.writeNbt(nbt);
     }
 
     @Override
-    protected void writeNbt(NbtCompound nbt) {
-        super.writeNbt(nbt);
+    public void readNbt(NbtCompound nbt) {
+        int[] upperLeftBlockPosArray = nbt.getIntArray("upperLeftBlockPos");
+        upperLeftBlockPos = new BlockPos(upperLeftBlockPosArray[0], upperLeftBlockPosArray[1],
+                upperLeftBlockPosArray[2]);
+        int[] upperRightBlockPosArray = nbt.getIntArray("upperRightBlockPos");
+        upperRightBlockPos = new BlockPos(upperRightBlockPosArray[0], upperRightBlockPosArray[1],
+                upperRightBlockPosArray[2]);
+        int[] lowerLeftBlockPosArray = nbt.getIntArray("lowerLeftBlockPos");
+        lowerLeftBlockPos = new BlockPos(lowerLeftBlockPosArray[0], lowerLeftBlockPosArray[1],
+                lowerLeftBlockPosArray[2]);
+        int[] lowerRightBlockPosArray = nbt.getIntArray("lowerRightBlockPos");
+        lowerRightBlockPos = new BlockPos(lowerRightBlockPosArray[0], lowerRightBlockPosArray[1],
+                lowerRightBlockPosArray[2]);
+        super.readNbt(nbt);
     }
 
 }
