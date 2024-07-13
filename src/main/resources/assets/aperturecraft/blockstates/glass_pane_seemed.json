@@ -1,0 +1,10 @@
+{
+    "variants": {
+        "facing=north": {"model": "aperturecraft:block/glass_pane_seemed","y":0},
+        "facing=west": {"model": "aperturecraft:block/glass_pane_seemed","y":90},
+        "facing=south": {"model": "aperturecraft:block/glass_pane_seemed","y":180},
+        "facing=east": {"model": "aperturecraft:block/glass_pane_seemed","y":270},
+        "facing=up": {"model": "aperturecraft:block/glass_pane_seemed",  "x":90},
+        "facing=down": {"model": "aperturecraft:block/glass_pane_seemed",  "x":270}
+    }
+}
