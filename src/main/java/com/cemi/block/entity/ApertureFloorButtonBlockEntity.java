@@ -12,51 +12,22 @@ import software.bernie.geckolib.core.object.PlayState;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 public class ApertureFloorButtonBlockEntity extends BlockEntity implements GeoBlockEntity {
-    BlockPos upperLeftBlockPos;
-    BlockPos upperRightBlockPos;
-    BlockPos lowerLeftBlockPos;
-    BlockPos lowerRightBlockPos;
 
-    protected static final RawAnimation OPEN =
+    protected static final RawAnimation PRESS =
             RawAnimation.begin().thenPlayAndHold("animation.floor-button.press");
-    protected static final RawAnimation CLOSE =
-            RawAnimation.begin().thenPlayAndHold("animation.door.close");
+    protected static final RawAnimation RELEASE =
+            RawAnimation.begin().thenPlayAndHold("animation.floor-button.release");
 
     private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
 
     public ApertureFloorButtonBlockEntity(BlockPos pos, BlockState state) {
-        super(ApertureBlockEntities.DOOR, pos, state);
+        super(ApertureBlockEntities.FLOOR_BUTTON, pos, state);
     }
 
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
         controllers.add(new AnimationController<>(this, "controller", e -> PlayState.STOP)
-                .triggerableAnim("open", OPEN).triggerableAnim("close", CLOSE));
-    }
-
-    public void setBlockPoses(BlockPos upperLeftBlockPos, BlockPos upperRightBlockPos,
-            BlockPos lowerLeftBlockPos, BlockPos lowerRightBlockPos) {
-        this.upperLeftBlockPos = upperLeftBlockPos;
-        this.upperRightBlockPos = upperRightBlockPos;
-        this.lowerLeftBlockPos = lowerLeftBlockPos;
-        this.lowerRightBlockPos = lowerRightBlockPos;
-        markDirty();
-    }
-
-    public BlockPos getUpperLeftBlockPos() {
-        return upperLeftBlockPos;
-    }
-
-    public BlockPos getUpperRightBlockPos() {
-        return upperRightBlockPos;
-    }
-
-    public BlockPos getLowerLeftBlockPos() {
-        return lowerLeftBlockPos;
-    }
-
-    public BlockPos getLowerRightBlockPos() {
-        return lowerRightBlockPos;
+                .triggerableAnim("press", PRESS).triggerableAnim("release", RELEASE));
     }
 
     @Override
