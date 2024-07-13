@@ -1,6 +1,6 @@
 {
     "parent": "item/generated",
     "textures": {
-        "layer0": "portalreloaded:blocks/glass_pane_seemed"
+        "layer0": "aperturecraft:block/glass_pane_seemed" 
     }
 }

@@ -37,8 +37,14 @@ public class ApertureBlocks {
             new BlockCollumn("metal_pillar", FabricBlockSettings.create().strength(4.f));
 
     // glass
-    public static final ApertureGlass GLASS_WALL =
-            new ApertureGlass("glass_wall", FabricBlockSettings.create().nonOpaque().strength(4.f));
+    public static final ApertureGlass GLASS_PANE = new ApertureGlass("glass_pane",
+			FabricBlockSettings.create().nonOpaque().strength(4.f));
+	  public static final ApertureGlass GLASS_PANE_SEEMED = new ApertureGlass("glass_pane_seemed",
+			FabricBlockSettings.create().nonOpaque().strength(4.f));
+	  public static final ApertureBlock GLASS_BLOCK = new ApertureBlock("glass_block",
+			FabricBlockSettings.create().nonOpaque().strength(4.f));
+	  public static final ApertureBlock GLASS_BLOCK_SEEMED = new ApertureBlock("glass_block_seemed",
+			FabricBlockSettings.create().nonOpaque().strength(4.f));
 
     // logic blocks
     public static final IndicatorLightBlock INDICATOR_LIGHT =
@@ -55,10 +61,10 @@ public class ApertureBlocks {
             FabricBlockSettings.create().nonOpaque().strength(4.f));
 
 
-    private static final ApertureBlock[] BLOCKS =
-            {SMALL_CONCRETE_TILE, MEDIUM_CONCRETE_TILE, CONCRETE_LARGE_TILE, CONCRETE_PILLAR,
-                    SMALL_METAL_TILE, MEDIUM_METAL_TILE, METAL_LARGE_TILE, METAL_PILLAR,
-                    INDICATOR_LIGHT, GLASS_WALL, HEP_LAUNCHER, INDICATOR, DOOR, FLOOR_BUTTON};
+    private static final ApertureBlock[] BLOCKS = {SMALL_CONCRETE_TILE, MEDIUM_CONCRETE_TILE,
+            CONCRETE_LARGE_TILE, CONCRETE_PILLAR, SMALL_METAL_TILE, MEDIUM_METAL_TILE,
+            METAL_LARGE_TILE, METAL_PILLAR, INDICATOR_LIGHT, GLASS_PANE, GLASS_PANE_SEEMED,
+            GLASS_BLOCK, GLASS_BLOCK_SEEMED, HEP_LAUNCHER, INDICATOR, DOOR, FLOOR_BUTTON};
 
     public static void registerBlocks() {
         NEUROTOXIN = Registry.register(Registries.BLOCK,

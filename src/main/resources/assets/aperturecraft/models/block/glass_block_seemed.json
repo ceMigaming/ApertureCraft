@@ -1,0 +1,6 @@
+{
+    "parent": "block/cube_all",
+    "textures": {
+      "all": "aperturecraft:block/glass_pane_seemed"
+    }
+}
