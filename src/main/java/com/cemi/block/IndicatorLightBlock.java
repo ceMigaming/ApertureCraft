@@ -44,6 +44,8 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldAccess;
 import net.minecraft.world.WorldView;
 
+
+// TODO show sides when near a block
 @SuppressWarnings("deprecation")
 public class IndicatorLightBlock extends ApertureBlock implements BlockEntityProvider {
     public static final MapCodec<RedstoneWireBlock> CODEC = createCodec(RedstoneWireBlock::new);
@@ -363,9 +365,11 @@ public class IndicatorLightBlock extends ApertureBlock implements BlockEntityPro
     }
 
     private int increasePower(World world, BlockPos pos) {
-        IndicatorLightBlockEntity blockEntity =
-                (IndicatorLightBlockEntity) world.getBlockEntity(pos);
-        return blockEntity != null ? blockEntity.getPower() : 0;
+        BlockEntity blockEntity = world.getBlockEntity(pos);
+        if (blockEntity instanceof IndicatorLightBlockEntity iLBlockEntity) {
+            return iLBlockEntity.getPower();
+        }
+        return 0;
     }
 
     private void updateNeighbors(World world, BlockPos pos) {

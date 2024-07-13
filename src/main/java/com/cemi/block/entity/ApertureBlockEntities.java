@@ -31,6 +31,11 @@ public class ApertureBlockEntities {
                     new Identifier(ApertureCraft.MOD_ID, "aperture_door_block_entity"),
                     BlockEntityType.Builder
                             .create(ApertureDoorBlockEntity::new, ApertureBlocks.DOOR).build());
+    public static final BlockEntityType<ApertureFloorButtonBlockEntity> FLOOR_BUTTON =
+            Registry.register(Registries.BLOCK_ENTITY_TYPE,
+                    new Identifier(ApertureCraft.MOD_ID, "aperture_floor_button_block_entity"),
+                    BlockEntityType.Builder.create(ApertureFloorButtonBlockEntity::new,
+                            ApertureBlocks.FLOOR_BUTTON).build());
 
     public static void registerBlockEntities() {}
 }
