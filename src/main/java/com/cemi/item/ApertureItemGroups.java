@@ -31,6 +31,15 @@ public class ApertureItemGroups {
             .displayName(Text.translatable("itemGroup." + ApertureCraft.MOD_ID + ".aperture_items"))
             .entries((context, entries) -> {
                 entries.add(ApertureItems.NEUROTOXIN_BUCKET);
+                entries.add(ApertureItems.PORTAL_GUN);
+                entries.add(ApertureItems.LONG_FALL_BOOTS);
+                entries.add(ApertureItems.COMPANION_CUBE_CAPSULE);
+                entries.add(ApertureItems.RADIO_CAPSULE);
+                entries.add(ApertureItems.TURRET_CAPSULE);
+                entries.add(ApertureItems.ROCKET_TURRET_CAPSULE);
+                entries.add(ApertureItems.STORAGE_CUBE_CAPSULE);
+                entries.add(ApertureItems.RUSTY_STORAGE_CUBE_CAPSULE);
+                entries.add(ApertureItems.OLD_STORAGE_CUBE_CAPSULE);
             }).build();
 
     private static final ItemGroup APERTURE_LOGIC = FabricItemGroup.builder()
@@ -50,6 +59,7 @@ public class ApertureItemGroups {
                 new Identifier(ApertureCraft.MOD_ID, "aperture_items"), APERTURE_ITEMS);
         Registry.register(Registries.ITEM_GROUP,
                 new Identifier(ApertureCraft.MOD_ID, "aperture_logic"), APERTURE_LOGIC);
+
     }
 
 
