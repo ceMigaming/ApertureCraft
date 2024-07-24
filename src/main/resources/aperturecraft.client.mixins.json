@@ -6,7 +6,8 @@
         "MixinGameRenderer_Shaders",
         "MixinInGameOverlayRenderer",
         "MixinBackgroundRenderer",
-        "MixinCamera"
+        "MixinCamera",
+        "MixinMinecraftClient"
     ],
     "injectors": {
         "defaultRequire": 1

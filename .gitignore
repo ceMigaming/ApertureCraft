@@ -98,4 +98,7 @@ run/
 ### macos
 *.DS_Store
 
+### other
+minecraft-source/
+
 # End of https://www.toptal.com/developers/gitignore/api/gradle,java,visualstudiocode

@@ -1,0 +1,5 @@
+accessWidener	v2	named
+accessible	field	net/minecraft/client/gui/screen/TitleScreen	doBackgroundFade	Z
+accessible	field	net/minecraft/client/gui/screen/TitleScreen	backgroundFadeStart	J
+accessible	field	net/minecraft/client/gui/screen/TitleScreen	logoDrawer	Lnet/minecraft/client/gui/LogoDrawer;
+accessible  field   net/minecraft/client/gui/screen/Screen  drawables   Ljava/util/List;
