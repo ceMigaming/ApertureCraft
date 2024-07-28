@@ -40,7 +40,7 @@ public class ApertureButtonWidget extends ButtonWidget {
         context.drawGuiTexture(TEXTURES.get(this.active, this.isSelected()), this.getX(),
                 this.getY(), this.getWidth(), this.getHeight());
         context.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-        int i = this.active ? 16777215 : 10526880;
+        int i = this.active ? (this.isSelected() ? 0xFFFFFF : 0x797979) : 0x454545;
         this.drawMessage(context, minecraftClient.textRenderer,
                 i | MathHelper.ceil(this.alpha * 255.0F) << 24);
     }
