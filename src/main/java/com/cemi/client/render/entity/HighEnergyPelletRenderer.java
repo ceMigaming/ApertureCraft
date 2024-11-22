@@ -1,8 +1,12 @@
 package com.cemi.client.render.entity;
 
 import com.cemi.ApertureCraft;
-import com.cemi.client.render.entity.model.GhostBlockModel;
+import com.cemi.client.render.model.HighEnergyPelletModel;
 import com.cemi.entity.HighEnergyPelletEntity;
+import com.mojang.blaze3d.systems.RenderSystem;
+
+import net.fabricmc.fabric.api.renderer.v1.material.MaterialFinder;
+import net.minecraft.client.render.LightmapTextureManager;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;
@@ -14,16 +18,16 @@ import net.minecraft.util.math.MathHelper;
 
 public class HighEnergyPelletRenderer extends EntityRenderer<HighEnergyPelletEntity> {
 
-    protected GhostBlockModel model;
+    protected HighEnergyPelletModel model;
 
     public HighEnergyPelletRenderer(Context ctx) {
         super(ctx);
-        model = new GhostBlockModel(GhostBlockModel.getTexturedModelData().createModel());
+        model = new HighEnergyPelletModel(HighEnergyPelletModel.getTexturedModelData().createModel());
     }
 
     @Override
     public Identifier getTexture(HighEnergyPelletEntity entity) {
-        return new Identifier(ApertureCraft.MOD_ID, "textures/entity/ghostblock.png");
+        return new Identifier(ApertureCraft.MOD_ID, "textures/entity/hep.png");
     }
 
     @Override
@@ -31,11 +35,18 @@ public class HighEnergyPelletRenderer extends EntityRenderer<HighEnergyPelletEnt
             MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light) {
         float lifeTime = entity.getLifeTime() / 240.0f; // 12 * 20
         // TODO find a better way to do this
-        RenderLayer renderLayer = RenderLayer.getEntityTranslucentEmissive(getTexture(entity));
+        RenderLayer renderLayer = RenderLayer.getEntityTranslucentCull(getTexture(entity));
         if (renderLayer != null) {
+            matrices.translate(0.0f, -0.5f, 0.0f);
             VertexConsumer vertexConsumer = vertexConsumers.getBuffer(renderLayer);
-            model.render(matrices, vertexConsumer, light, 0, 1.0f, 1.0f, 0.0f,
-                    MathHelper.clamp(1.0f + (float) Math.log10(lifeTime), 0.0f, 0.5f));
+            matrices.scale(0.5f, 0.5f, 0.5f);
+            matrices.push();
+            
+            matrices.multiply(this.dispatcher.getRotation());
+            matrices.translate(0.0f, -0.75f, 0.0f);
+            model.render(matrices, vertexConsumer, LightmapTextureManager.pack(15, 15), 0, 1.0f, 1.0f, 1.0f,
+                    MathHelper.clamp(1.0f + (float) Math.log10(lifeTime), 0.5f, 1.0f));
+            matrices.pop();
         }
         super.render(entity, yaw, tickDelta, matrices, vertexConsumers, light);
     }
