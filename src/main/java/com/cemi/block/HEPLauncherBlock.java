@@ -76,7 +76,7 @@ public class HEPLauncherBlock extends ApertureBlock implements BlockEntityProvid
         be.triggerAnim("controller", "shoot");
         HighEnergyPelletEntity hep = ApertureEntities.HIGH_ENERGY_PELLET.create(world);
         hep.setPos(pos.getX() + 0.5 + state.get(FACING).getOffsetX(),
-                pos.getY() + 0.5 + state.get(FACING).getOffsetY(),
+                pos.getY() + 0.875 + state.get(FACING).getOffsetY(),
                 pos.getZ() + 0.5 + state.get(FACING).getOffsetZ());
         hep.setVelocity(state.get(FACING).getOffsetX() * 0.1, state.get(FACING).getOffsetY() * 0.1,
                 state.get(FACING).getOffsetZ() * 0.1);
