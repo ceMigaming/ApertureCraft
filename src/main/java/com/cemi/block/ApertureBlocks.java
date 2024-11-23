@@ -18,6 +18,8 @@ public class ApertureBlocks {
 
     // decorative blocks
     // concrete
+    public static final ApertureBlock PORTAL1_CONCRETE_TILE =
+            new ApertureBlock("portal1_concrete_tile", FabricBlockSettings.create().strength(4.f));
     public static final ApertureBlock SMALL_CONCRETE_TILE =
             new ApertureBlock("concrete_tile_small", FabricBlockSettings.create().strength(4.f));
     public static final ApertureBlock MEDIUM_CONCRETE_TILE =
@@ -60,11 +62,14 @@ public class ApertureBlocks {
     public static final ApertureFloorButton FLOOR_BUTTON = new ApertureFloorButton("floor_button",
             FabricBlockSettings.create().nonOpaque().strength(4.f));
 
+    // support blocks
+    public static final TodoBlock TODO_BLOCK = new TodoBlock();
 
-    private static final ApertureBlock[] BLOCKS = {SMALL_CONCRETE_TILE, MEDIUM_CONCRETE_TILE,
+
+    private static final ApertureBlock[] BLOCKS = {PORTAL1_CONCRETE_TILE, SMALL_CONCRETE_TILE, MEDIUM_CONCRETE_TILE,
             CONCRETE_LARGE_TILE, CONCRETE_PILLAR, SMALL_METAL_TILE, MEDIUM_METAL_TILE,
             METAL_LARGE_TILE, METAL_PILLAR, INDICATOR_LIGHT, GLASS_PANE, GLASS_PANE_SEEMED,
-            GLASS_BLOCK, GLASS_BLOCK_SEEMED, HEP_LAUNCHER, INDICATOR, DOOR, FLOOR_BUTTON};
+            GLASS_BLOCK, GLASS_BLOCK_SEEMED, HEP_LAUNCHER, INDICATOR, DOOR, FLOOR_BUTTON, TODO_BLOCK};
 
     public static void registerBlocks() {
         NEUROTOXIN = Registry.register(Registries.BLOCK,
