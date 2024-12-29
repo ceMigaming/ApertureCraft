@@ -3,10 +3,12 @@ package com.cemi.entity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.data.DataTracker;
+import net.minecraft.entity.data.DataTracker.Builder;
 import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.particle.ParticleTypes;
+import net.minecraft.registry.RegistryWrapper.WrapperLookup;
 import net.minecraft.world.World;
 
 public class HighEnergyPelletEntity extends Entity {
@@ -24,8 +26,8 @@ public class HighEnergyPelletEntity extends Entity {
     }
 
     @Override
-    protected void initDataTracker() {
-        this.dataTracker.startTracking(LIFE_TIME, 12 * 20);
+    protected void initDataTracker(Builder builder) {
+        builder.add(LIFE_TIME, 12 * 20);
     }
 
     @Override

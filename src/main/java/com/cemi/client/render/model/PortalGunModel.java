@@ -9,7 +9,7 @@ import software.bernie.geckolib.model.DefaultedItemGeoModel;
 public class PortalGunModel extends DefaultedItemGeoModel<PortalGunItem> {
 
     public PortalGunModel() {
-        super(new Identifier(ApertureCraft.MOD_ID, "portal_gun"));
+        super(Identifier.of(ApertureCraft.MOD_ID, "portal_gun"));
     }
 
 }

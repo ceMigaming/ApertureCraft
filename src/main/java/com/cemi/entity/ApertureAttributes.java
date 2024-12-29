@@ -14,6 +14,8 @@ public class ApertureAttributes {
                 StorageCubeEntity.createMobAttributes());
         FabricDefaultAttributeRegistry.register(ApertureEntities.TURRET,
                 TurretEntity.createMobAttributes());
+        FabricDefaultAttributeRegistry.register(ApertureEntities.FLOATING_PANEL,
+                FloatingPanelEntity.createMobAttributes());
         FabricDefaultAttributeRegistry.register(ApertureEntities.RADIO,
                 RadioEntity.createMobAttributes());
         FabricDefaultAttributeRegistry.register(ApertureEntities.ROCKET_TURRET,

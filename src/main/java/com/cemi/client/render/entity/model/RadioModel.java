@@ -8,7 +8,7 @@ import software.bernie.geckolib.model.DefaultedEntityGeoModel;
 public class RadioModel extends DefaultedEntityGeoModel<RadioEntity> {
 
     public RadioModel() {
-        super(new Identifier(ApertureCraft.MOD_ID, "radio"));
+        super(Identifier.of(ApertureCraft.MOD_ID, "radio"));
     }
 
 }

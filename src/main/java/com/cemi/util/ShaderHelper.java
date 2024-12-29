@@ -71,7 +71,7 @@ public class ShaderHelper {
             @Override
             public Optional<Resource> getResource(Identifier resourceLocation) {
                 Identifier corrected =
-                        new Identifier(ApertureCraft.MOD_ID, resourceLocation.getPath());
+                        Identifier.of(ApertureCraft.MOD_ID, resourceLocation.getPath());
                 return resourceManager.getResource(corrected);
             }
         };

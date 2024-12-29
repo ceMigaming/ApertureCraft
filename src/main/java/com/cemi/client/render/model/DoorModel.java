@@ -8,7 +8,7 @@ import software.bernie.geckolib.model.DefaultedBlockGeoModel;
 public class DoorModel extends DefaultedBlockGeoModel<ApertureDoorBlockEntity> {
 
     public DoorModel() {
-        super(new Identifier(ApertureCraft.MOD_ID, "door"));
+        super(Identifier.of(ApertureCraft.MOD_ID, "door"));
     }
     
 }

@@ -14,8 +14,8 @@ public class ApertureFluidsClient {
         FluidRenderHandlerRegistry.INSTANCE.register(ApertureFluids.STILL_NEUROTOXIN,
                 ApertureFluids.FLOWING_NEUROTOXIN,
                 new SimpleFluidRenderHandler(
-                        new Identifier(ApertureCraft.MOD_ID, "block/neurotoxin_still"),
-                        new Identifier(ApertureCraft.MOD_ID, "block/neurotoxin_flow")));
+                        Identifier.of(ApertureCraft.MOD_ID, "block/neurotoxin_still"),
+                        Identifier.of(ApertureCraft.MOD_ID, "block/neurotoxin_flow")));
         BlockRenderLayerMap.INSTANCE.putFluids(RenderLayer.getTranslucent(),
                 ApertureFluids.STILL_NEUROTOXIN, ApertureFluids.FLOWING_NEUROTOXIN);
     }

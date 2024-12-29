@@ -8,7 +8,7 @@ import software.bernie.geckolib.model.DefaultedBlockGeoModel;
 public class HEPLauncherModel extends DefaultedBlockGeoModel<HEPLauncherBlockEntity> {
 
     public HEPLauncherModel() {
-        super(new Identifier(ApertureCraft.MOD_ID, "hep_launcher"));
+        super(Identifier.of(ApertureCraft.MOD_ID, "hep_launcher"));
     }
 
 }

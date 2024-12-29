@@ -10,7 +10,7 @@ import software.bernie.geckolib.model.DefaultedBlockGeoModel;
 public class CubeDropperModel extends DefaultedBlockGeoModel<ApertureCubeDropperBlockEntity> {
 
     public CubeDropperModel() {
-        super(new Identifier(ApertureCraft.MOD_ID, "cube_dropper"));
+        super(Identifier.of(ApertureCraft.MOD_ID, "cube_dropper"));
     }
 
     @Override

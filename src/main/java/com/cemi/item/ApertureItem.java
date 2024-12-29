@@ -21,7 +21,7 @@ public class ApertureItem extends Item {
     }
 
     public void register() {
-        Registry.register(Registries.ITEM, new Identifier(ApertureCraft.MOD_ID, name), this);
+        Registry.register(Registries.ITEM, Identifier.of(ApertureCraft.MOD_ID, name), this);
     }
 
     @Override

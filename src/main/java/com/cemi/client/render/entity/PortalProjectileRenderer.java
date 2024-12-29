@@ -23,22 +23,17 @@ public class PortalProjectileRenderer extends EntityRenderer<PortalProjectileEnt
 
     @Override
     public Identifier getTexture(PortalProjectileEntity entity) {
-        return new Identifier(ApertureCraft.MOD_ID, "textures/entity/ghostblock.png");
+        return Identifier.of(ApertureCraft.MOD_ID, "textures/entity/ghostblock.png");
     }
 
     @Override
     public void render(PortalProjectileEntity entity, float yaw, float tickDelta,
             MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light) {
 
-        int r = entity.getColor() >> 16 & 255;
-        int g = entity.getColor() >> 8 & 255;
-        int b = entity.getColor() & 255;
-
-
         model.render(matrices,
                 vertexConsumers
                         .getBuffer(RenderLayer.getEntityTranslucent(this.getTexture(entity))),
-                light, OverlayTexture.DEFAULT_UV, r, g, b, 0.5F);
+                light, OverlayTexture.DEFAULT_UV, entity.getColor());
         super.render(entity, yaw, tickDelta, matrices, vertexConsumers, light);
     }
 }

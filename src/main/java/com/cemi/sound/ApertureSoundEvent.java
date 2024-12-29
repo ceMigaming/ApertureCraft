@@ -8,7 +8,7 @@ import net.minecraft.util.Identifier;
 
 public class ApertureSoundEvent {
     public static final Identifier RADIO_LOOP_ID =
-            new Identifier(ApertureCraft.MOD_ID, "radio_loop");
+            Identifier.of(ApertureCraft.MOD_ID, "radio_loop");
     public static SoundEvent RADIO_LOOP_EVENT = SoundEvent.of(RADIO_LOOP_ID);
 
     public static void registerSoundEvents() {

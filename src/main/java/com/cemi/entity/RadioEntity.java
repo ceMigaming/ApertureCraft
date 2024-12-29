@@ -12,14 +12,15 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.PacketByteBuf;
+import net.minecraft.registry.RegistryWrapper.WrapperLookup;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Arm;
 import net.minecraft.util.Hand;
 import net.minecraft.world.World;
 import software.bernie.geckolib.animatable.GeoEntity;
-import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
-import software.bernie.geckolib.core.animation.AnimatableManager.ControllerRegistrar;
+import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.animation.AnimatableManager.ControllerRegistrar;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 public class RadioEntity extends MobEntity implements GeoEntity, Pickable {
@@ -67,11 +68,6 @@ public class RadioEntity extends MobEntity implements GeoEntity, Pickable {
         return true;
     }
 
-    @Override
-    public boolean damage(DamageSource source, float amount) {
-        return false;
-    }
-
     public boolean isPlaying() {
         return isPlaying;
     }
@@ -113,8 +109,9 @@ public class RadioEntity extends MobEntity implements GeoEntity, Pickable {
             if (getWorld().isClient())
                 return ActionResult.SUCCESS;
             getWorld().getPlayers().forEach(p -> {
-                ServerPlayNetworking.send((ServerPlayerEntity) p,
-                        ApertureNetworkingConstants.RADIO_PLAY_ID, buf);
+                // FIXME update this to use the new networking system
+                // ServerPlayNetworking.send((ServerPlayerEntity) p,
+                //         ApertureNetworkingConstants.RADIO_PLAY_ID, buf);
             });
         }
         return ActionResult.SUCCESS;

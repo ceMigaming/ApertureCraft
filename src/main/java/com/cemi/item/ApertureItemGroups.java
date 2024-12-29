@@ -49,11 +49,11 @@ public class ApertureItemGroups {
 
     public static void registerItemGroups() {
         Registry.register(Registries.ITEM_GROUP,
-                new Identifier(ApertureCraft.MOD_ID, "aperture_blocks"), APERTURE_BLOCKS);
+                Identifier.of(ApertureCraft.MOD_ID, "aperture_blocks"), APERTURE_BLOCKS);
         Registry.register(Registries.ITEM_GROUP,
-                new Identifier(ApertureCraft.MOD_ID, "aperture_items"), APERTURE_ITEMS);
+                Identifier.of(ApertureCraft.MOD_ID, "aperture_items"), APERTURE_ITEMS);
         Registry.register(Registries.ITEM_GROUP,
-                new Identifier(ApertureCraft.MOD_ID, "aperture_logic"), APERTURE_LOGIC);
+                Identifier.of(ApertureCraft.MOD_ID, "aperture_logic"), APERTURE_LOGIC);
     }
 
 

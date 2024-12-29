@@ -2,16 +2,22 @@ package com.cemi.item;
 
 import java.util.function.Consumer;
 import java.util.function.Supplier;
+
+import org.jetbrains.annotations.Nullable;
+
 import com.cemi.client.render.item.PortalGunRenderer;
+import com.cemi.component.ApertureComponents;
+import com.cemi.component.PortalComponent;
 import com.cemi.entity.ApertureEntities;
 import com.cemi.entity.PortalProjectileEntity;
 import com.cemi.world.ChannelData;
-import com.cemi.world.PortalData;
-import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
+
 import net.minecraft.block.BlockState;
 import net.minecraft.client.render.item.BuiltinModelItemRenderer;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.ItemCooldownManager;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.world.ServerWorld;
@@ -22,12 +28,12 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import software.bernie.geckolib.animatable.GeoItem;
 import software.bernie.geckolib.animatable.SingletonGeoAnimatable;
-import software.bernie.geckolib.animatable.client.RenderProvider;
-import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
-import software.bernie.geckolib.core.animation.AnimatableManager.ControllerRegistrar;
-import software.bernie.geckolib.core.animation.AnimationController;
-import software.bernie.geckolib.core.animation.RawAnimation;
-import software.bernie.geckolib.core.object.PlayState;
+import software.bernie.geckolib.animatable.client.GeoRenderProvider;
+import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.animation.AnimatableManager.ControllerRegistrar;
+import software.bernie.geckolib.animation.AnimationController;
+import software.bernie.geckolib.animation.PlayState;
+import software.bernie.geckolib.animation.RawAnimation;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 public class PortalGunItem extends ApertureItem implements GeoItem {
@@ -36,31 +42,25 @@ public class PortalGunItem extends ApertureItem implements GeoItem {
 
     private static final RawAnimation ACTIVATE_ANIM = RawAnimation.begin().thenPlay("use.activate");
     private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
-    private final Supplier<Object> renderProvider = GeoItem.makeRenderer(this);
 
     public PortalGunItem() {
-        super("portal_gun", new FabricItemSettings().maxCount(1));
+        super("portal_gun", new Item.Settings().maxCount(1));
         SingletonGeoAnimatable.registerSyncedAnimatable(this);
     }
 
     @Override
-    public void createRenderer(Consumer<Object> consumer) {
-        consumer.accept(new RenderProvider() {
+    public void createGeoRenderer(Consumer<GeoRenderProvider> consumer) {
+        consumer.accept(new GeoRenderProvider() {
             private PortalGunRenderer renderer;
 
             @Override
-            public BuiltinModelItemRenderer getCustomRenderer() {
+            public @Nullable BuiltinModelItemRenderer getGeoItemRenderer() {
                 if (this.renderer == null)
                     this.renderer = new PortalGunRenderer();
 
                 return this.renderer;
             }
         });
-    }
-
-    @Override
-    public Supplier<Object> getRenderProvider() {
-        return this.renderProvider;
     }
 
     @Override
@@ -101,21 +101,23 @@ public class PortalGunItem extends ApertureItem implements GeoItem {
 
     public void onResetPortals(World world, PlayerEntity user, Hand hand) {
         ItemStack stack = user.getStackInHand(hand);
-        PortalData masterData = PortalData.getPortalData(user.getStackInHand(hand), true);
-        PortalData slaveData = PortalData.getPortalData(user.getStackInHand(hand), false);
+        PortalComponent masterData = user.getStackInHand(hand).get(ApertureComponents.PORTAL_COMPONENT);
+        PortalComponent slaveData = masterData.other().get();
         ((ServerWorld) world).getEntitiesByType(ApertureEntities.APERTURE_PORTAL, (entity) -> {
-            return entity.getUuid().toString().equals(masterData.getUuid());
+            return entity.getUuid().toString().equals(masterData.uuid());
         }).forEach((entity) -> {
             entity.kill();
-            stack.getOrCreateNbt().put("portalDataMaster",
-                    masterData.reset().writeToNBT(new NbtCompound()));
+            // FIXME use new component system
+            // stack.componen getOrCreateNbt().put("portalDataMaster",
+            // masterData.reset().writeToNBT(new NbtCompound()));
         });
         ((ServerWorld) world).getEntitiesByType(ApertureEntities.APERTURE_PORTAL, (entity) -> {
-            return entity.getUuid().toString().equals(slaveData.getUuid());
+            return entity.getUuid().toString().equals(slaveData.uuid());
         }).forEach((entity) -> {
             entity.kill();
-            stack.getOrCreateNbt().put("portalDataSlave",
-                    slaveData.reset().writeToNBT(new NbtCompound()));
+            // FIXME use new component system
+            // stack.getOrCreateNbt().put("portalDataSlave",
+            // slaveData.reset().writeToNBT(new NbtCompound()));
         });
 
     }
@@ -126,7 +128,7 @@ public class PortalGunItem extends ApertureItem implements GeoItem {
     }
 
     @Override
-    public int getMaxUseTime(ItemStack stack) {
+    public int getMaxUseTime(ItemStack stack, LivingEntity user) {
         return Integer.MAX_VALUE;
     }
 
@@ -139,8 +141,7 @@ public class PortalGunItem extends ApertureItem implements GeoItem {
             boolean isMaster) {
         ItemCooldownManager cooldownManager = user.getItemCooldownManager();
         cooldownManager.set(this, 10);
-        PortalProjectileEntity portalProjectileEntity =
-                ApertureEntities.PORTAL_PROJECTILE.create(world);
+        PortalProjectileEntity portalProjectileEntity = ApertureEntities.PORTAL_PROJECTILE.create(world);
         portalProjectileEntity.setProperties(user, isMaster);
         world.spawnEntity(portalProjectileEntity);
     }

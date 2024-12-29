@@ -12,9 +12,9 @@ public class ApertureFluids {
 
     public static void registerFluids() {
         FLOWING_NEUROTOXIN = Registry.register(Registries.FLUID,
-                new Identifier(ApertureCraft.MOD_ID, "flowing_neurotoxin"),
+                Identifier.of(ApertureCraft.MOD_ID, "flowing_neurotoxin"),
                 new NeurotoxinFluid.Flowing());
         STILL_NEUROTOXIN = Registry.register(Registries.FLUID,
-                new Identifier(ApertureCraft.MOD_ID, "neurotoxin"), new NeurotoxinFluid.Still());
+                Identifier.of(ApertureCraft.MOD_ID, "neurotoxin"), new NeurotoxinFluid.Still());
     }
 }

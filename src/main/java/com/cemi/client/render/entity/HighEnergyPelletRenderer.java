@@ -27,7 +27,7 @@ public class HighEnergyPelletRenderer extends EntityRenderer<HighEnergyPelletEnt
 
     @Override
     public Identifier getTexture(HighEnergyPelletEntity entity) {
-        return new Identifier(ApertureCraft.MOD_ID, "textures/entity/hep.png");
+        return Identifier.of(ApertureCraft.MOD_ID, "textures/entity/hep.png");
     }
 
     @Override
@@ -44,8 +44,10 @@ public class HighEnergyPelletRenderer extends EntityRenderer<HighEnergyPelletEnt
             
             matrices.multiply(this.dispatcher.getRotation());
             matrices.translate(0.0f, -0.75f, 0.0f);
-            model.render(matrices, vertexConsumer, LightmapTextureManager.pack(15, 15), 0, 1.0f, 1.0f, 1.0f,
-                    MathHelper.clamp(1.0f + (float) Math.log10(lifeTime), 0.5f, 1.0f));
+            // model.render(matrices, vertexConsumer, LightmapTextureManager.pack(15, 15), 0, 1.0f, 1.0f, 1.0f,
+            //         MathHelper.clamp(1.0f + (float) Math.log10(lifeTime), 0.5f, 1.0f));
+            model.render(matrices, vertexConsumer, LightmapTextureManager.pack(15, 15), 0, 0xFFFFFFFF);
+
             matrices.pop();
         }
         super.render(entity, yaw, tickDelta, matrices, vertexConsumers, light);

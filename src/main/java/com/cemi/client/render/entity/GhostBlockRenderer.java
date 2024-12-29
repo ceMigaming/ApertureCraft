@@ -22,7 +22,7 @@ public class GhostBlockRenderer extends EntityRenderer<GhostBlockEntity> {
 
     @Override
     public Identifier getTexture(GhostBlockEntity entity) {
-        return new Identifier(ApertureCraft.MOD_ID, "textures/entity/ghostblock.png");
+        return Identifier.of(ApertureCraft.MOD_ID, "textures/entity/ghostblock.png");
     }
 
     @Override
@@ -34,7 +34,7 @@ public class GhostBlockRenderer extends EntityRenderer<GhostBlockEntity> {
         if (renderLayer != null) {
             VertexConsumer vertexConsumer = vertexConsumers.getBuffer(renderLayer);
             if ((lifeTime / 10) % 2 == 0)
-                model.render(matrices, vertexConsumer, light, 0, 1.0f, .5f, .5f, 0.5f);
+                model.render(matrices, vertexConsumer, light, 0, 0xFFFF7F7F);
         }
         super.render(entity, yaw, tickDelta, matrices, vertexConsumers, light);
     }

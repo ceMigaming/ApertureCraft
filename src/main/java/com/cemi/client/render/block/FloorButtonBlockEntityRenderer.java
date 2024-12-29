@@ -12,9 +12,9 @@ import software.bernie.geckolib.renderer.GeoBlockRenderer;
 public class FloorButtonBlockEntityRenderer
         extends GeoBlockRenderer<ApertureFloorButtonBlockEntity> {
     private static final Identifier TEXTURE_ON =
-            new Identifier(ApertureCraft.MOD_ID, "textures/block/floor_button_on.png");
+            Identifier.of(ApertureCraft.MOD_ID, "textures/block/floor_button_on.png");
     private static final Identifier TEXTURE_OFF =
-            new Identifier(ApertureCraft.MOD_ID, "textures/block/floor_button_off.png");
+            Identifier.of(ApertureCraft.MOD_ID, "textures/block/floor_button_off.png");
 
     public FloorButtonBlockEntityRenderer(BlockEntityRendererFactory.Context context) {
         super(new FloorButtonModel());

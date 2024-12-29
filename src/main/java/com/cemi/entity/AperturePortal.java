@@ -2,6 +2,7 @@ package com.cemi.entity;
 
 import net.minecraft.entity.EntityType;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.registry.RegistryWrapper.WrapperLookup;
 import net.minecraft.world.World;
 import qouteall.imm_ptl.core.portal.Portal;
 

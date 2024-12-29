@@ -3,6 +3,7 @@ package com.cemi.block.entity;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.registry.RegistryWrapper.WrapperLookup;
 import net.minecraft.util.math.BlockPos;
 
 public class LargeTileBlockEntity extends BlockEntity {
@@ -17,7 +18,7 @@ public class LargeTileBlockEntity extends BlockEntity {
     }
 
     @Override
-    protected void writeNbt(NbtCompound nbt) {
+    protected void writeNbt(NbtCompound nbt, WrapperLookup registryLookup) {
         nbt.putIntArray("upperLeftBlockPos", new int[] {upperLeftBlockPos.getX(),
                 upperLeftBlockPos.getY(), upperLeftBlockPos.getZ()});
         nbt.putIntArray("upperRightBlockPos", new int[] {upperRightBlockPos.getX(),
@@ -26,11 +27,11 @@ public class LargeTileBlockEntity extends BlockEntity {
                 lowerLeftBlockPos.getY(), lowerLeftBlockPos.getZ()});
         nbt.putIntArray("lowerRightBlockPos", new int[] {lowerRightBlockPos.getX(),
                 lowerRightBlockPos.getY(), lowerRightBlockPos.getZ()});
-        super.writeNbt(nbt);
+        super.writeNbt(nbt, registryLookup);
     }
 
     @Override
-    public void readNbt(NbtCompound nbt) {
+    public void readNbt(NbtCompound nbt, WrapperLookup registryLookup) {
         int[] upperLeftBlockPosArray = nbt.getIntArray("upperLeftBlockPos");
         upperLeftBlockPos = new BlockPos(upperLeftBlockPosArray[0], upperLeftBlockPosArray[1],
                 upperLeftBlockPosArray[2]);
@@ -43,7 +44,7 @@ public class LargeTileBlockEntity extends BlockEntity {
         int[] lowerRightBlockPosArray = nbt.getIntArray("lowerRightBlockPos");
         lowerRightBlockPos = new BlockPos(lowerRightBlockPosArray[0], lowerRightBlockPosArray[1],
                 lowerRightBlockPosArray[2]);
-        super.readNbt(nbt);
+        super.readNbt(nbt, registryLookup);
     }
 
     public void setBlockPoses(BlockPos upperLeftBlockPos, BlockPos upperRightBlockPos,

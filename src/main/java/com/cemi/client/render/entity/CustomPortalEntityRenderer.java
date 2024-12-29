@@ -11,6 +11,7 @@ import com.mojang.blaze3d.platform.GlStateManager.SrcFactor;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.BufferBuilder;
+import net.minecraft.client.render.BufferRenderer;
 import net.minecraft.client.render.Tessellator;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.VertexFormat.DrawMode;
@@ -30,16 +31,13 @@ public class CustomPortalEntityRenderer extends PortalEntityRenderer {
     protected boolean useShader;
 
     private final PortalOverlayModel model;
-    public static final EntityModelLayer OVERLAY_MODEL_LAYER =
-            new EntityModelLayer(new Identifier(ApertureCraft.MOD_ID, "portal_overlay"), "main");
+    public static final EntityModelLayer OVERLAY_MODEL_LAYER = new EntityModelLayer(
+            Identifier.of(ApertureCraft.MOD_ID, "portal_overlay"), "main");
 
-    Identifier portalClosed =
-            new Identifier(ApertureCraft.MOD_ID, "textures/entity/portalclose.png");
-    Identifier portalOpen = new Identifier(ApertureCraft.MOD_ID, "textures/entity/portalopen.png");
-    Identifier portalOutline =
-            new Identifier(ApertureCraft.MOD_ID, "textures/entity/portaloutline.png");
-    Identifier portalOutlineFancy =
-            new Identifier(ApertureCraft.MOD_ID, "textures/entity/portaloutlinefancy.png");
+    Identifier portalClosed = Identifier.of(ApertureCraft.MOD_ID, "textures/entity/portalclose.png");
+    Identifier portalOpen = Identifier.of(ApertureCraft.MOD_ID, "textures/entity/portalopen.png");
+    Identifier portalOutline = Identifier.of(ApertureCraft.MOD_ID, "textures/entity/portaloutline.png");
+    Identifier portalOutlineFancy = Identifier.of(ApertureCraft.MOD_ID, "textures/entity/portaloutlinefancy.png");
 
     public CustomPortalEntityRenderer(Context context) {
         super(context);
@@ -67,9 +65,9 @@ public class CustomPortalEntityRenderer extends PortalEntityRenderer {
         // GL20.glUseProgram(ShaderHelper.PORTAL_SHADER);
         matrixStack.push();
 
-
         // matrixStack.peek().getNormalMatrix()
-        // .rotate(DQuaternion.rotationByDegrees(new Vec3d(1, 0, 0), -90).toMcQuaternion());
+        // .rotate(DQuaternion.rotationByDegrees(new Vec3d(1, 0, 0),
+        // -90).toMcQuaternion());
 
         // matrixStack.translate(0.375F, -0.5F, 0.01F);
         AperturePortal portal = (AperturePortal) entity;
@@ -81,16 +79,22 @@ public class CustomPortalEntityRenderer extends PortalEntityRenderer {
         // matrixStack.scale(0.25F, 0.5F, 0.25F);
 
         // GL20.glUseProgram(ShaderHelper.PORTAL_SHADER);
-        // GL20.glUniform1f(GL20.glGetUniformLocation(ShaderHelper.PORTAL_SHADER, "closeAlpha"),
+        // GL20.glUniform1f(GL20.glGetUniformLocation(ShaderHelper.PORTAL_SHADER,
+        // "closeAlpha"),
         // 0.5f);
-        // GL20.glUniform1f(GL20.glGetUniformLocation(ShaderHelper.PORTAL_SHADER, "theColorR"),
+        // GL20.glUniform1f(GL20.glGetUniformLocation(ShaderHelper.PORTAL_SHADER,
+        // "theColorR"),
         // r / 255.0f);
-        // GL20.glUniform1f(GL20.glGetUniformLocation(ShaderHelper.PORTAL_SHADER, "theColorG"),
+        // GL20.glUniform1f(GL20.glGetUniformLocation(ShaderHelper.PORTAL_SHADER,
+        // "theColorG"),
         // g / 255.0f);
-        // GL20.glUniform1f(GL20.glGetUniformLocation(ShaderHelper.PORTAL_SHADER, "theColorB"),
+        // GL20.glUniform1f(GL20.glGetUniformLocation(ShaderHelper.PORTAL_SHADER,
+        // "theColorB"),
         // b / 255.0f);
-        // GL20.glUniform1f(GL20.glGetUniformLocation(ShaderHelper.PORTAL_SHADER, "time"), 0.5f);
-        // GL20.glUniform1f(GL20.glGetUniformLocation(ShaderHelper.PORTAL_SHADER, "pass"), 0.5f);
+        // GL20.glUniform1f(GL20.glGetUniformLocation(ShaderHelper.PORTAL_SHADER,
+        // "time"), 0.5f);
+        // GL20.glUniform1f(GL20.glGetUniformLocation(ShaderHelper.PORTAL_SHADER,
+        // "pass"), 0.5f);
 
         // System.out.println(ShaderHelper.getPortalShader());
         Matrix4f matrix = matrixStack.peek().getPositionMatrix();
@@ -100,7 +104,8 @@ public class CustomPortalEntityRenderer extends PortalEntityRenderer {
             time += (tickDelta - prevTickDelta) * 0.1F;
         }
         prevTickDelta = tickDelta;
-        // TODO add switch to disable shader and adjust the overlay so its not hidden behind the
+        // TODO add switch to disable shader and adjust the overlay so its not hidden
+        // behind the
         // portal, also add a second layer of overlay
         if (useShader) {
             PortalShader program = ShaderHelper.getPortalShader();
@@ -131,10 +136,7 @@ public class CustomPortalEntityRenderer extends PortalEntityRenderer {
         // program.modelViewMat.set(matrixStack.peek().getPositionMatrix());
         // GL20.glBindTexture();
 
-
-
         drawPlane(matrix, 2.45F);
-
 
         // RenderSystem.setShader(null);
         // TextureManager textureManager = this.dispatcher.textureManager;
@@ -142,12 +144,12 @@ public class CustomPortalEntityRenderer extends PortalEntityRenderer {
         // RenderSystem.bindTexture(texture);
         // MinecraftClient.getInstance().getTextureManager().bindTexture(portalClosed);
 
-
         // RenderSystem.disableDepthTest();
         // RenderSystem.enableBlend();
         // RenderSystem.depthMask(false);
         // RenderSystem.defaultBlendFunc();
-        // RenderSystem.blendFuncSeparate(SrcFactor.SRC_ALPHA, DstFactor.ONE_MINUS_SRC_ALPHA,
+        // RenderSystem.blendFuncSeparate(SrcFactor.SRC_ALPHA,
+        // DstFactor.ONE_MINUS_SRC_ALPHA,
         // SrcFactor.ONE, DstFactor.ZERO);
         // RenderSystem.clearColor(1.0F, 1.0F, 1.0F, 1.0F);
         // RenderSystem.disableCull();
@@ -162,15 +164,19 @@ public class CustomPortalEntityRenderer extends PortalEntityRenderer {
         // final float r2 = MathHelper.clamp(r * brightness, 0.0f, 1.0f);
         // final float g2 = MathHelper.clamp(g * brightness, 0.0f, 1.0f);
         // final float b2 = MathHelper.clamp(b * brightness, 0.0f, 1.0f);
-        // bufferbuilder.vertex(matrix, -0.5F, -0.5F, 0.0F).color(r2, g2, b2, 1.0f).texture(0.0F,
+        // bufferbuilder.vertex(matrix, -0.5F, -0.5F, 0.0F).color(r2, g2, b2,
+        // 1.0f).texture(0.0F,
         // 0.0F)
         // .next();
-        // bufferbuilder.vertex(matrix, 0.5F, -0.5F, 0.0F).color(r2, g2, b2, 1.0f).texture(1.0F,
+        // bufferbuilder.vertex(matrix, 0.5F, -0.5F, 0.0F).color(r2, g2, b2,
+        // 1.0f).texture(1.0F,
         // 0.0F)
         // .next();
-        // bufferbuilder.vertex(matrix, 0.5F, 0.5F, 0.0F).color(r, g, b, 1.0f).texture(1.0F, 1.0F)
+        // bufferbuilder.vertex(matrix, 0.5F, 0.5F, 0.0F).color(r, g, b,
+        // 1.0f).texture(1.0F, 1.0F)
         // .next();
-        // bufferbuilder.vertex(matrix, -0.5F, 0.5F, 0.0F).color(r, g, b, 1.0f).texture(0.0F, 1.0F)
+        // bufferbuilder.vertex(matrix, -0.5F, 0.5F, 0.0F).color(r, g, b,
+        // 1.0f).texture(0.0F, 1.0F)
         // .next();
         // tessellator.draw();
         // RenderSystem.depthMask(true);
@@ -185,19 +191,17 @@ public class CustomPortalEntityRenderer extends PortalEntityRenderer {
         // GL20.glUseProgram(0);
         matrixStack.pop();
 
-
         // GL20.glUseProgram(0);
     }
 
     public void drawPlane(final Matrix4f matrix, final float mult) {
-        final Tessellator tessellator = RenderSystem.renderThreadTesselator();
-        final BufferBuilder bufferbuilder = tessellator.getBuffer();
-        bufferbuilder.begin(DrawMode.QUADS, VertexFormats.POSITION_TEXTURE);
-        bufferbuilder.vertex(matrix, -0.5F * mult, -0.5F * mult, 0.0F).texture(0.0F, 0.0F).next();
-        bufferbuilder.vertex(matrix, 0.5F * mult, -0.5F * mult, 0.0F).texture(1.0F, 0.0F).next();
-        bufferbuilder.vertex(matrix, 0.5F * mult, 0.5F * mult, 0.0F).texture(1.0F, 1.0F).next();
-        bufferbuilder.vertex(matrix, -0.5F * mult, 0.5F * mult, 0.0F).texture(0.0F, 1.0F).next();
-        tessellator.draw();
+        final Tessellator tessellator = Tessellator.getInstance();
+        final BufferBuilder bufferbuilder = tessellator.begin(DrawMode.QUADS, VertexFormats.POSITION_TEXTURE);
+        bufferbuilder.vertex(matrix, -0.5F * mult, -0.5F * mult, 0.0F).texture(0.0F, 0.0F);
+        bufferbuilder.vertex(matrix, 0.5F * mult, -0.5F * mult, 0.0F).texture(1.0F, 0.0F);
+        bufferbuilder.vertex(matrix, 0.5F * mult, 0.5F * mult, 0.0F).texture(1.0F, 1.0F);
+        bufferbuilder.vertex(matrix, -0.5F * mult, 0.5F * mult, 0.0F).texture(0.0F, 1.0F);
+        BufferRenderer.drawWithGlobalProgram(bufferbuilder.end());
     }
 
 }

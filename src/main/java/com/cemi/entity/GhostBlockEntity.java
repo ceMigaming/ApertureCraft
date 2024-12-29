@@ -5,6 +5,7 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
+import net.minecraft.entity.data.DataTracker.Builder;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.world.World;
 
@@ -23,8 +24,8 @@ public class GhostBlockEntity extends Entity {
     }
 
     @Override
-    protected void initDataTracker() {
-        this.dataTracker.startTracking(LIFE_TIME, 5 * 20);
+    protected void initDataTracker(Builder builder) {
+        builder.add(LIFE_TIME, 5 * 20);
     }
 
     @Override
@@ -38,10 +39,12 @@ public class GhostBlockEntity extends Entity {
     }
 
     @Override
-    protected void readCustomDataFromNbt(NbtCompound nbt) {}
+    protected void readCustomDataFromNbt(NbtCompound nbt) {
+    }
 
     @Override
-    protected void writeCustomDataToNbt(NbtCompound nbt) {}
+    protected void writeCustomDataToNbt(NbtCompound nbt) {
+    }
 
     public int getLifeTime() {
         return this.dataTracker.get(LIFE_TIME);

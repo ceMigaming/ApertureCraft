@@ -151,7 +151,7 @@ public class ApertureCubeDropperBlock extends ApertureBlock implements BlockEnti
         if (world.isReceivingRedstonePower(pos)) {
             // TODO add animations and entity binding - kill old entity on new entity spawn
             ApertureCubeDropperBlockEntity blockEntity = (ApertureCubeDropperBlockEntity) world.getBlockEntity(pos);
-            blockEntity.
+            blockEntity.triggerAnim("controller", "open");
             BlockPos masterPos = ((ApertureCubeDropperBlockEntity) world.getBlockEntity(pos)).getMasterPos();
             world.scheduleBlockTick(masterPos, this, 4);
         }
@@ -162,6 +162,8 @@ public class ApertureCubeDropperBlock extends ApertureBlock implements BlockEnti
         Entity spawnableEntity = this.spawnableEntity.create(world);
         spawnableEntity.refreshPositionAndAngles(pos.getX() + 0.5, pos.getY() + 1, pos.getZ() + 0.5, 0, 0);
         world.spawnEntity(spawnableEntity);
+        ApertureCubeDropperBlockEntity blockEntity = (ApertureCubeDropperBlockEntity) world.getBlockEntity(pos);
+        blockEntity.triggerAnim("controller", "close");
     }
 
     @Override

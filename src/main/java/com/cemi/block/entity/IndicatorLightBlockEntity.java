@@ -3,6 +3,7 @@ package com.cemi.block.entity;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.registry.RegistryWrapper.WrapperLookup;
 import net.minecraft.util.math.BlockPos;
 
 public class IndicatorLightBlockEntity extends BlockEntity {
@@ -21,14 +22,14 @@ public class IndicatorLightBlockEntity extends BlockEntity {
         this.power = power;
         markDirty();
     }
-
+    
     @Override
-    public void readNbt(NbtCompound nbt) {
+    protected void readNbt(NbtCompound nbt, WrapperLookup registryLookup) {
         power = nbt.getInt("power");
     }
 
     @Override
-    protected void writeNbt(NbtCompound nbt) {
+    protected void writeNbt(NbtCompound nbt, WrapperLookup registryLookup) {
         nbt.putInt("power", power);
     }
 }

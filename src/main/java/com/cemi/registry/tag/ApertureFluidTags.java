@@ -8,7 +8,7 @@ import net.minecraft.util.Identifier;
 
 public class ApertureFluidTags {
     public static final TagKey<Fluid> NEUROTOXIN =
-            TagKey.of(RegistryKeys.FLUID, new Identifier(ApertureCraft.MOD_ID, "neurotoxin"));
+            TagKey.of(RegistryKeys.FLUID, Identifier.of(ApertureCraft.MOD_ID, "neurotoxin"));
 
     public static void registerFluidTags() {}
 }

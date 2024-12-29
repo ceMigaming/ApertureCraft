@@ -6,11 +6,11 @@ import com.cemi.client.render.item.ApertureGeoItemsRenderer;
 import net.minecraft.client.render.item.BuiltinModelItemRenderer;
 import software.bernie.geckolib.animatable.GeoItem;
 import software.bernie.geckolib.animatable.SingletonGeoAnimatable;
-import software.bernie.geckolib.animatable.client.RenderProvider;
-import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
-import software.bernie.geckolib.core.animation.AnimatableManager.ControllerRegistrar;
-import software.bernie.geckolib.core.animation.AnimationController;
-import software.bernie.geckolib.core.object.PlayState;
+import software.bernie.geckolib.animatable.client.GeoRenderProvider;
+import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.animation.AnimatableManager.ControllerRegistrar;
+import software.bernie.geckolib.animation.AnimationController;
+import software.bernie.geckolib.animation.PlayState;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 public class ApertureGeoItem extends ApertureItem implements GeoItem {
@@ -23,12 +23,11 @@ public class ApertureGeoItem extends ApertureItem implements GeoItem {
     }
 
     @Override
-    public void createRenderer(Consumer<Object> consumer) {
-        consumer.accept(new RenderProvider() {
+    public void createGeoRenderer(Consumer<GeoRenderProvider> consumer) {
+        consumer.accept(new GeoRenderProvider() {
             private ApertureGeoItemsRenderer renderer;
 
-            @Override
-            public BuiltinModelItemRenderer getCustomRenderer() {
+            public ApertureGeoItemsRenderer getRenderer() {
                 return renderer == null ? renderer = new ApertureGeoItemsRenderer(name) : renderer;
             }
         });

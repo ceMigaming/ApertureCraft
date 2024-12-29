@@ -8,6 +8,6 @@ import software.bernie.geckolib.renderer.GeoItemRenderer;
 
 public class ApertureGeoItemsRenderer extends GeoItemRenderer<ApertureGeoItem> {
     public ApertureGeoItemsRenderer(String path) {
-        super(new DefaultedItemGeoModel<>(new Identifier(ApertureCraft.MOD_ID, path)));
+        super(new DefaultedItemGeoModel<>(Identifier.of(ApertureCraft.MOD_ID, path)));
     }
 }

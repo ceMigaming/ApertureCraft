@@ -19,6 +19,6 @@ public class PlayerLookupMixin {
             CallbackInfoReturnable<Collection<ServerPlayerEntity>> cir) {
 
         cir.setReturnValue(
-                world.getChunkManager().threadedAnvilChunkStorage.getPlayersWatchingChunk(pos));
+                world.getChunkManager().chunkLoadingManager.getPlayersWatchingChunk(pos));
     }
 }

@@ -8,7 +8,7 @@ import software.bernie.geckolib.model.DefaultedEntityGeoModel;
 public class StorageCubeModel extends DefaultedEntityGeoModel<StorageCubeEntity> {
 
     public StorageCubeModel() {
-        super(new Identifier(ApertureCraft.MOD_ID, "storage_cube"));
+        super(Identifier.of(ApertureCraft.MOD_ID, "storage_cube"));
     }
 
 }

@@ -8,7 +8,7 @@ import net.minecraft.client.particle.ParticleTextureSheet;
 import net.minecraft.client.particle.SpriteBillboardParticle;
 import net.minecraft.client.particle.SpriteProvider;
 import net.minecraft.client.world.ClientWorld;
-import net.minecraft.particle.DefaultParticleType;
+import net.minecraft.particle.SimpleParticleType;
 
 @Environment(EnvType.CLIENT)
 public class NeurotoxinSuspendParticle extends SpriteBillboardParticle {
@@ -41,14 +41,14 @@ public class NeurotoxinSuspendParticle extends SpriteBillboardParticle {
     }
 
     @Environment(EnvType.CLIENT)
-    public static class UnderNeurotoxinFactory implements ParticleFactory<DefaultParticleType> {
+    public static class UnderNeurotoxinFactory implements ParticleFactory<SimpleParticleType> {
         private final SpriteProvider spriteProvider;
 
         public UnderNeurotoxinFactory(SpriteProvider spriteProvider) {
             this.spriteProvider = spriteProvider;
         }
 
-        public Particle createParticle(DefaultParticleType defaultParticleType,
+        public Particle createParticle(SimpleParticleType defaultParticleType,
                 ClientWorld clientWorld, double d, double e, double f, double g, double h,
                 double i) {
             NeurotoxinSuspendParticle waterSuspendParticle =

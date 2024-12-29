@@ -29,7 +29,8 @@ public class ApertureCraftInput {
                 PacketByteBuf buf = PacketByteBufs.create();
                 Hand hand = client.player.getActiveHand();
                 buf.writeEnumConstant(hand);
-                ClientPlayNetworking.send(ApertureNetworkingConstants.RESET_PORTALS_ID, buf);
+                // FIXME use new networking system
+                // ClientPlayNetworking.send(ApertureNetworkingConstants.RESET_PORTALS_ID, buf);
             }
         });
         ClientPreAttackCallback.EVENT.register(new ClientPreAttackCallback() {
@@ -43,7 +44,8 @@ public class ApertureCraftInput {
                 PacketByteBuf buf = PacketByteBufs.create();
                 Hand hand = player.getActiveHand();
                 buf.writeEnumConstant(hand);
-                ClientPlayNetworking.send(ApertureNetworkingConstants.LEFT_CLICK_ID, buf);
+                // FIXME use new networking system
+                // ClientPlayNetworking.send(ApertureNetworkingConstants.LEFT_CLICK_ID, buf);
 
                 return false;
             }

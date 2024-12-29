@@ -83,7 +83,7 @@ public abstract class NeurotoxinFluid extends FlowableFluid {
     }
 
     @Override
-    public int getFlowSpeed(WorldView world) {
+    public int getMaxFlowDistance(WorldView world) {
         return 4;
     }
 

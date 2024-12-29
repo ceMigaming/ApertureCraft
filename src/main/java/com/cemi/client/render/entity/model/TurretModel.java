@@ -8,7 +8,7 @@ import software.bernie.geckolib.model.DefaultedEntityGeoModel;
 public class TurretModel extends DefaultedEntityGeoModel<TurretEntity> {
 
     public TurretModel() {
-        super(new Identifier(ApertureCraft.MOD_ID, "turret"));
+        super(Identifier.of(ApertureCraft.MOD_ID, "turret"));
     }
 
 }

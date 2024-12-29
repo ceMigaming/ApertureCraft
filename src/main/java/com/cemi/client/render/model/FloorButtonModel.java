@@ -8,7 +8,7 @@ import software.bernie.geckolib.model.DefaultedBlockGeoModel;
 public class FloorButtonModel extends DefaultedBlockGeoModel<ApertureFloorButtonBlockEntity> {
 
     public FloorButtonModel() {
-        super(new Identifier(ApertureCraft.MOD_ID, "floor_button"));
+        super(Identifier.of(ApertureCraft.MOD_ID, "floor_button"));
     }
 
 }

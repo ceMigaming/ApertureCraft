@@ -1,12 +1,12 @@
 package com.cemi.particle;
 
 import com.cemi.ApertureCraft;
-import net.minecraft.particle.DefaultParticleType;
+import net.minecraft.particle.SimpleParticleType;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.util.Identifier;
 
-public class ApertureParticleTypes extends DefaultParticleType {
+public class ApertureParticleTypes extends SimpleParticleType {
     private String name;
 
     protected ApertureParticleTypes(boolean alwaysShow) {
@@ -18,17 +18,17 @@ public class ApertureParticleTypes extends DefaultParticleType {
         this.name = name;
     }
 
-    public static final DefaultParticleType DRIPPING_NEUROTOXIN = simple("dripping_neurotoxin");
-    public static final DefaultParticleType UNDER_NEUROTOXIN = simple("under_neurotoxin");
+    public static final SimpleParticleType DRIPPING_NEUROTOXIN = simple("dripping_neurotoxin");
+    public static final SimpleParticleType UNDER_NEUROTOXIN = simple("under_neurotoxin");
 
-    private static final DefaultParticleType[] PARTICLES = {DRIPPING_NEUROTOXIN, UNDER_NEUROTOXIN};
+    private static final SimpleParticleType[] PARTICLES = {DRIPPING_NEUROTOXIN, UNDER_NEUROTOXIN};
 
     public static void registerParticles() {
-        for (DefaultParticleType particle : PARTICLES) {
+        for (SimpleParticleType particle : PARTICLES) {
             Registry.register(Registries.PARTICLE_TYPE,
-                    new Identifier(ApertureCraft.MOD_ID,
+                    Identifier.of(ApertureCraft.MOD_ID,
                             ((ApertureParticleTypes) particle).getName()),
-                    (DefaultParticleType) particle);
+                    (SimpleParticleType) particle);
         }
     }
 
@@ -36,8 +36,8 @@ public class ApertureParticleTypes extends DefaultParticleType {
         return name;
     }
 
-    public static DefaultParticleType simple(String name) {
-        DefaultParticleType particle = new ApertureParticleTypes(name, false);
+    public static SimpleParticleType simple(String name) {
+        SimpleParticleType particle = new ApertureParticleTypes(name, false);
         return particle;
     }
 }

@@ -1,6 +1,7 @@
 package com.cemi.world;
 
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.registry.RegistryWrapper.WrapperLookup;
 
 public class ChannelData {
     public String uuid;
@@ -25,7 +26,7 @@ public class ChannelData {
                 && ((ChannelData) object).channel.equals(this.channel);
     }
 
-    public ChannelData readFromNBT(NbtCompound nbt) {
+    public ChannelData readFromNbt(NbtCompound nbt, WrapperLookup registryLookup) {
         this.uuid = nbt.getString("uuid");
         this.channel = nbt.getString("channel");
         this.masterColor = nbt.getInt("masterColor");
@@ -33,7 +34,7 @@ public class ChannelData {
         return this;
     }
 
-    public NbtCompound writeToNBT(NbtCompound nbt) {
+    public NbtCompound writeToNbt(NbtCompound nbt, WrapperLookup registryLookup) {
         nbt.putString("uuid", this.uuid);
         nbt.putString("channel", this.channel);
         nbt.putInt("masterColor", this.masterColor);

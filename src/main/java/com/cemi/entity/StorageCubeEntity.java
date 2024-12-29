@@ -14,8 +14,8 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import software.bernie.geckolib.animatable.GeoEntity;
-import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
-import software.bernie.geckolib.core.animation.AnimatableManager;
+import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.animation.AnimatableManager;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 public class StorageCubeEntity extends MobEntity implements GeoEntity, Pickable {
@@ -42,7 +42,8 @@ public class StorageCubeEntity extends MobEntity implements GeoEntity, Pickable 
     }
 
     @Override
-    public void equipStack(EquipmentSlot slot, ItemStack stack) {}
+    public void equipStack(EquipmentSlot slot, ItemStack stack) {
+    }
 
     @Override
     public Iterable<ItemStack> getArmorItems() {
@@ -60,7 +61,8 @@ public class StorageCubeEntity extends MobEntity implements GeoEntity, Pickable 
     }
 
     @Override
-    public void registerControllers(final AnimatableManager.ControllerRegistrar controllers) {}
+    public void registerControllers(final AnimatableManager.ControllerRegistrar controllers) {
+    }
 
     @Override
     public AnimatableInstanceCache getAnimatableInstanceCache() {
@@ -101,10 +103,4 @@ public class StorageCubeEntity extends MobEntity implements GeoEntity, Pickable 
     public boolean isInvulnerable() {
         return true;
     }
-
-    @Override
-    public boolean damage(DamageSource source, float amount) {
-        return false;
-    }
-
 }

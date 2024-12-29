@@ -16,7 +16,7 @@ public class EntityMixin {
     @Inject(method = "damage(Lnet/minecraft/entity/damage/DamageSource;F)Z", at = @At("HEAD"), cancellable = true)
     private void onDamage(DamageSource source, float amount, CallbackInfoReturnable<Boolean> info) {
         LivingEntity entity = (LivingEntity) (Object) this;
-        for (ItemStack stack : entity.getItemsEquipped()) {
+        for (ItemStack stack : entity.getEquippedItems()) {
             if (stack.getItem() == ApertureItems.LONG_FALL_BOOTS
                     && source.isIn(DamageTypeTags.IS_FALL)) {
                 info.setReturnValue(false);

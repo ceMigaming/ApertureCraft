@@ -1,16 +1,16 @@
 package com.cemi.block.entity;
 
-import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.registry.RegistryWrapper.WrapperLookup;
 import net.minecraft.util.math.BlockPos;
 import software.bernie.geckolib.animatable.GeoBlockEntity;
-import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
-import software.bernie.geckolib.core.animation.AnimatableManager;
-import software.bernie.geckolib.core.animation.Animation.LoopType;
-import software.bernie.geckolib.core.animation.AnimationController;
-import software.bernie.geckolib.core.animation.RawAnimation;
+import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.animation.AnimatableManager;
+import software.bernie.geckolib.animation.Animation.LoopType;
+import software.bernie.geckolib.animation.AnimationController;
+import software.bernie.geckolib.animation.RawAnimation;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 public class ApertureCubeDropperBlockEntity extends BlockEntity implements GeoBlockEntity {
@@ -57,14 +57,15 @@ public class ApertureCubeDropperBlockEntity extends BlockEntity implements GeoBl
     }
 
     @Override
-    protected void writeNbt(NbtCompound nbt) {
-        nbt.putLong("masterPos", this.masterPos.asLong());
-        super.writeNbt(nbt);
+    public void readNbt(NbtCompound nbt, WrapperLookup registryLookup) {
+        this.masterPos = BlockPos.fromLong(nbt.getLong("masterPos"));
+        super.readNbt(nbt, registryLookup);
     }
 
     @Override
-    public void readNbt(NbtCompound nbt) {
-        this.masterPos = BlockPos.fromLong(nbt.getLong("masterPos"));
-        super.readNbt(nbt);
+    protected void writeNbt(NbtCompound nbt, WrapperLookup registryLookup) {
+        // TODO Auto-generated method stub
+        nbt.putLong("masterPos", this.masterPos.asLong());
+        super.writeNbt(nbt, registryLookup);
     }
 }
