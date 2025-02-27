@@ -1,7 +1,7 @@
 package com.cemi.client.render.block;
 
 import com.cemi.ApertureCraft;
-import com.cemi.block.ApertureFloorButton;
+import com.cemi.block.FloorButtonBlock;
 import com.cemi.block.entity.ApertureFloorButtonBlockEntity;
 import com.cemi.client.render.model.FloorButtonModel;
 import net.minecraft.block.BlockState;
@@ -23,8 +23,8 @@ public class FloorButtonBlockEntityRenderer
     @Override
     public Identifier getTextureLocation(ApertureFloorButtonBlockEntity animatable) {
         BlockState state = animatable.getWorld().getBlockState(animatable.getPos());
-        if (state.getBlock() instanceof ApertureFloorButton)
-            return state.get(ApertureFloorButton.POWERED) ? TEXTURE_ON : TEXTURE_OFF;
+        if (state.getBlock() instanceof FloorButtonBlock)
+            return state.get(FloorButtonBlock.POWERED) ? TEXTURE_ON : TEXTURE_OFF;
         else
             return TEXTURE_OFF;
     }
