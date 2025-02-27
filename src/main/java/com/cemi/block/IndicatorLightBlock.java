@@ -44,7 +44,6 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldAccess;
 import net.minecraft.world.WorldView;
 
-
 // TODO show sides when near a block
 @SuppressWarnings("deprecation")
 public class IndicatorLightBlock extends ApertureBlock implements BlockEntityProvider {
@@ -77,18 +76,17 @@ public class IndicatorLightBlock extends ApertureBlock implements BlockEntityPro
         this.setDefaultState(
                 (BlockState) ((BlockState) ((BlockState) ((BlockState) ((BlockState) ((BlockState) this.stateManager
                         .getDefaultState()).with(WIRE_CONNECTION_NORTH, WireConnection.NONE))
-                                .with(WIRE_CONNECTION_EAST, WireConnection.NONE))
-                                        .with(WIRE_CONNECTION_SOUTH, WireConnection.NONE))
-                                                .with(WIRE_CONNECTION_WEST, WireConnection.NONE))
-                                                        .with(POWERED, false));
+                        .with(WIRE_CONNECTION_EAST, WireConnection.NONE))
+                        .with(WIRE_CONNECTION_SOUTH, WireConnection.NONE))
+                        .with(WIRE_CONNECTION_WEST, WireConnection.NONE))
+                        .with(POWERED, false));
         // .with(POWER, 0));
         this.dotState = (BlockState) ((BlockState) ((BlockState) ((BlockState) this
                 .getDefaultState().with(WIRE_CONNECTION_NORTH, WireConnection.SIDE))
-                        .with(WIRE_CONNECTION_EAST, WireConnection.SIDE))
-                                .with(WIRE_CONNECTION_SOUTH, WireConnection.SIDE))
-                                        .with(WIRE_CONNECTION_WEST, WireConnection.SIDE);
-        UnmodifiableIterator<BlockState> statesIterator =
-                this.getStateManager().getStates().iterator();
+                .with(WIRE_CONNECTION_EAST, WireConnection.SIDE))
+                .with(WIRE_CONNECTION_SOUTH, WireConnection.SIDE))
+                .with(WIRE_CONNECTION_WEST, WireConnection.SIDE);
+        UnmodifiableIterator<BlockState> statesIterator = this.getStateManager().getStates().iterator();
 
         while (statesIterator.hasNext()) {
             BlockState blockState = (BlockState) statesIterator.next();
@@ -174,9 +172,9 @@ public class IndicatorLightBlock extends ApertureBlock implements BlockEntityPro
             Direction direction = (Direction) var5.next();
             if (!((WireConnection) state
                     .get((Property<WireConnection>) DIRECTION_TO_WIRE_CONNECTION_PROPERTY
-                            .get(direction))).isConnected()) {
-                WireConnection wireConnection =
-                        this.getRenderConnectionType(world, pos, direction, bl);
+                            .get(direction)))
+                    .isConnected()) {
+                WireConnection wireConnection = this.getRenderConnectionType(world, pos, direction, bl);
                 state = (BlockState) state
                         .with((Property<WireConnection>) DIRECTION_TO_WIRE_CONNECTION_PROPERTY
                                 .get(direction), wireConnection);
@@ -199,7 +197,8 @@ public class IndicatorLightBlock extends ApertureBlock implements BlockEntityPro
             return wireConnection
                     .isConnected() == ((WireConnection) state
                             .get((Property<WireConnection>) DIRECTION_TO_WIRE_CONNECTION_PROPERTY
-                                    .get(direction))).isConnected()
+                                    .get(direction)))
+                            .isConnected()
                     && !isFullyConnected(state)
                             ? (BlockState) state.with(
                                     (Property<WireConnection>) DIRECTION_TO_WIRE_CONNECTION_PROPERTY
@@ -306,8 +305,7 @@ public class IndicatorLightBlock extends ApertureBlock implements BlockEntityPro
 
     private void update(World world, BlockPos pos, BlockState state) {
         int i = this.getReceivedRedstonePower(world, pos);
-        IndicatorLightBlockEntity blockEntity =
-                (IndicatorLightBlockEntity) world.getBlockEntity(pos);
+        IndicatorLightBlockEntity blockEntity = (IndicatorLightBlockEntity) world.getBlockEntity(pos);
         if (blockEntity != null && blockEntity.getPower() != i) {
             if (world.getBlockState(pos) == state) {
                 blockEntity.setPower(i);
@@ -465,8 +463,7 @@ public class IndicatorLightBlock extends ApertureBlock implements BlockEntityPro
             Direction direction) {
         if (this.wiresGivePower && direction != Direction.DOWN) {
             // int i = (Integer) state.get(POWER);
-            IndicatorLightBlockEntity blockEntity =
-                    (IndicatorLightBlockEntity) world.getBlockEntity(pos);
+            IndicatorLightBlockEntity blockEntity = (IndicatorLightBlockEntity) world.getBlockEntity(pos);
             int i = blockEntity != null ? blockEntity.getPower() : 0;
             if (i == 0) {
                 return 0;
@@ -474,7 +471,8 @@ public class IndicatorLightBlock extends ApertureBlock implements BlockEntityPro
                 return direction != Direction.UP
                         && !((WireConnection) this.getPlacementState(world, state, pos).get(
                                 (Property<WireConnection>) DIRECTION_TO_WIRE_CONNECTION_PROPERTY
-                                        .get(direction.getOpposite()))).isConnected() ? 0 : i;
+                                        .get(direction.getOpposite())))
+                                .isConnected() ? 0 : i;
             }
         } else {
             return 0;
@@ -507,33 +505,36 @@ public class IndicatorLightBlock extends ApertureBlock implements BlockEntityPro
             case 1:
                 return (BlockState) ((BlockState) ((BlockState) ((BlockState) state.with(
                         WIRE_CONNECTION_NORTH, (WireConnection) state.get(WIRE_CONNECTION_SOUTH)))
-                                .with(WIRE_CONNECTION_EAST,
-                                        (WireConnection) state.get(WIRE_CONNECTION_WEST))).with(
-                                                WIRE_CONNECTION_SOUTH,
-                                                (WireConnection) state.get(WIRE_CONNECTION_NORTH)))
-                                                        .with(WIRE_CONNECTION_WEST,
-                                                                (WireConnection) state
-                                                                        .get(WIRE_CONNECTION_EAST));
+                        .with(WIRE_CONNECTION_EAST,
+                                (WireConnection) state.get(WIRE_CONNECTION_WEST)))
+                        .with(
+                                WIRE_CONNECTION_SOUTH,
+                                (WireConnection) state.get(WIRE_CONNECTION_NORTH)))
+                        .with(WIRE_CONNECTION_WEST,
+                                (WireConnection) state
+                                        .get(WIRE_CONNECTION_EAST));
             case 2:
                 return (BlockState) ((BlockState) ((BlockState) ((BlockState) state.with(
                         WIRE_CONNECTION_NORTH, (WireConnection) state.get(WIRE_CONNECTION_EAST)))
-                                .with(WIRE_CONNECTION_EAST,
-                                        (WireConnection) state.get(WIRE_CONNECTION_SOUTH))).with(
-                                                WIRE_CONNECTION_SOUTH,
-                                                (WireConnection) state.get(WIRE_CONNECTION_WEST)))
-                                                        .with(WIRE_CONNECTION_WEST,
-                                                                (WireConnection) state.get(
-                                                                        WIRE_CONNECTION_NORTH));
+                        .with(WIRE_CONNECTION_EAST,
+                                (WireConnection) state.get(WIRE_CONNECTION_SOUTH)))
+                        .with(
+                                WIRE_CONNECTION_SOUTH,
+                                (WireConnection) state.get(WIRE_CONNECTION_WEST)))
+                        .with(WIRE_CONNECTION_WEST,
+                                (WireConnection) state.get(
+                                        WIRE_CONNECTION_NORTH));
             case 3:
                 return (BlockState) ((BlockState) ((BlockState) ((BlockState) state.with(
                         WIRE_CONNECTION_NORTH, (WireConnection) state.get(WIRE_CONNECTION_WEST)))
-                                .with(WIRE_CONNECTION_EAST,
-                                        (WireConnection) state.get(WIRE_CONNECTION_NORTH))).with(
-                                                WIRE_CONNECTION_SOUTH,
-                                                (WireConnection) state.get(WIRE_CONNECTION_EAST)))
-                                                        .with(WIRE_CONNECTION_WEST,
-                                                                (WireConnection) state.get(
-                                                                        WIRE_CONNECTION_SOUTH));
+                        .with(WIRE_CONNECTION_EAST,
+                                (WireConnection) state.get(WIRE_CONNECTION_NORTH)))
+                        .with(
+                                WIRE_CONNECTION_SOUTH,
+                                (WireConnection) state.get(WIRE_CONNECTION_EAST)))
+                        .with(WIRE_CONNECTION_WEST,
+                                (WireConnection) state.get(
+                                        WIRE_CONNECTION_SOUTH));
             default:
                 return state;
         }
@@ -557,8 +558,8 @@ public class IndicatorLightBlock extends ApertureBlock implements BlockEntityPro
     }
 
     protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
-        builder.add(new Property[] {WIRE_CONNECTION_NORTH, WIRE_CONNECTION_EAST,
-                WIRE_CONNECTION_SOUTH, WIRE_CONNECTION_WEST, POWERED /* , POWER */});
+        builder.add(new Property[] { WIRE_CONNECTION_NORTH, WIRE_CONNECTION_EAST,
+                WIRE_CONNECTION_SOUTH, WIRE_CONNECTION_WEST, POWERED /* , POWER */ });
     }
 
     public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player,
@@ -567,8 +568,7 @@ public class IndicatorLightBlock extends ApertureBlock implements BlockEntityPro
             return ActionResult.PASS;
         } else {
             if (isFullyConnected(state) || isNotConnected(state)) {
-                BlockState blockState =
-                        isFullyConnected(state) ? this.getDefaultState() : this.dotState;
+                BlockState blockState = isFullyConnected(state) ? this.getDefaultState() : this.dotState;
                 // blockState = (BlockState) blockState.with(POWER, (Integer) state.get(POWER));
                 blockState = (BlockState) blockState.with(POWERED, (Boolean) state.get(POWERED));
                 blockState = this.getPlacementState(world, blockState, pos);
@@ -592,9 +592,11 @@ public class IndicatorLightBlock extends ApertureBlock implements BlockEntityPro
             BlockPos blockPos = pos.offset(direction);
             if (((WireConnection) oldState
                     .get((Property<WireConnection>) DIRECTION_TO_WIRE_CONNECTION_PROPERTY
-                            .get(direction))).isConnected() != ((WireConnection) newState.get(
-                                    (Property<WireConnection>) DIRECTION_TO_WIRE_CONNECTION_PROPERTY
-                                            .get(direction))).isConnected()
+                            .get(direction)))
+                    .isConnected() != ((WireConnection) newState.get(
+                            (Property<WireConnection>) DIRECTION_TO_WIRE_CONNECTION_PROPERTY
+                                    .get(direction)))
+                            .isConnected()
                     && world.getBlockState(blockPos).isSolidBlock(world, blockPos)) {
                 world.updateNeighborsExcept(blockPos, newState.getBlock(), direction.getOpposite());
             }
@@ -618,19 +620,18 @@ public class IndicatorLightBlock extends ApertureBlock implements BlockEntityPro
                 Block.createCuboidShape(3.0, 0.0, 3.0, 13.0, 1.0, 16.0), Direction.EAST,
                 Block.createCuboidShape(3.0, 0.0, 3.0, 16.0, 1.0, 13.0), Direction.WEST,
                 Block.createCuboidShape(0.0, 0.0, 3.0, 13.0, 1.0, 13.0)));
-        DIRECTION_TO_UP_SHAPE =
-                Maps.newEnumMap(ImmutableMap.of(Direction.NORTH,
-                        VoxelShapes.union((VoxelShape) DIRECTION_TO_SIDE_SHAPE.get(Direction.NORTH),
-                                Block.createCuboidShape(3.0, 0.0, 0.0, 13.0, 16.0, 1.0)),
-                        Direction.SOUTH,
-                        VoxelShapes.union((VoxelShape) DIRECTION_TO_SIDE_SHAPE.get(Direction.SOUTH),
-                                Block.createCuboidShape(3.0, 0.0, 15.0, 13.0, 16.0, 16.0)),
-                        Direction.EAST,
-                        VoxelShapes.union((VoxelShape) DIRECTION_TO_SIDE_SHAPE.get(Direction.EAST),
-                                Block.createCuboidShape(15.0, 0.0, 3.0, 16.0, 16.0, 13.0)),
-                        Direction.WEST,
-                        VoxelShapes.union((VoxelShape) DIRECTION_TO_SIDE_SHAPE.get(Direction.WEST),
-                                Block.createCuboidShape(0.0, 0.0, 3.0, 1.0, 16.0, 13.0))));
+        DIRECTION_TO_UP_SHAPE = Maps.newEnumMap(ImmutableMap.of(Direction.NORTH,
+                VoxelShapes.union((VoxelShape) DIRECTION_TO_SIDE_SHAPE.get(Direction.NORTH),
+                        Block.createCuboidShape(3.0, 0.0, 0.0, 13.0, 16.0, 1.0)),
+                Direction.SOUTH,
+                VoxelShapes.union((VoxelShape) DIRECTION_TO_SIDE_SHAPE.get(Direction.SOUTH),
+                        Block.createCuboidShape(3.0, 0.0, 15.0, 13.0, 16.0, 16.0)),
+                Direction.EAST,
+                VoxelShapes.union((VoxelShape) DIRECTION_TO_SIDE_SHAPE.get(Direction.EAST),
+                        Block.createCuboidShape(15.0, 0.0, 3.0, 16.0, 16.0, 13.0)),
+                Direction.WEST,
+                VoxelShapes.union((VoxelShape) DIRECTION_TO_SIDE_SHAPE.get(Direction.WEST),
+                        Block.createCuboidShape(0.0, 0.0, 3.0, 1.0, 16.0, 13.0))));
         SHAPES = Maps.newHashMap();
     }
 
