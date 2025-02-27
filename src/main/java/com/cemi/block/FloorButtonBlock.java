@@ -1,7 +1,9 @@
 package com.cemi.block;
 
 import org.jetbrains.annotations.Nullable;
+
 import com.cemi.block.entity.ApertureFloorButtonBlockEntity;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockEntityProvider;
 import net.minecraft.block.BlockRenderType;
@@ -25,27 +27,30 @@ import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 import net.minecraft.world.event.GameEvent;
 
-public class ApertureFloorButton extends ApertureBlock implements BlockEntityProvider {
+public class FloorButtonBlock extends ApertureBlock implements BlockEntityProvider {
 
     public static final int MAX_POWER = 127;
     public static final BooleanProperty POWERED = Properties.POWERED;
-    protected static final Box COLLIDER =
-            new Box(-0.3125D, 0.0D, -0.3125D, 1.3125D, 0.375D, 1.3125D);
-    protected static final VoxelShape PRESSED_SHAPE =
-            Block.createCuboidShape(-5.0D, 0.0D, -5.0D, 21.0D, 4.0D, 21.0D);
-    protected static final VoxelShape DEFAULT_SHAPE =
-            Block.createCuboidShape(-5.0D, 0.0D, -5.0D, 21.0D, 5.0D, 21.0D);
+    protected static final Box COLLIDER = new Box(-0.3125D, 0.0D, -0.3125D, 1.3125D, 0.375D, 1.3125D);
+    protected static final VoxelShape PRESSED_SHAPE = Block.createCuboidShape(-5.0D, 0.0D, -5.0D, 21.0D, 4.0D, 21.0D);
+    protected static final VoxelShape DEFAULT_SHAPE = Block.createCuboidShape(-5.0D, 0.0D, -5.0D, 21.0D, 5.0D, 21.0D);
 
     // standard, cube, sphere, old buttons
-    // public static final IntProperty BUTTON_TYPE = IntProperty.of("button_type", 0, 3);
+    // public static final IntProperty BUTTON_TYPE = IntProperty.of("button_type",
+    // 0, 3);
 
-    public ApertureFloorButton(String name, Settings settings) {
-        super(name, settings, true);
+    public FloorButtonBlock(String name, Settings settings) {
+        super(name, settings);
     }
 
     public VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos,
             ShapeContext context) {
         return this.getRedstoneOutput(state) > 0 ? PRESSED_SHAPE : DEFAULT_SHAPE;
+    }
+
+    @Override
+    public boolean emitsRedstonePower(BlockState state) {
+        return true;
     }
 
     @Override
@@ -137,11 +142,13 @@ public class ApertureFloorButton extends ApertureBlock implements BlockEntityPro
         }
 
         if (!isPowered && hasPositiveOutput) {
-            // world.playSound((PlayerEntity) null, pos, this.blockSetType.pressurePlateClickOff(),
+            // world.playSound((PlayerEntity) null, pos,
+            // this.blockSetType.pressurePlateClickOff(),
             // SoundCategory.BLOCKS);
             world.emitGameEvent(entity, GameEvent.BLOCK_DEACTIVATE, pos);
         } else if (isPowered && !hasPositiveOutput) {
-            // world.playSound((PlayerEntity) null, pos, this.blockSetType.pressurePlateClickOn(),
+            // world.playSound((PlayerEntity) null, pos,
+            // this.blockSetType.pressurePlateClickOn(),
             // SoundCategory.BLOCKS);
             world.emitGameEvent(entity, GameEvent.BLOCK_ACTIVATE, pos);
         }
@@ -168,6 +175,6 @@ public class ApertureFloorButton extends ApertureBlock implements BlockEntityPro
 
     @Override
     protected void appendProperties(Builder<Block, BlockState> builder) {
-        builder.add(new Property[] {POWERED});
+        builder.add(new Property[] { POWERED });
     }
 }
