@@ -2,8 +2,13 @@ package com.cemi.item;
 
 import java.util.function.Consumer;
 import java.util.function.Supplier;
+
+import com.cemi.block.ApertureBlock;
 import com.cemi.client.render.item.ApertureGeoItemsRenderer;
+
+import net.minecraft.block.Block;
 import net.minecraft.client.render.item.BuiltinModelItemRenderer;
+import net.minecraft.item.BlockItem;
 import software.bernie.geckolib.animatable.GeoItem;
 import software.bernie.geckolib.animatable.SingletonGeoAnimatable;
 import software.bernie.geckolib.animatable.client.RenderProvider;
@@ -13,12 +18,14 @@ import software.bernie.geckolib.core.animation.AnimationController;
 import software.bernie.geckolib.core.object.PlayState;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
-public class ApertureGeoItem extends ApertureItem implements GeoItem {
-
+public class ApertureGeoItem extends BlockItem implements GeoItem {
+    private String name;
     private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
+    private final Supplier<Object> renderProvider = GeoItem.makeRenderer(this);
 
-    public ApertureGeoItem(String name, Settings settings) {
-        super(name, settings);
+    public ApertureGeoItem(ApertureBlock block, Settings settings) {
+        super(block, settings);
+        this.name = block.getBlockName();
         SingletonGeoAnimatable.registerSyncedAnimatable(this);
     }
 
@@ -46,7 +53,6 @@ public class ApertureGeoItem extends ApertureItem implements GeoItem {
 
     @Override
     public Supplier<Object> getRenderProvider() {
-        return () -> this;
+        return this.renderProvider;
     }
-
 }

@@ -41,10 +41,11 @@ public class ApertureItemGroups {
             .icon(() -> new ItemStack(ApertureBlocks.INDICATOR_LIGHT))
             .displayName(Text.translatable("itemGroup." + ApertureCraft.MOD_ID + ".aperture_logic"))
             .entries((context, entries) -> {
+                entries.add(ApertureBlocks.FLOOR_BUTTON);
                 entries.add(ApertureBlocks.INDICATOR_LIGHT);
                 entries.add(ApertureBlocks.INDICATOR);
                 entries.add(ApertureBlocks.DOOR);
-                // entries.add(ApertureBlocks.BUTTON);
+                entries.add(ApertureBlocks.CUBE_DROPPER);
             }).build();
 
     public static void registerItemGroups() {
@@ -55,6 +56,5 @@ public class ApertureItemGroups {
         Registry.register(Registries.ITEM_GROUP,
                 new Identifier(ApertureCraft.MOD_ID, "aperture_logic"), APERTURE_LOGIC);
     }
-
 
 }
