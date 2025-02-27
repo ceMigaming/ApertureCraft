@@ -1,8 +1,9 @@
 {
-  "parent": "minecraft:item/generated",
-  "textures": {
-    "layer0": "aperturecraft:item/indicator_light"
-  },
+  "parent": "builtin/entity",
+  "texture_size": [
+    256,
+    256
+  ],
   "display": {
     "thirdperson_righthand": {
       "rotation": [
@@ -12,8 +13,8 @@
       ],
       "translation": [
         0,
-        0,
-        0
+        -9,
+        -7.5
       ],
       "scale": [
         0.5,
@@ -29,8 +30,8 @@
       ],
       "translation": [
         0,
-        0,
-        0
+        -9,
+        -7.5
       ],
       "scale": [
         -0.5,
@@ -45,14 +46,14 @@
         0
       ],
       "translation": [
-        0,
-        0,
-        0
+        -1.5,
+        -4.5,
+        -0.25
       ],
       "scale": [
-        1,
-        1,
-        1
+        0.25,
+        0.25,
+        0.25
       ]
     },
     "firstperson_lefthand": {
@@ -62,21 +63,21 @@
         0
       ],
       "translation": [
-        0,
-        0,
-        0
+        -1.5,
+        -4.5,
+        -0.25
       ],
       "scale": [
-        -1,
-        1,
-        1
+        -0.25,
+        0.25,
+        0.25
       ]
     },
     "ground": {
       "translation": [
         0,
-        0,
-        0
+        -4.25,
+        1.75
       ],
       "scale": [
         10.5,
@@ -86,31 +87,31 @@
     },
     "gui": {
       "rotation": [
-        0,
-        0,
+        28,
+        140,
         0
       ],
       "translation": [
-        0,
-        0,
+        -2,
+        -4,
         0
       ],
       "scale": [
-        0.8,
-        0.8,
-        0.8
+        0.3,
+        0.3,
+        0.3
       ]
     },
     "head": {
       "rotation": [
         0,
-        0,
+        -180,
         0
       ],
       "translation": [
         0,
-        0,
-        0
+        -6.75,
+        -8.25
       ],
       "scale": [
         0.5,
@@ -125,14 +126,14 @@
         0
       ],
       "translation": [
-        0,
-        0,
+        0.5,
+        -5.75,
         0
       ],
       "scale": [
-        1,
-        1,
-        1
+        0.3,
+        0.3,
+        0.3
       ]
     }
   }

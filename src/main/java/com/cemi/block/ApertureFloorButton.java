@@ -40,7 +40,7 @@ public class ApertureFloorButton extends ApertureBlock implements BlockEntityPro
     // public static final IntProperty BUTTON_TYPE = IntProperty.of("button_type", 0, 3);
 
     public ApertureFloorButton(String name, Settings settings) {
-        super(name, settings);
+        super(name, settings, true);
     }
 
     public VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos,

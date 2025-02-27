@@ -1,7 +1,7 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "aperturecraft:item/indicator_light"
+    "layer0": "aperturecraft:item/indicator"
   },
   "display": {
     "thirdperson_righthand": {
