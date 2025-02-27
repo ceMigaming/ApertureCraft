@@ -1,6 +1,7 @@
 package com.cemi.block;
 
 import com.cemi.ApertureCraft;
+import com.cemi.item.ApertureGeoItem;
 
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.minecraft.block.Block;
@@ -11,7 +12,7 @@ import net.minecraft.util.Identifier;
 
 public class ApertureBlock extends Block {
 
-    protected String name; 
+    protected String name;
     protected boolean canPlacePortals = true;
     protected boolean usesGeoItem = false;
 
@@ -23,13 +24,27 @@ public class ApertureBlock extends Block {
         }
     }
 
+    public ApertureBlock(String name, Settings settings, boolean usesGeoItem) {
+        super(settings);
+        this.name = name;
+        if (name.contains("metal")) {
+            canPlacePortals = false;
+        }
+        this.usesGeoItem = usesGeoItem;
+    }
+
+    public String getBlockName() {
+        return name;
+    }
+
     public void register() {
         Registry.register(Registries.BLOCK, new Identifier(ApertureCraft.MOD_ID, name), this);
-        if(usesGeoItem) {
-
+        if (usesGeoItem) {
+            Registry.register(Registries.ITEM, new Identifier(ApertureCraft.MOD_ID, name),
+                    new ApertureGeoItem(this, new FabricItemSettings()));
         } else {
             Registry.register(Registries.ITEM, new Identifier(ApertureCraft.MOD_ID, name),
-            new BlockItem(this, new FabricItemSettings()));
+                    new BlockItem(this, new FabricItemSettings()));
         }
     }
 

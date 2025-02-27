@@ -11,13 +11,11 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.ShapeContext;
 import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.state.StateManager.Builder;
 import net.minecraft.state.property.BooleanProperty;
-import net.minecraft.state.property.Properties;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.random.Random;
@@ -30,14 +28,13 @@ public class ApertureCubeDropperBlock extends ApertureBlock implements BlockEnti
 
     public static final BooleanProperty IS_SLAVE = BooleanProperty.of("slave");
     public static final BooleanProperty CAN_GO_THROUGH = BooleanProperty.of("can_go_through");
-    public static final BooleanProperty TRIGGERED = Properties.TRIGGERED;
 
     private static final VoxelShape SHAPE = VoxelShapes.cuboid(0f, 0f, 0f, 16f / 16f, 1f, 16f / 16f);
 
     private final EntityType<?> spawnableEntity;
 
     public ApertureCubeDropperBlock(String name, Settings settings, EntityType<?> spawnableEntity) {
-        super(name, settings);
+        super(name, settings, true);
         this.spawnableEntity = spawnableEntity;
         setDefaultState(getDefaultState().with(IS_SLAVE, false).with(CAN_GO_THROUGH, true));
     }
@@ -149,19 +146,25 @@ public class ApertureCubeDropperBlock extends ApertureBlock implements BlockEnti
             return;
         }
         if (world.isReceivingRedstonePower(pos)) {
-            // TODO add animations and entity binding - kill old entity on new entity spawn
-            ApertureCubeDropperBlockEntity blockEntity = (ApertureCubeDropperBlockEntity) world.getBlockEntity(pos);
-            blockEntity.
             BlockPos masterPos = ((ApertureCubeDropperBlockEntity) world.getBlockEntity(pos)).getMasterPos();
-            world.scheduleBlockTick(masterPos, this, 4);
+            System.out.println(masterPos);
+            world.scheduleBlockTick(masterPos, this, 0);
         }
     }
 
     @Override
     public void scheduledTick(BlockState state, ServerWorld world, BlockPos pos, Random random) {
-        Entity spawnableEntity = this.spawnableEntity.create(world);
-        spawnableEntity.refreshPositionAndAngles(pos.getX() + 0.5, pos.getY() + 1, pos.getZ() + 0.5, 0, 0);
-        world.spawnEntity(spawnableEntity);
+        ApertureCubeDropperBlockEntity blockEntity = (ApertureCubeDropperBlockEntity) world.getBlockEntity(pos);
+        BlockPos masterPos = ((ApertureCubeDropperBlockEntity) world.getBlockEntity(pos)).getMasterPos();
+        if (!blockEntity.getTriggered()) {
+            blockEntity.triggerAnim("controller", "open");
+            blockEntity.spawnEntity(spawnableEntity);
+            blockEntity.setTriggered(true);
+            world.scheduleBlockTick(masterPos, this, 4);
+        } else {
+            blockEntity.triggerAnim("controller", "close");
+            blockEntity.setTriggered(false);
+        }
     }
 
     @Override

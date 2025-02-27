@@ -26,19 +26,13 @@ public class CubeDropperEntityRenderer extends GeoBlockRenderer<ApertureCubeDrop
     public void defaultRender(MatrixStack poseStack, ApertureCubeDropperBlockEntity animatable,
             VertexConsumerProvider bufferSource, @Nullable RenderLayer renderType, @Nullable VertexConsumer buffer,
             float yaw, float partialTick, int packedLight) {
+                BlockState state = animatable.getWorld().getBlockState(animatable.getPos());
+                if (state.getBlock() == ApertureBlocks.CUBE_DROPPER && state.get(ApertureCubeDropperBlock.IS_SLAVE)) {
+                    return;
+                }
+                poseStack.push();
+                poseStack.translate(0, 0.5, 0);
         super.defaultRender(poseStack, animatable, bufferSource, renderType, buffer, yaw, partialTick, packedLight);
-    }
-
-    @Override
-    public void render(ApertureCubeDropperBlockEntity animatable, float partialTick, MatrixStack poseStack,
-            VertexConsumerProvider bufferSource, int packedLight, int packedOverlay) {
-        BlockState state = animatable.getWorld().getBlockState(animatable.getPos());
-        if (state.getBlock() == ApertureBlocks.CUBE_DROPPER && state.get(ApertureCubeDropperBlock.IS_SLAVE)) {
-            return;
-        }
-        poseStack.push();
-        poseStack.translate(0, 0.5, 0);
-        super.render(animatable, partialTick, poseStack, bufferSource, packedLight, packedOverlay);
         poseStack.pop();
     }
 }

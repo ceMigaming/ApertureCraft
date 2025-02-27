@@ -1,10 +1,15 @@
 package com.cemi.block.entity;
 
+import java.util.UUID;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityType;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Box;
 import software.bernie.geckolib.animatable.GeoBlockEntity;
 import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.core.animation.AnimatableManager;
@@ -27,6 +32,8 @@ public class ApertureCubeDropperBlockEntity extends BlockEntity implements GeoBl
             LoopType.PLAY_ONCE);
 
     private BlockPos masterPos;
+    private UUID trackedEntityUuid;
+    private boolean triggered = false;
 
     private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
 
@@ -59,12 +66,40 @@ public class ApertureCubeDropperBlockEntity extends BlockEntity implements GeoBl
     @Override
     protected void writeNbt(NbtCompound nbt) {
         nbt.putLong("masterPos", this.masterPos.asLong());
+        if (trackedEntityUuid != null)
+            nbt.putString("trackedEntity", this.trackedEntityUuid.toString());
         super.writeNbt(nbt);
     }
 
     @Override
     public void readNbt(NbtCompound nbt) {
         this.masterPos = BlockPos.fromLong(nbt.getLong("masterPos"));
+        if (nbt.contains("trackedEntity"))
+            this.trackedEntityUuid = UUID.fromString(nbt.getString("trackedEntity"));
         super.readNbt(nbt);
+    }
+
+    public void spawnEntity(EntityType<?> spawnableEntity) {
+        var trackedEntityOpt = world
+                .getEntitiesByType(spawnableEntity, Box.enclosing(pos.add(-100, -100, -100), pos.add(100, 100, 100)),
+                        en -> en.getUuid().equals(trackedEntityUuid))
+                .stream().findFirst();
+        var trackedEntity = trackedEntityOpt.isPresent() ? trackedEntityOpt.get() : null;
+        // var trackedEntity = this.world.getEntityById(trackedEntityUuid);
+        if (trackedEntity != null) {
+            trackedEntity.kill();
+        }
+        trackedEntity = spawnableEntity.create(world);
+        trackedEntity.refreshPositionAndAngles(pos.getX() + 0.5, pos.getY() + 1, pos.getZ() + 0.5, 0, 0);
+        world.spawnEntity(trackedEntity);
+        trackedEntityUuid = trackedEntity.getUuid();
+    }
+
+    public void setTriggered(boolean triggered) {
+        this.triggered = triggered;
+    }
+
+    public boolean getTriggered() {
+        return this.triggered;
     }
 }

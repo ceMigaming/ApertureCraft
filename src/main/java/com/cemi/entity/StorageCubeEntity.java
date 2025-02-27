@@ -8,6 +8,7 @@ import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.registry.tag.DamageTypeTags;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Arm;
 import net.minecraft.util.Hand;
@@ -42,7 +43,8 @@ public class StorageCubeEntity extends MobEntity implements GeoEntity, Pickable 
     }
 
     @Override
-    public void equipStack(EquipmentSlot slot, ItemStack stack) {}
+    public void equipStack(EquipmentSlot slot, ItemStack stack) {
+    }
 
     @Override
     public Iterable<ItemStack> getArmorItems() {
@@ -60,7 +62,8 @@ public class StorageCubeEntity extends MobEntity implements GeoEntity, Pickable 
     }
 
     @Override
-    public void registerControllers(final AnimatableManager.ControllerRegistrar controllers) {}
+    public void registerControllers(final AnimatableManager.ControllerRegistrar controllers) {
+    }
 
     @Override
     public AnimatableInstanceCache getAnimatableInstanceCache() {
@@ -104,7 +107,7 @@ public class StorageCubeEntity extends MobEntity implements GeoEntity, Pickable 
 
     @Override
     public boolean damage(DamageSource source, float amount) {
-        return false;
+        return source.isIn(DamageTypeTags.BYPASSES_INVULNERABILITY) ? super.damage(source, amount) : false;
     }
 
 }
