@@ -54,6 +54,198 @@
     },
     {   "when": { "west": "up" },
         "apply": { "model": "aperturecraft:block/indicator_light_up", "y": 270 }
+    },
+    {   "when": { "north": "side_horizontal" },
+        "apply": { "model": "aperturecraft:block/indicator_light_side_dot" }
+    },
+    {   "when": { "east": "side_horizontal" },
+        "apply": { "model": "aperturecraft:block/indicator_light_side_dot", "y": 90 }
+    },
+    {   "when": { "south": "side_horizontal" },
+        "apply": { "model": "aperturecraft:block/indicator_light_side_dot", "y": 180 }
+    },
+    {   "when": { "west": "side_horizontal" },
+        "apply": { "model": "aperturecraft:block/indicator_light_side_dot", "y": 270 }
+    },
+    {   "when": { "north": "side_horizontal" },
+        "apply": { "model": "aperturecraft:block/indicator_light_side_left" }
+    },
+    {   "when": { "east": "side_horizontal" },
+        "apply": { "model": "aperturecraft:block/indicator_light_side_left", "y": 90 }
+    },
+    {   "when": { "south": "side_horizontal" },
+        "apply": { "model": "aperturecraft:block/indicator_light_side_left", "y": 180 }
+    },
+    {   "when": { "west": "side_horizontal" },
+        "apply": { "model": "aperturecraft:block/indicator_light_side_left", "y": 270 }
+    },
+    {   "when": { "north": "side_horizontal" },
+        "apply": { "model": "aperturecraft:block/indicator_light_side_right" }
+    },
+    {   "when": { "east": "side_horizontal" },
+        "apply": { "model": "aperturecraft:block/indicator_light_side_right", "y": 90 }
+    },
+    {   "when": { "south": "side_horizontal" },
+        "apply": { "model": "aperturecraft:block/indicator_light_side_right", "y": 180 }
+    },
+    {   "when": { "west": "side_horizontal" },
+        "apply": { "model": "aperturecraft:block/indicator_light_side_right", "y": 270 }
+    },
+    {   "when": { "north": "side_vertical" },
+        "apply": { "model": "aperturecraft:block/indicator_light_up" }
+    },
+    {   "when": { "east": "side_vertical" },
+        "apply": { "model": "aperturecraft:block/indicator_light_up", "y": 90 }
+    },
+    {   "when": { "south": "side_vertical" },
+        "apply": { "model": "aperturecraft:block/indicator_light_up", "y": 180 }
+    },
+    {   "when": { "west": "side_vertical" },
+        "apply": { "model": "aperturecraft:block/indicator_light_up", "y": 270 }
+    },
+    {   "when": { "north": "side_up_right" },
+        "apply": { "model": "aperturecraft:block/indicator_light_side_dot" }
+    },
+    {   "when": { "east": "side_up_right" },
+        "apply": { "model": "aperturecraft:block/indicator_light_side_dot", "y": 90 }
+    },
+    {   "when": { "south": "side_up_right" },
+        "apply": { "model": "aperturecraft:block/indicator_light_side_dot", "y": 180 }
+    },
+    {   "when": { "west": "side_up_right" },
+        "apply": { "model": "aperturecraft:block/indicator_light_side_dot", "y": 270 }
+    },
+    {   "when": { "north": "side_up_right" },
+        "apply": { "model": "aperturecraft:block/indicator_light_side_up" }
+    },
+    {   "when": { "east": "side_up_right" },
+        "apply": { "model": "aperturecraft:block/indicator_light_side_up", "y": 90 }
+    },
+    {   "when": { "south": "side_up_right" },
+        "apply": { "model": "aperturecraft:block/indicator_light_side_up", "y": 180 }
+    },
+    {   "when": { "west": "side_up_right" },
+        "apply": { "model": "aperturecraft:block/indicator_light_side_up", "y": 270 }
+    },
+    {   "when": { "north": "side_up_right" },
+        "apply": { "model": "aperturecraft:block/indicator_light_side_right" }
+    },
+    {   "when": { "east": "side_up_right" },
+        "apply": { "model": "aperturecraft:block/indicator_light_side_right", "y": 90 }
+    },
+    {   "when": { "south": "side_up_right" },
+        "apply": { "model": "aperturecraft:block/indicator_light_side_right", "y": 180 }
+    },
+    {   "when": { "west": "side_up_right" },
+        "apply": { "model": "aperturecraft:block/indicator_light_side_right", "y": 270 }
+    },
+    {   "when": { "north": "side_up_left" },
+        "apply": { "model": "aperturecraft:block/indicator_light_side_dot" }
+    },
+    {   "when": { "east": "side_up_left" },
+        "apply": { "model": "aperturecraft:block/indicator_light_side_dot", "y": 90 }
+    },
+    {   "when": { "south": "side_up_left" },
+        "apply": { "model": "aperturecraft:block/indicator_light_side_dot", "y": 180 }
+    },
+    {   "when": { "west": "side_up_left" },
+        "apply": { "model": "aperturecraft:block/indicator_light_side_dot", "y": 270 }
+    },
+    {   "when": { "north": "side_up_left" },
+        "apply": { "model": "aperturecraft:block/indicator_light_side_up" }
+    },
+    {   "when": { "east": "side_up_left" },
+        "apply": { "model": "aperturecraft:block/indicator_light_side_up", "y": 90 }
+    },
+    {   "when": { "south": "side_up_left" },
+        "apply": { "model": "aperturecraft:block/indicator_light_side_up", "y": 180 }
+    },
+    {   "when": { "west": "side_up_left" },
+        "apply": { "model": "aperturecraft:block/indicator_light_side_up", "y": 270 }
+    },
+    {   "when": { "north": "side_up_left" },
+        "apply": { "model": "aperturecraft:block/indicator_light_side_left" }
+    },
+    {   "when": { "east": "side_up_left" },
+        "apply": { "model": "aperturecraft:block/indicator_light_side_left", "y": 90 }
+    },
+    {   "when": { "south": "side_up_left" },
+        "apply": { "model": "aperturecraft:block/indicator_light_side_left", "y": 180 }
+    },
+    {   "when": { "west": "side_up_left" },
+        "apply": { "model": "aperturecraft:block/indicator_light_side_left", "y": 270 }
+    },
+    {   "when": { "north": "side_down_right" },
+        "apply": { "model": "aperturecraft:block/indicator_light_side_dot" }
+    },
+    {   "when": { "east": "side_down_right" },
+        "apply": { "model": "aperturecraft:block/indicator_light_side_dot", "y": 90 }
+    },
+    {   "when": { "south": "side_down_right" },
+        "apply": { "model": "aperturecraft:block/indicator_light_side_dot", "y": 180 }
+    },
+    {   "when": { "west": "side_down_right" },
+        "apply": { "model": "aperturecraft:block/indicator_light_side_dot", "y": 270 }
+    },
+    {   "when": { "north": "side_down_right" },
+        "apply": { "model": "aperturecraft:block/indicator_light_side_down" }
+    },
+    {   "when": { "east": "side_down_right" },
+        "apply": { "model": "aperturecraft:block/indicator_light_side_down", "y": 90 }
+    },
+    {   "when": { "south": "side_down_right" },
+        "apply": { "model": "aperturecraft:block/indicator_light_side_down", "y": 180 }
+    },
+    {   "when": { "west": "side_down_right" },
+        "apply": { "model": "aperturecraft:block/indicator_light_side_down", "y": 270 }
+    },
+    {   "when": { "north": "side_down_right" },
+        "apply": { "model": "aperturecraft:block/indicator_light_side_right" }
+    },
+    {   "when": { "east": "side_down_right" },
+        "apply": { "model": "aperturecraft:block/indicator_light_side_right", "y": 90 }
+    },
+    {   "when": { "south": "side_down_right" },
+        "apply": { "model": "aperturecraft:block/indicator_light_side_right", "y": 180 }
+    },
+    {   "when": { "west": "side_down_right" },
+        "apply": { "model": "aperturecraft:block/indicator_light_side_right", "y": 270 }
+    },
+    {   "when": { "north": "side_down_left" },
+        "apply": { "model": "aperturecraft:block/indicator_light_side_dot" }
+    },
+    {   "when": { "east": "side_down_left" },
+        "apply": { "model": "aperturecraft:block/indicator_light_side_dot", "y": 90 }
+    },
+    {   "when": { "south": "side_down_left" },
+        "apply": { "model": "aperturecraft:block/indicator_light_side_dot", "y": 180 }
+    },
+    {   "when": { "west": "side_down_left" },
+        "apply": { "model": "aperturecraft:block/indicator_light_side_dot", "y": 270 }
+    },
+    {   "when": { "north": "side_down_left" },
+        "apply": { "model": "aperturecraft:block/indicator_light_side_down" }
+    },
+    {   "when": { "east": "side_down_left" },
+        "apply": { "model": "aperturecraft:block/indicator_light_side_down", "y": 90 }
+    },
+    {   "when": { "south": "side_down_left" },
+        "apply": { "model": "aperturecraft:block/indicator_light_side_down", "y": 180 }
+    },
+    {   "when": { "west": "side_down_left" },
+        "apply": { "model": "aperturecraft:block/indicator_light_side_down", "y": 270 }
+    },
+    {   "when": { "north": "side_down_left" },
+        "apply": { "model": "aperturecraft:block/indicator_light_side_left" }
+    },
+    {   "when": { "east": "side_down_left" },
+        "apply": { "model": "aperturecraft:block/indicator_light_side_left", "y": 90 }
+    },
+    {   "when": { "south": "side_down_left" },
+        "apply": { "model": "aperturecraft:block/indicator_light_side_left", "y": 180 }
+    },
+    {   "when": { "west": "side_down_left" },
+        "apply": { "model": "aperturecraft:block/indicator_light_side_left", "y": 270 }
     }
 ]
 }

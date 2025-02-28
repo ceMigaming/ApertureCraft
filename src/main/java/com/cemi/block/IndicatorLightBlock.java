@@ -5,6 +5,8 @@ import java.util.Map;
 import java.util.Set;
 import org.jetbrains.annotations.Nullable;
 import com.cemi.block.entity.IndicatorLightBlockEntity;
+import com.cemi.block.enums.IndicatorLightConnection;
+import com.cemi.state.property.ApertureProperties;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -21,7 +23,6 @@ import net.minecraft.block.RepeaterBlock;
 import net.minecraft.block.ShapeContext;
 import net.minecraft.block.TrapdoorBlock;
 import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.block.enums.WireConnection;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.state.StateManager;
@@ -48,13 +49,13 @@ import net.minecraft.world.WorldView;
 @SuppressWarnings("deprecation")
 public class IndicatorLightBlock extends ApertureBlock implements BlockEntityProvider {
     public static final MapCodec<RedstoneWireBlock> CODEC = createCodec(RedstoneWireBlock::new);
-    public static final EnumProperty<WireConnection> WIRE_CONNECTION_NORTH;
-    public static final EnumProperty<WireConnection> WIRE_CONNECTION_EAST;
-    public static final EnumProperty<WireConnection> WIRE_CONNECTION_SOUTH;
-    public static final EnumProperty<WireConnection> WIRE_CONNECTION_WEST;
+    public static final EnumProperty<IndicatorLightConnection> WIRE_CONNECTION_NORTH;
+    public static final EnumProperty<IndicatorLightConnection> WIRE_CONNECTION_EAST;
+    public static final EnumProperty<IndicatorLightConnection> WIRE_CONNECTION_SOUTH;
+    public static final EnumProperty<IndicatorLightConnection> WIRE_CONNECTION_WEST;
     // public static final IntProperty POWER;
     public static final BooleanProperty POWERED;
-    public static final Map<Direction, EnumProperty<WireConnection>> DIRECTION_TO_WIRE_CONNECTION_PROPERTY;
+    public static final Map<Direction, EnumProperty<IndicatorLightConnection>> DIRECTION_TO_WIRE_CONNECTION_PROPERTY;
     protected static final int field_31222 = 1;
     protected static final int field_31223 = 3;
     protected static final int field_31224 = 13;
@@ -75,17 +76,17 @@ public class IndicatorLightBlock extends ApertureBlock implements BlockEntityPro
         super("indicator_light", settings);
         this.setDefaultState(
                 (BlockState) ((BlockState) ((BlockState) ((BlockState) ((BlockState) ((BlockState) this.stateManager
-                        .getDefaultState()).with(WIRE_CONNECTION_NORTH, WireConnection.NONE))
-                        .with(WIRE_CONNECTION_EAST, WireConnection.NONE))
-                        .with(WIRE_CONNECTION_SOUTH, WireConnection.NONE))
-                        .with(WIRE_CONNECTION_WEST, WireConnection.NONE))
+                        .getDefaultState()).with(WIRE_CONNECTION_NORTH, IndicatorLightConnection.NONE))
+                        .with(WIRE_CONNECTION_EAST, IndicatorLightConnection.NONE))
+                        .with(WIRE_CONNECTION_SOUTH, IndicatorLightConnection.NONE))
+                        .with(WIRE_CONNECTION_WEST, IndicatorLightConnection.NONE))
                         .with(POWERED, false));
         // .with(POWER, 0));
         this.dotState = (BlockState) ((BlockState) ((BlockState) ((BlockState) this
-                .getDefaultState().with(WIRE_CONNECTION_NORTH, WireConnection.SIDE))
-                .with(WIRE_CONNECTION_EAST, WireConnection.SIDE))
-                .with(WIRE_CONNECTION_SOUTH, WireConnection.SIDE))
-                .with(WIRE_CONNECTION_WEST, WireConnection.SIDE);
+                .getDefaultState().with(WIRE_CONNECTION_NORTH, IndicatorLightConnection.SIDE))
+                .with(WIRE_CONNECTION_EAST, IndicatorLightConnection.SIDE))
+                .with(WIRE_CONNECTION_SOUTH, IndicatorLightConnection.SIDE))
+                .with(WIRE_CONNECTION_WEST, IndicatorLightConnection.SIDE);
         UnmodifiableIterator<BlockState> statesIterator = this.getStateManager().getStates().iterator();
 
         while (statesIterator.hasNext()) {
@@ -105,13 +106,13 @@ public class IndicatorLightBlock extends ApertureBlock implements BlockEntityPro
 
         while (var3.hasNext()) {
             Direction direction = (Direction) var3.next();
-            WireConnection wireConnection = (WireConnection) state
-                    .get((Property<WireConnection>) DIRECTION_TO_WIRE_CONNECTION_PROPERTY
+            IndicatorLightConnection IndicatorLightConnection = (IndicatorLightConnection) state
+                    .get((Property<IndicatorLightConnection>) DIRECTION_TO_WIRE_CONNECTION_PROPERTY
                             .get(direction));
-            if (wireConnection == WireConnection.SIDE) {
+            if (IndicatorLightConnection == IndicatorLightConnection.SIDE) {
                 voxelShape = VoxelShapes.union(voxelShape,
                         (VoxelShape) DIRECTION_TO_SIDE_SHAPE.get(direction));
-            } else if (wireConnection == WireConnection.UP) {
+            } else if (IndicatorLightConnection == IndicatorLightConnection.UP) {
                 voxelShape = VoxelShapes.union(voxelShape,
                         (VoxelShape) DIRECTION_TO_UP_SHAPE.get(direction));
             }
@@ -138,26 +139,26 @@ public class IndicatorLightBlock extends ApertureBlock implements BlockEntityPro
         if (bl && isNotConnected(state)) {
             return state;
         } else {
-            boolean bl2 = ((WireConnection) state.get(WIRE_CONNECTION_NORTH)).isConnected();
-            boolean bl3 = ((WireConnection) state.get(WIRE_CONNECTION_SOUTH)).isConnected();
-            boolean bl4 = ((WireConnection) state.get(WIRE_CONNECTION_EAST)).isConnected();
-            boolean bl5 = ((WireConnection) state.get(WIRE_CONNECTION_WEST)).isConnected();
+            boolean bl2 = ((IndicatorLightConnection) state.get(WIRE_CONNECTION_NORTH)).isConnected();
+            boolean bl3 = ((IndicatorLightConnection) state.get(WIRE_CONNECTION_SOUTH)).isConnected();
+            boolean bl4 = ((IndicatorLightConnection) state.get(WIRE_CONNECTION_EAST)).isConnected();
+            boolean bl5 = ((IndicatorLightConnection) state.get(WIRE_CONNECTION_WEST)).isConnected();
             boolean bl6 = !bl2 && !bl3;
             boolean bl7 = !bl4 && !bl5;
             if (!bl5 && bl6) {
-                state = (BlockState) state.with(WIRE_CONNECTION_WEST, WireConnection.SIDE);
+                state = (BlockState) state.with(WIRE_CONNECTION_WEST, IndicatorLightConnection.SIDE);
             }
 
             if (!bl4 && bl6) {
-                state = (BlockState) state.with(WIRE_CONNECTION_EAST, WireConnection.SIDE);
+                state = (BlockState) state.with(WIRE_CONNECTION_EAST, IndicatorLightConnection.SIDE);
             }
 
             if (!bl2 && bl7) {
-                state = (BlockState) state.with(WIRE_CONNECTION_NORTH, WireConnection.SIDE);
+                state = (BlockState) state.with(WIRE_CONNECTION_NORTH, IndicatorLightConnection.SIDE);
             }
 
             if (!bl3 && bl7) {
-                state = (BlockState) state.with(WIRE_CONNECTION_SOUTH, WireConnection.SIDE);
+                state = (BlockState) state.with(WIRE_CONNECTION_SOUTH, IndicatorLightConnection.SIDE);
             }
 
             return state;
@@ -170,14 +171,14 @@ public class IndicatorLightBlock extends ApertureBlock implements BlockEntityPro
 
         while (var5.hasNext()) {
             Direction direction = (Direction) var5.next();
-            if (!((WireConnection) state
-                    .get((Property<WireConnection>) DIRECTION_TO_WIRE_CONNECTION_PROPERTY
+            if (!((IndicatorLightConnection) state
+                    .get((Property<IndicatorLightConnection>) DIRECTION_TO_WIRE_CONNECTION_PROPERTY
                             .get(direction)))
                     .isConnected()) {
-                WireConnection wireConnection = this.getRenderConnectionType(world, pos, direction, bl);
+                IndicatorLightConnection IndicatorLightConnection = this.getRenderConnectionType(world, pos, direction, bl);
                 state = (BlockState) state
-                        .with((Property<WireConnection>) DIRECTION_TO_WIRE_CONNECTION_PROPERTY
-                                .get(direction), wireConnection);
+                        .with((Property<IndicatorLightConnection>) DIRECTION_TO_WIRE_CONNECTION_PROPERTY
+                                .get(direction), IndicatorLightConnection);
             }
         }
 
@@ -193,17 +194,17 @@ public class IndicatorLightBlock extends ApertureBlock implements BlockEntityPro
         } else if (direction == Direction.UP) {
             return this.getPlacementState(world, state, pos);
         } else {
-            WireConnection wireConnection = this.getRenderConnectionType(world, pos, direction);
-            return wireConnection
-                    .isConnected() == ((WireConnection) state
-                            .get((Property<WireConnection>) DIRECTION_TO_WIRE_CONNECTION_PROPERTY
+            IndicatorLightConnection IndicatorLightConnection = this.getRenderConnectionType(world, pos, direction);
+            return IndicatorLightConnection
+                    .isConnected() == ((IndicatorLightConnection) state
+                            .get((Property<IndicatorLightConnection>) DIRECTION_TO_WIRE_CONNECTION_PROPERTY
                                     .get(direction)))
                             .isConnected()
                     && !isFullyConnected(state)
                             ? (BlockState) state.with(
-                                    (Property<WireConnection>) DIRECTION_TO_WIRE_CONNECTION_PROPERTY
+                                    (Property<IndicatorLightConnection>) DIRECTION_TO_WIRE_CONNECTION_PROPERTY
                                             .get(direction),
-                                    wireConnection)
+                                    IndicatorLightConnection)
                             : this.getPlacementState(world, (BlockState) ((BlockState) this.dotState
                                     .with(POWERED, (Boolean) state.get(POWERED)) /*
                                                                                   * .with(POWER,
@@ -211,25 +212,25 @@ public class IndicatorLightBlock extends ApertureBlock implements BlockEntityPro
                                                                                   * state.get(POWER)
                                                                                   * )
                                                                                   */).with(
-                                            (Property<WireConnection>) DIRECTION_TO_WIRE_CONNECTION_PROPERTY
+                                            (Property<IndicatorLightConnection>) DIRECTION_TO_WIRE_CONNECTION_PROPERTY
                                                     .get(direction),
-                                            wireConnection),
+                                            IndicatorLightConnection),
                                     pos);
         }
     }
 
     private static boolean isFullyConnected(BlockState state) {
-        return ((WireConnection) state.get(WIRE_CONNECTION_NORTH)).isConnected()
-                && ((WireConnection) state.get(WIRE_CONNECTION_SOUTH)).isConnected()
-                && ((WireConnection) state.get(WIRE_CONNECTION_EAST)).isConnected()
-                && ((WireConnection) state.get(WIRE_CONNECTION_WEST)).isConnected();
+        return ((IndicatorLightConnection) state.get(WIRE_CONNECTION_NORTH)).isConnected()
+                && ((IndicatorLightConnection) state.get(WIRE_CONNECTION_SOUTH)).isConnected()
+                && ((IndicatorLightConnection) state.get(WIRE_CONNECTION_EAST)).isConnected()
+                && ((IndicatorLightConnection) state.get(WIRE_CONNECTION_WEST)).isConnected();
     }
 
     private static boolean isNotConnected(BlockState state) {
-        return !((WireConnection) state.get(WIRE_CONNECTION_NORTH)).isConnected()
-                && !((WireConnection) state.get(WIRE_CONNECTION_SOUTH)).isConnected()
-                && !((WireConnection) state.get(WIRE_CONNECTION_EAST)).isConnected()
-                && !((WireConnection) state.get(WIRE_CONNECTION_WEST)).isConnected();
+        return !((IndicatorLightConnection) state.get(WIRE_CONNECTION_NORTH)).isConnected()
+                && !((IndicatorLightConnection) state.get(WIRE_CONNECTION_SOUTH)).isConnected()
+                && !((IndicatorLightConnection) state.get(WIRE_CONNECTION_EAST)).isConnected()
+                && !((IndicatorLightConnection) state.get(WIRE_CONNECTION_WEST)).isConnected();
     }
 
     public void prepare(BlockState state, WorldAccess world, BlockPos pos, int flags,
@@ -239,10 +240,10 @@ public class IndicatorLightBlock extends ApertureBlock implements BlockEntityPro
 
         while (var7.hasNext()) {
             Direction direction = (Direction) var7.next();
-            WireConnection wireConnection = (WireConnection) state
-                    .get((Property<WireConnection>) DIRECTION_TO_WIRE_CONNECTION_PROPERTY
+            IndicatorLightConnection IndicatorLightConnection = (IndicatorLightConnection) state
+                    .get((Property<IndicatorLightConnection>) DIRECTION_TO_WIRE_CONNECTION_PROPERTY
                             .get(direction));
-            if (wireConnection != WireConnection.NONE
+            if (IndicatorLightConnection != IndicatorLightConnection.NONE
                     && !world.getBlockState(mutable.set(pos, direction)).isOf(this)) {
                 mutable.move(Direction.DOWN);
                 BlockState blockState = world.getBlockState(mutable);
@@ -266,13 +267,13 @@ public class IndicatorLightBlock extends ApertureBlock implements BlockEntityPro
 
     }
 
-    private WireConnection getRenderConnectionType(BlockView world, BlockPos pos,
+    private IndicatorLightConnection getRenderConnectionType(BlockView world, BlockPos pos,
             Direction direction) {
         return this.getRenderConnectionType(world, pos, direction,
                 !world.getBlockState(pos.up()).isSolidBlock(world, pos));
     }
 
-    private WireConnection getRenderConnectionType(BlockView world, BlockPos pos,
+    private IndicatorLightConnection getRenderConnectionType(BlockView world, BlockPos pos,
             Direction direction, boolean bl) {
         BlockPos blockPos = pos.offset(direction);
         BlockState blockState = world.getBlockState(blockPos);
@@ -281,16 +282,16 @@ public class IndicatorLightBlock extends ApertureBlock implements BlockEntityPro
                     || this.canRunOnTop(world, blockPos, blockState);
             if (bl2 && connectsTo(world.getBlockState(blockPos.up()))) {
                 if (blockState.isSideSolidFullSquare(world, blockPos, direction.getOpposite())) {
-                    return WireConnection.UP;
+                    return IndicatorLightConnection.UP;
                 }
 
-                return WireConnection.SIDE;
+                return IndicatorLightConnection.SIDE;
             }
         }
 
         return !connectsTo(blockState, direction) && (blockState.isSolidBlock(world, blockPos)
-                || !connectsTo(world.getBlockState(blockPos.down()))) ? WireConnection.NONE
-                        : WireConnection.SIDE;
+                || !connectsTo(world.getBlockState(blockPos.down()))) ? IndicatorLightConnection.NONE
+                        : IndicatorLightConnection.SIDE;
     }
 
     public boolean canPlaceAt(BlockState state, WorldView world, BlockPos pos) {
@@ -469,8 +470,8 @@ public class IndicatorLightBlock extends ApertureBlock implements BlockEntityPro
                 return 0;
             } else {
                 return direction != Direction.UP
-                        && !((WireConnection) this.getPlacementState(world, state, pos).get(
-                                (Property<WireConnection>) DIRECTION_TO_WIRE_CONNECTION_PROPERTY
+                        && !((IndicatorLightConnection) this.getPlacementState(world, state, pos).get(
+                                (Property<IndicatorLightConnection>) DIRECTION_TO_WIRE_CONNECTION_PROPERTY
                                         .get(direction.getOpposite())))
                                 .isConnected() ? 0 : i;
             }
@@ -504,36 +505,36 @@ public class IndicatorLightBlock extends ApertureBlock implements BlockEntityPro
         switch (InnerIndicatorLightBlock.ROTATION[rotation.ordinal()]) {
             case 1:
                 return (BlockState) ((BlockState) ((BlockState) ((BlockState) state.with(
-                        WIRE_CONNECTION_NORTH, (WireConnection) state.get(WIRE_CONNECTION_SOUTH)))
+                        WIRE_CONNECTION_NORTH, (IndicatorLightConnection) state.get(WIRE_CONNECTION_SOUTH)))
                         .with(WIRE_CONNECTION_EAST,
-                                (WireConnection) state.get(WIRE_CONNECTION_WEST)))
+                                (IndicatorLightConnection) state.get(WIRE_CONNECTION_WEST)))
                         .with(
                                 WIRE_CONNECTION_SOUTH,
-                                (WireConnection) state.get(WIRE_CONNECTION_NORTH)))
+                                (IndicatorLightConnection) state.get(WIRE_CONNECTION_NORTH)))
                         .with(WIRE_CONNECTION_WEST,
-                                (WireConnection) state
+                                (IndicatorLightConnection) state
                                         .get(WIRE_CONNECTION_EAST));
             case 2:
                 return (BlockState) ((BlockState) ((BlockState) ((BlockState) state.with(
-                        WIRE_CONNECTION_NORTH, (WireConnection) state.get(WIRE_CONNECTION_EAST)))
+                        WIRE_CONNECTION_NORTH, (IndicatorLightConnection) state.get(WIRE_CONNECTION_EAST)))
                         .with(WIRE_CONNECTION_EAST,
-                                (WireConnection) state.get(WIRE_CONNECTION_SOUTH)))
+                                (IndicatorLightConnection) state.get(WIRE_CONNECTION_SOUTH)))
                         .with(
                                 WIRE_CONNECTION_SOUTH,
-                                (WireConnection) state.get(WIRE_CONNECTION_WEST)))
+                                (IndicatorLightConnection) state.get(WIRE_CONNECTION_WEST)))
                         .with(WIRE_CONNECTION_WEST,
-                                (WireConnection) state.get(
+                                (IndicatorLightConnection) state.get(
                                         WIRE_CONNECTION_NORTH));
             case 3:
                 return (BlockState) ((BlockState) ((BlockState) ((BlockState) state.with(
-                        WIRE_CONNECTION_NORTH, (WireConnection) state.get(WIRE_CONNECTION_WEST)))
+                        WIRE_CONNECTION_NORTH, (IndicatorLightConnection) state.get(WIRE_CONNECTION_WEST)))
                         .with(WIRE_CONNECTION_EAST,
-                                (WireConnection) state.get(WIRE_CONNECTION_NORTH)))
+                                (IndicatorLightConnection) state.get(WIRE_CONNECTION_NORTH)))
                         .with(
                                 WIRE_CONNECTION_SOUTH,
-                                (WireConnection) state.get(WIRE_CONNECTION_EAST)))
+                                (IndicatorLightConnection) state.get(WIRE_CONNECTION_EAST)))
                         .with(WIRE_CONNECTION_WEST,
-                                (WireConnection) state.get(
+                                (IndicatorLightConnection) state.get(
                                         WIRE_CONNECTION_SOUTH));
             default:
                 return state;
@@ -544,14 +545,14 @@ public class IndicatorLightBlock extends ApertureBlock implements BlockEntityPro
         switch (InnerIndicatorLightBlock.AXIS[mirror.ordinal()]) {
             case 1:
                 return (BlockState) ((BlockState) state.with(WIRE_CONNECTION_NORTH,
-                        (WireConnection) state.get(WIRE_CONNECTION_SOUTH))).with(
+                        (IndicatorLightConnection) state.get(WIRE_CONNECTION_SOUTH))).with(
                                 WIRE_CONNECTION_SOUTH,
-                                (WireConnection) state.get(WIRE_CONNECTION_NORTH));
+                                (IndicatorLightConnection) state.get(WIRE_CONNECTION_NORTH));
             case 2:
                 return (BlockState) ((BlockState) state.with(WIRE_CONNECTION_EAST,
-                        (WireConnection) state.get(WIRE_CONNECTION_WEST))).with(
+                        (IndicatorLightConnection) state.get(WIRE_CONNECTION_WEST))).with(
                                 WIRE_CONNECTION_WEST,
-                                (WireConnection) state.get(WIRE_CONNECTION_EAST));
+                                (IndicatorLightConnection) state.get(WIRE_CONNECTION_EAST));
             default:
                 return super.mirror(state, mirror);
         }
@@ -590,11 +591,11 @@ public class IndicatorLightBlock extends ApertureBlock implements BlockEntityPro
         while (var5.hasNext()) {
             Direction direction = (Direction) var5.next();
             BlockPos blockPos = pos.offset(direction);
-            if (((WireConnection) oldState
-                    .get((Property<WireConnection>) DIRECTION_TO_WIRE_CONNECTION_PROPERTY
+            if (((IndicatorLightConnection) oldState
+                    .get((Property<IndicatorLightConnection>) DIRECTION_TO_WIRE_CONNECTION_PROPERTY
                             .get(direction)))
-                    .isConnected() != ((WireConnection) newState.get(
-                            (Property<WireConnection>) DIRECTION_TO_WIRE_CONNECTION_PROPERTY
+                    .isConnected() != ((IndicatorLightConnection) newState.get(
+                            (Property<IndicatorLightConnection>) DIRECTION_TO_WIRE_CONNECTION_PROPERTY
                                     .get(direction)))
                             .isConnected()
                     && world.getBlockState(blockPos).isSolidBlock(world, blockPos)) {
@@ -605,10 +606,10 @@ public class IndicatorLightBlock extends ApertureBlock implements BlockEntityPro
     }
 
     static {
-        WIRE_CONNECTION_NORTH = Properties.NORTH_WIRE_CONNECTION;
-        WIRE_CONNECTION_EAST = Properties.EAST_WIRE_CONNECTION;
-        WIRE_CONNECTION_SOUTH = Properties.SOUTH_WIRE_CONNECTION;
-        WIRE_CONNECTION_WEST = Properties.WEST_WIRE_CONNECTION;
+        WIRE_CONNECTION_NORTH = ApertureProperties.NORTH_WIRE_CONNECTION;
+        WIRE_CONNECTION_EAST = ApertureProperties.EAST_WIRE_CONNECTION;
+        WIRE_CONNECTION_SOUTH = ApertureProperties.SOUTH_WIRE_CONNECTION;
+        WIRE_CONNECTION_WEST = ApertureProperties.WEST_WIRE_CONNECTION;
         // POWER = Properties.POWER;
         POWERED = Properties.POWERED;
         DIRECTION_TO_WIRE_CONNECTION_PROPERTY = Maps.newEnumMap(ImmutableMap.of(Direction.NORTH,
@@ -638,7 +639,7 @@ public class IndicatorLightBlock extends ApertureBlock implements BlockEntityPro
     public static class InnerIndicatorLightBlock {
         public static int[] AXIS = new int[BlockMirror.values().length];
         public static int[] ROTATION = new int[BlockRotation.values().length];
-        public static int[] SIDE = new int[WireConnection.values().length];
+        public static int[] SIDE = new int[IndicatorLightConnection.values().length];
 
         static {
             AXIS[BlockMirror.LEFT_RIGHT.ordinal()] = 1;
@@ -648,9 +649,9 @@ public class IndicatorLightBlock extends ApertureBlock implements BlockEntityPro
             ROTATION[BlockRotation.COUNTERCLOCKWISE_90.ordinal()] = 2;
             ROTATION[BlockRotation.CLOCKWISE_90.ordinal()] = 3;
 
-            SIDE[WireConnection.UP.ordinal()] = 1;
-            SIDE[WireConnection.SIDE.ordinal()] = 2;
-            SIDE[WireConnection.NONE.ordinal()] = 3;
+            SIDE[IndicatorLightConnection.UP.ordinal()] = 1;
+            SIDE[IndicatorLightConnection.SIDE.ordinal()] = 2;
+            SIDE[IndicatorLightConnection.NONE.ordinal()] = 3;
         }
     }
 

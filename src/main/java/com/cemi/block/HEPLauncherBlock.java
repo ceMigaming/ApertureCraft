@@ -25,7 +25,7 @@ public class HEPLauncherBlock extends ApertureBlock implements BlockEntityProvid
 
 
     public HEPLauncherBlock(String name, Settings settings) {
-        super(name, settings);
+        super(name, settings, true);
     }
 
     @Override

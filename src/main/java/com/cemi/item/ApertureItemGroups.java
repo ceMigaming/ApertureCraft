@@ -47,6 +47,7 @@ public class ApertureItemGroups {
                 entries.add(ApertureBlocks.INDICATOR);
                 entries.add(ApertureBlocks.DOOR);
                 entries.add(ApertureBlocks.CUBE_DROPPER);
+                entries.add(ApertureBlocks.HEP_LAUNCHER);
                 entries.add(ApertureBlocks.TODO_BLOCK);
             }).build();
 
