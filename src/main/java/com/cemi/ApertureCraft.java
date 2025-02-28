@@ -13,6 +13,8 @@ import com.cemi.item.ApertureItems;
 import com.cemi.networking.AperturePacketHandler;
 import com.cemi.particle.ApertureParticleTypes;
 import com.cemi.registry.tag.ApertureFluidTags;
+import com.cemi.server.ApertureCommands;
+
 import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.ConfigHolder;
 import me.shedaniel.autoconfig.serializer.GsonConfigSerializer;
@@ -43,6 +45,7 @@ public class ApertureCraft implements ModInitializer {
         ApertureEntities.registerEntities();
         ApertureAttributes.registerAttributes();
         AperturePacketHandler.registerPacketHandlers();
+        ApertureCommands.registerCommands();
 
         LOGGER.info("Now you're thinking with portals!");
     }
