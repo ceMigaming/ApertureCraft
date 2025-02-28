@@ -42,7 +42,7 @@ public class PedestalButtonBlock extends ApertureBlock implements BlockEntityPro
     protected static final VoxelShape DEFAULT_SHAPE = Block.createCuboidShape(5.0D, 0.0D, 5.0D, 11.0D, 22.0D, 11.0D);
 
     public PedestalButtonBlock(String name, Settings settings) {
-        super(name, settings);
+        super(name, settings, true);
         this.setDefaultState((BlockState) ((BlockState) ((BlockState) ((BlockState) this.stateManager.getDefaultState())
                 .with(FACING, Direction.NORTH)).with(POWERED, false)));
     }
@@ -108,7 +108,7 @@ public class PedestalButtonBlock extends ApertureBlock implements BlockEntityPro
     @Override
     public BlockState getPlacementState(ItemPlacementContext ctx) {
         return (BlockState) this.getDefaultState()
-                .with(FACING, ctx.getPlayerLookDirection());
+                .with(FACING, ctx.getHorizontalPlayerFacing());
     }
 
     protected void playClickSound(@Nullable PlayerEntity player, WorldAccess world, BlockPos pos, boolean powered) {

@@ -42,10 +42,12 @@ public class ApertureItemGroups {
             .displayName(Text.translatable("itemGroup." + ApertureCraft.MOD_ID + ".aperture_logic"))
             .entries((context, entries) -> {
                 entries.add(ApertureBlocks.FLOOR_BUTTON);
+                entries.add(ApertureBlocks.PEDESTAL_BUTTON);
                 entries.add(ApertureBlocks.INDICATOR_LIGHT);
                 entries.add(ApertureBlocks.INDICATOR);
                 entries.add(ApertureBlocks.DOOR);
                 entries.add(ApertureBlocks.CUBE_DROPPER);
+                entries.add(ApertureBlocks.TODO_BLOCK);
             }).build();
 
     public static void registerItemGroups() {

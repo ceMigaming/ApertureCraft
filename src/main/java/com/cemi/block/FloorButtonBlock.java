@@ -40,7 +40,7 @@ public class FloorButtonBlock extends ApertureBlock implements BlockEntityProvid
     // 0, 3);
 
     public FloorButtonBlock(String name, Settings settings) {
-        super(name, settings);
+        super(name, settings, true);
     }
 
     public VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos,
