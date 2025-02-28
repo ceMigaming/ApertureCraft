@@ -37,7 +37,7 @@ public class ApertureDoorBlock extends ApertureBlock implements BlockEntityProvi
     public static final IntProperty SIDE = IntProperty.of("side", 0, 3);
 
     public ApertureDoorBlock(Settings settings) {
-        super("door", settings);
+        super("door", settings, true);
         setDefaultState(getDefaultState().with(FACING, Direction.NORTH).with(TRIGGERED, false)
                 .with(SIDE, 0));
     }

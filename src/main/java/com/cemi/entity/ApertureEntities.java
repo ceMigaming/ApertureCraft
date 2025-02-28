@@ -61,6 +61,9 @@ public class ApertureEntities {
             Registries.ENTITY_TYPE, new Identifier(ApertureCraft.MOD_ID, "portal_projectile"),
             EntityType.Builder.create(PortalProjectileEntity::new, SpawnGroup.MISC)
                     .setDimensions(.5f, .5f).build());
+    
+
+    
 
     public static void registerEntities() {}
 

@@ -35,10 +35,22 @@ public class ApertureBlockEntities {
             new Identifier(ApertureCraft.MOD_ID, "aperture_floor_button_block_entity"),
             BlockEntityType.Builder.create(ApertureFloorButtonBlockEntity::new,
                     ApertureBlocks.FLOOR_BUTTON).build());
+
     public static final BlockEntityType<TodoBlockEntity> TODO = Registry.register(
             Registries.BLOCK_ENTITY_TYPE,
             new Identifier(ApertureCraft.MOD_ID, "todo_block_entity"),
             BlockEntityType.Builder.create(TodoBlockEntity::new, ApertureBlocks.TODO_BLOCK).build());
+    public static final BlockEntityType<ApertureCubeDropperBlockEntity> CUBE_DROPPER_BLOCK_ENTITY = Registry
+            .register(Registries.BLOCK_ENTITY_TYPE,
+                    new Identifier(ApertureCraft.MOD_ID, "aperture_cube_dropper_block_entity"),
+                    BlockEntityType.Builder.create(ApertureCubeDropperBlockEntity::new,
+                            ApertureBlocks.CUBE_DROPPER).build());
+    public static final BlockEntityType<PedestalButtonBlockEntity> PEDESTAL_BUTTON = Registry.register(
+            Registries.BLOCK_ENTITY_TYPE,
+            new Identifier(ApertureCraft.MOD_ID, "aperture_pedestal_button_block_entity"),
+            BlockEntityType.Builder
+                    .create(PedestalButtonBlockEntity::new, ApertureBlocks.PEDESTAL_BUTTON)
+                    .build());
 
     public static void registerBlockEntities() {
     }
