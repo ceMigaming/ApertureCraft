@@ -54,7 +54,7 @@ public class ApertureBlocks {
 
     // logic blocks
     public static final IndicatorLightBlock INDICATOR_LIGHT = new IndicatorLightBlock(
-            FabricBlockSettings.copy(Blocks.REDSTONE_WIRE));
+            FabricBlockSettings.copy(Blocks.REDSTONE_WIRE).notSolid().nonOpaque());
     public static final HEPLauncherBlock HEP_LAUNCHER = new HEPLauncherBlock("hep_launcher",
             FabricBlockSettings.copy(Blocks.DISPENSER).nonOpaque());
 

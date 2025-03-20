@@ -1,5 +1,7 @@
 package com.cemi.block;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -23,8 +25,10 @@ import net.minecraft.block.RepeaterBlock;
 import net.minecraft.block.ShapeContext;
 import net.minecraft.block.TrapdoorBlock;
 import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemPlacementContext;
+import net.minecraft.item.ItemStack;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.BooleanProperty;
 import net.minecraft.state.property.EnumProperty;
@@ -45,7 +49,6 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldAccess;
 import net.minecraft.world.WorldView;
 
-// TODO show sides when near a block
 @SuppressWarnings("deprecation")
 public class IndicatorLightBlock extends ApertureBlock implements BlockEntityProvider {
     public static final MapCodec<RedstoneWireBlock> CODEC = createCodec(RedstoneWireBlock::new);
@@ -64,6 +67,7 @@ public class IndicatorLightBlock extends ApertureBlock implements BlockEntityPro
     private static final VoxelShape DOT_SHAPE;
     private static final Map<Direction, VoxelShape> DIRECTION_TO_SIDE_SHAPE;
     private static final Map<Direction, VoxelShape> DIRECTION_TO_UP_SHAPE;
+    private static final Map<Direction, VoxelShape> DIRECTION_TO_VERTICAL_SHAPE;
     private static final Map<BlockState, VoxelShape> SHAPES;
     private final BlockState dotState;
     private boolean wiresGivePower = true;
@@ -106,15 +110,30 @@ public class IndicatorLightBlock extends ApertureBlock implements BlockEntityPro
 
         while (var3.hasNext()) {
             Direction direction = (Direction) var3.next();
-            IndicatorLightConnection IndicatorLightConnection = (IndicatorLightConnection) state
+            IndicatorLightConnection conn = (IndicatorLightConnection) state
                     .get((Property<IndicatorLightConnection>) DIRECTION_TO_WIRE_CONNECTION_PROPERTY
                             .get(direction));
-            if (IndicatorLightConnection == IndicatorLightConnection.SIDE) {
-                voxelShape = VoxelShapes.union(voxelShape,
-                        (VoxelShape) DIRECTION_TO_SIDE_SHAPE.get(direction));
-            } else if (IndicatorLightConnection == IndicatorLightConnection.UP) {
-                voxelShape = VoxelShapes.union(voxelShape,
-                        (VoxelShape) DIRECTION_TO_UP_SHAPE.get(direction));
+            // if (conn == IndicatorLightConnection.SIDE) {
+            // voxelShape = VoxelShapes.union(voxelShape,
+            // (VoxelShape) DIRECTION_TO_SIDE_SHAPE.get(direction));
+            // } else if (conn == IndicatorLightConnection.UP) {
+            // voxelShape = VoxelShapes.union(voxelShape,
+            // (VoxelShape) DIRECTION_TO_UP_SHAPE.get(direction));
+            // }
+            switch (conn) {
+                case SIDE:
+                    voxelShape = VoxelShapes.union(voxelShape,
+                            (VoxelShape) DIRECTION_TO_SIDE_SHAPE.get(direction));
+                    break;
+                case UP:
+                    voxelShape = VoxelShapes.union(voxelShape,
+                            (VoxelShape) DIRECTION_TO_UP_SHAPE.get(direction));
+                    break;
+                case SIDE_VERTICAL:
+                    voxelShape = (VoxelShape) DIRECTION_TO_VERTICAL_SHAPE.get(direction);
+                    break;
+                default:
+                    break;
             }
         }
 
@@ -127,42 +146,129 @@ public class IndicatorLightBlock extends ApertureBlock implements BlockEntityPro
     }
 
     public BlockState getPlacementState(ItemPlacementContext ctx) {
-        return this.getPlacementState(ctx.getWorld(), this.dotState, ctx.getBlockPos());
+        return this.getPlacementState(ctx.getWorld(), this.dotState, ctx.getBlockPos(), ctx.getPlayer());
     }
 
-    private BlockState getPlacementState(BlockView world, BlockState state, BlockPos pos) {
+    private BlockState getPlacementState(BlockView world, BlockState state, BlockPos pos,
+            @Nullable PlayerEntity player) {
         boolean bl = isNotConnected(state);
-        state = this.getDefaultWireState(world,
+        var newState = this.getDefaultWireState(world,
                 (BlockState) this.getDefaultState().with(POWERED,
                         (Boolean) state.get(POWERED))/* .with(POWER, (Integer) state.get(POWER)) */,
                 pos);
-        if (bl && isNotConnected(state)) {
-            return state;
+        if (bl && isNotConnected(newState)) {
+            return newState;
         } else {
-            boolean bl2 = ((IndicatorLightConnection) state.get(WIRE_CONNECTION_NORTH)).isConnected();
-            boolean bl3 = ((IndicatorLightConnection) state.get(WIRE_CONNECTION_SOUTH)).isConnected();
-            boolean bl4 = ((IndicatorLightConnection) state.get(WIRE_CONNECTION_EAST)).isConnected();
-            boolean bl5 = ((IndicatorLightConnection) state.get(WIRE_CONNECTION_WEST)).isConnected();
+            boolean bl2 = ((IndicatorLightConnection) newState.get(WIRE_CONNECTION_NORTH)).isConnected();
+            boolean bl3 = ((IndicatorLightConnection) newState.get(WIRE_CONNECTION_SOUTH)).isConnected();
+            boolean bl4 = ((IndicatorLightConnection) newState.get(WIRE_CONNECTION_EAST)).isConnected();
+            boolean bl5 = ((IndicatorLightConnection) newState.get(WIRE_CONNECTION_WEST)).isConnected();
             boolean bl6 = !bl2 && !bl3;
             boolean bl7 = !bl4 && !bl5;
+            boolean hasBlockUnder = world.getBlockState(pos.down()).isSolidBlock(world, pos);
+            boolean hasConnectionAbove = world.getBlockState(pos.up()).isOf(this);
+
+            Direction newDir = Direction.NORTH;
+
+            if (!hasBlockUnder) {
+                state = state.with(WIRE_CONNECTION_NORTH, IndicatorLightConnection.NONE)
+                        .with(WIRE_CONNECTION_EAST, IndicatorLightConnection.NONE)
+                        .with(WIRE_CONNECTION_SOUTH, IndicatorLightConnection.NONE)
+                        .with(WIRE_CONNECTION_WEST, IndicatorLightConnection.NONE);
+                if (player != null
+                        && world.getBlockState(pos.offset(player.getHorizontalFacing())).isSolidBlock(world, pos)) {
+                    newDir = player.getHorizontalFacing();
+                } else {
+                    boolean allAir = true;
+                    for (Direction dir : Type.HORIZONTAL) {
+                        if (world.getBlockState(pos.offset(dir)).isSolidBlock(world, pos)) {
+                            allAir = false;
+                            newDir = dir;
+                            break;
+                        }
+                    }
+                    if (allAir) {
+                        return Blocks.AIR.getDefaultState();
+                    }
+                }
+                return state.with(
+                        (Property<IndicatorLightConnection>) DIRECTION_TO_WIRE_CONNECTION_PROPERTY.get(newDir),
+                        IndicatorLightConnection.SIDE_VERTICAL);
+            }
+
+            if (hasConnectionAbove) {
+                state = state.with(WIRE_CONNECTION_NORTH, IndicatorLightConnection.NONE)
+                        .with(WIRE_CONNECTION_EAST, IndicatorLightConnection.NONE)
+                        .with(WIRE_CONNECTION_SOUTH, IndicatorLightConnection.NONE)
+                        .with(WIRE_CONNECTION_WEST, IndicatorLightConnection.NONE);
+                newDir = getDirectionFromBlockState(world.getBlockState(pos.up()));
+                if (player != null
+                        && world.getBlockState(pos.offset(player.getHorizontalFacing())).isSolidBlock(world, pos)) {
+                    newDir = player.getHorizontalFacing();
+                } else {
+                    if (world.getBlockState(pos.offset(newDir)).isSolidBlock(world, pos)) {
+                        return state.with(
+                                (Property<IndicatorLightConnection>) DIRECTION_TO_WIRE_CONNECTION_PROPERTY
+                                        .get(newDir),
+                                IndicatorLightConnection.UP);
+                    } else {
+                        boolean allAir = true;
+                        for (Direction dir : Type.HORIZONTAL) {
+                            if (world.getBlockState(pos.offset(dir)).isSolidBlock(world, pos)) {
+                                allAir = false;
+                                newDir = dir;
+                                break;
+                            }
+                        }
+                        if (!allAir) {
+                            if (world.getBlockState(pos.down()).isSolidBlock(world, pos.down())) {
+                                return state.with(
+                                        (Property<IndicatorLightConnection>) DIRECTION_TO_WIRE_CONNECTION_PROPERTY
+                                                .get(newDir),
+                                        IndicatorLightConnection.UP);
+                            }
+                            return state.with(
+                                    (Property<IndicatorLightConnection>) DIRECTION_TO_WIRE_CONNECTION_PROPERTY
+                                            .get(newDir),
+                                    IndicatorLightConnection.SIDE_VERTICAL);
+                        }
+                    }
+                }
+            }
+
             if (!bl5 && bl6) {
-                state = (BlockState) state.with(WIRE_CONNECTION_WEST, IndicatorLightConnection.SIDE);
+                newState = (BlockState) newState.with(WIRE_CONNECTION_WEST, IndicatorLightConnection.SIDE);
             }
 
             if (!bl4 && bl6) {
-                state = (BlockState) state.with(WIRE_CONNECTION_EAST, IndicatorLightConnection.SIDE);
+                newState = (BlockState) newState.with(WIRE_CONNECTION_EAST, IndicatorLightConnection.SIDE);
             }
 
             if (!bl2 && bl7) {
-                state = (BlockState) state.with(WIRE_CONNECTION_NORTH, IndicatorLightConnection.SIDE);
+                newState = (BlockState) newState.with(WIRE_CONNECTION_NORTH, IndicatorLightConnection.SIDE);
             }
 
             if (!bl3 && bl7) {
-                state = (BlockState) state.with(WIRE_CONNECTION_SOUTH, IndicatorLightConnection.SIDE);
+                newState = (BlockState) newState.with(WIRE_CONNECTION_SOUTH, IndicatorLightConnection.SIDE);
             }
 
-            return state;
+            return newState;
         }
+    }
+
+    @Nullable
+    private Direction getDirectionFromBlockState(BlockState blockState) {
+        for (Direction direction : Type.HORIZONTAL) {
+            var conn = blockState.get((Property<IndicatorLightConnection>) DIRECTION_TO_WIRE_CONNECTION_PROPERTY
+                    .get(direction));
+            if (Arrays.asList(IndicatorLightConnection.SIDE_VERTICAL,
+                    IndicatorLightConnection.SIDE_DOWN_LEFT, IndicatorLightConnection.SIDE_DOWN_RIGHT,
+                    IndicatorLightConnection.UP)
+                    .contains(conn)) {
+                return direction;
+            }
+        }
+        return null;
     }
 
     private BlockState getDefaultWireState(BlockView world, BlockState state, BlockPos pos) {
@@ -175,7 +281,9 @@ public class IndicatorLightBlock extends ApertureBlock implements BlockEntityPro
                     .get((Property<IndicatorLightConnection>) DIRECTION_TO_WIRE_CONNECTION_PROPERTY
                             .get(direction)))
                     .isConnected()) {
-                IndicatorLightConnection IndicatorLightConnection = this.getRenderConnectionType(world, pos, direction, bl);
+                IndicatorLightConnection IndicatorLightConnection = this.getRenderConnectionType(world, pos, pos,
+                        direction,
+                        bl);
                 state = (BlockState) state
                         .with((Property<IndicatorLightConnection>) DIRECTION_TO_WIRE_CONNECTION_PROPERTY
                                 .get(direction), IndicatorLightConnection);
@@ -187,36 +295,65 @@ public class IndicatorLightBlock extends ApertureBlock implements BlockEntityPro
 
     public BlockState getStateForNeighborUpdate(BlockState state, Direction direction,
             BlockState neighborState, WorldAccess world, BlockPos pos, BlockPos neighborPos) {
-        if (direction == Direction.DOWN) {
-            return !this.canRunOnTop(world, neighborPos, neighborState)
-                    ? Blocks.AIR.getDefaultState()
-                    : state;
-        } else if (direction == Direction.UP) {
-            return this.getPlacementState(world, state, pos);
-        } else {
-            IndicatorLightConnection IndicatorLightConnection = this.getRenderConnectionType(world, pos, direction);
-            return IndicatorLightConnection
-                    .isConnected() == ((IndicatorLightConnection) state
-                            .get((Property<IndicatorLightConnection>) DIRECTION_TO_WIRE_CONNECTION_PROPERTY
-                                    .get(direction)))
-                            .isConnected()
-                    && !isFullyConnected(state)
-                            ? (BlockState) state.with(
-                                    (Property<IndicatorLightConnection>) DIRECTION_TO_WIRE_CONNECTION_PROPERTY
-                                            .get(direction),
-                                    IndicatorLightConnection)
-                            : this.getPlacementState(world, (BlockState) ((BlockState) this.dotState
-                                    .with(POWERED, (Boolean) state.get(POWERED)) /*
-                                                                                  * .with(POWER,
-                                                                                  * (Integer)
-                                                                                  * state.get(POWER)
-                                                                                  * )
-                                                                                  */).with(
-                                            (Property<IndicatorLightConnection>) DIRECTION_TO_WIRE_CONNECTION_PROPERTY
-                                                    .get(direction),
-                                            IndicatorLightConnection),
-                                    pos);
+        // if (direction == Direction.DOWN) {
+        // return !this.canRunOnTop(world, neighborPos, neighborState)
+        // ? Blocks.AIR.getDefaultState()
+        // : state;
+        // } else if (direction == Direction.UP) {
+        // return this.getPlacementState(world, state, pos);
+        // } else {
+        Direction newDir = direction;
+        if (direction == Direction.UP || direction == Direction.DOWN) {
+            var offsetPos = pos.offset(direction);
+            if (!world.getBlockState(offsetPos).isOf(this)) {
+                var tempDir = getDirectionFromBlockState(state);
+                if (tempDir != null) {
+                    var s = (Property<IndicatorLightConnection>) DIRECTION_TO_WIRE_CONNECTION_PROPERTY
+                            .get(tempDir);
+                    return state.with(
+                            s,
+                            isFullyConnected(state) || isNotConnected(state) ? IndicatorLightConnection.SIDE : IndicatorLightConnection.NONE);
+                } else
+                    return state;
+            }
+            newDir = getDirectionFromBlockState(world.getBlockState(pos.offset(direction)));
+            if (newDir != null && world.getBlockState(pos.down()).isSolidBlock(world, pos.down())) {
+                return state.with(
+                        (Property<IndicatorLightConnection>) DIRECTION_TO_WIRE_CONNECTION_PROPERTY
+                                .get(newDir),
+                        IndicatorLightConnection.UP);
+            }
+            boolean allAir = true;
+            for (Direction dir : Type.HORIZONTAL) {
+                if (!world.isAir(pos.offset(dir))) {
+                    allAir = false;
+                    newDir = dir;
+                    break;
+                }
+            }
+            if (allAir) {
+                return Blocks.AIR.getDefaultState();
+            }
         }
+        IndicatorLightConnection conn = this.getRenderConnectionType(world, pos, neighborPos,
+                newDir);
+        return conn
+                .isConnected() == ((IndicatorLightConnection) state
+                        .get((Property<IndicatorLightConnection>) DIRECTION_TO_WIRE_CONNECTION_PROPERTY
+                                .get(newDir)))
+                        .isConnected()
+                && !isFullyConnected(state)
+                        ? (BlockState) state.with(
+                                (Property<IndicatorLightConnection>) DIRECTION_TO_WIRE_CONNECTION_PROPERTY
+                                        .get(newDir),
+                                conn)
+                        : this.getPlacementState(world, (BlockState) ((BlockState) this.dotState
+                                .with(POWERED, (Boolean) state.get(POWERED))).with(
+                                        (Property<IndicatorLightConnection>) DIRECTION_TO_WIRE_CONNECTION_PROPERTY
+                                                .get(newDir),
+                                        conn),
+                                pos, null);
+        // }
     }
 
     private static boolean isFullyConnected(BlockState state) {
@@ -240,10 +377,10 @@ public class IndicatorLightBlock extends ApertureBlock implements BlockEntityPro
 
         while (var7.hasNext()) {
             Direction direction = (Direction) var7.next();
-            IndicatorLightConnection IndicatorLightConnection = (IndicatorLightConnection) state
+            IndicatorLightConnection conn = (IndicatorLightConnection) state
                     .get((Property<IndicatorLightConnection>) DIRECTION_TO_WIRE_CONNECTION_PROPERTY
                             .get(direction));
-            if (IndicatorLightConnection != IndicatorLightConnection.NONE
+            if (conn != IndicatorLightConnection.NONE
                     && !world.getBlockState(mutable.set(pos, direction)).isOf(this)) {
                 mutable.move(Direction.DOWN);
                 BlockState blockState = world.getBlockState(mutable);
@@ -267,13 +404,13 @@ public class IndicatorLightBlock extends ApertureBlock implements BlockEntityPro
 
     }
 
-    private IndicatorLightConnection getRenderConnectionType(BlockView world, BlockPos pos,
+    private IndicatorLightConnection getRenderConnectionType(BlockView world, BlockPos pos, BlockPos neighborPos,
             Direction direction) {
-        return this.getRenderConnectionType(world, pos, direction,
+        return this.getRenderConnectionType(world, pos, neighborPos, direction,
                 !world.getBlockState(pos.up()).isSolidBlock(world, pos));
     }
 
-    private IndicatorLightConnection getRenderConnectionType(BlockView world, BlockPos pos,
+    private IndicatorLightConnection getRenderConnectionType(BlockView world, BlockPos pos, BlockPos neighborPos,
             Direction direction, boolean bl) {
         BlockPos blockPos = pos.offset(direction);
         BlockState blockState = world.getBlockState(blockPos);
@@ -282,6 +419,9 @@ public class IndicatorLightBlock extends ApertureBlock implements BlockEntityPro
                     || this.canRunOnTop(world, blockPos, blockState);
             if (bl2 && connectsTo(world.getBlockState(blockPos.up()))) {
                 if (blockState.isSideSolidFullSquare(world, blockPos, direction.getOpposite())) {
+                    if (!world.getBlockState(pos.down()).isSolidBlock(world, blockPos.down())) {
+                        return IndicatorLightConnection.SIDE_VERTICAL;
+                    }
                     return IndicatorLightConnection.UP;
                 }
 
@@ -294,14 +434,16 @@ public class IndicatorLightBlock extends ApertureBlock implements BlockEntityPro
                         : IndicatorLightConnection.SIDE;
     }
 
-    public boolean canPlaceAt(BlockState state, WorldView world, BlockPos pos) {
-        BlockPos blockPos = pos.down();
-        BlockState blockState = world.getBlockState(blockPos);
-        return this.canRunOnTop(world, blockPos, blockState);
-    }
+    // public boolean canPlaceAt(BlockState state, WorldView world, BlockPos pos) {
+    // BlockPos blockPos = pos.down();
+    // BlockState blockState = world.getBlockState(blockPos);
+    // return this.canRunOnTop(world, blockPos, blockState);
+    // }
 
     private boolean canRunOnTop(BlockView world, BlockPos pos, BlockState floor) {
-        return floor.isSideSolidFullSquare(world, pos, Direction.UP) || floor.isOf(Blocks.HOPPER);
+        return true;
+        // return floor.isSideSolidFullSquare(world, pos, Direction.UP) ||
+        // floor.isOf(Blocks.HOPPER);
     }
 
     private void update(World world, BlockPos pos, BlockState state) {
@@ -470,7 +612,7 @@ public class IndicatorLightBlock extends ApertureBlock implements BlockEntityPro
                 return 0;
             } else {
                 return direction != Direction.UP
-                        && !((IndicatorLightConnection) this.getPlacementState(world, state, pos).get(
+                        && !((IndicatorLightConnection) this.getPlacementState(world, state, pos, null).get(
                                 (Property<IndicatorLightConnection>) DIRECTION_TO_WIRE_CONNECTION_PROPERTY
                                         .get(direction.getOpposite())))
                                 .isConnected() ? 0 : i;
@@ -485,7 +627,7 @@ public class IndicatorLightBlock extends ApertureBlock implements BlockEntityPro
     }
 
     protected static boolean connectsTo(BlockState state, @Nullable Direction dir) {
-        if (state.isOf(Blocks.REDSTONE_WIRE)) {
+        if (state.isOf(Blocks.REDSTONE_WIRE) || state.isOf(ApertureBlocks.INDICATOR_LIGHT)) {
             return true;
         } else if (state.isOf(Blocks.REPEATER)) {
             Direction direction = (Direction) state.get(RepeaterBlock.FACING);
@@ -572,7 +714,7 @@ public class IndicatorLightBlock extends ApertureBlock implements BlockEntityPro
                 BlockState blockState = isFullyConnected(state) ? this.getDefaultState() : this.dotState;
                 // blockState = (BlockState) blockState.with(POWER, (Integer) state.get(POWER));
                 blockState = (BlockState) blockState.with(POWERED, (Boolean) state.get(POWERED));
-                blockState = this.getPlacementState(world, blockState, pos);
+                blockState = this.getPlacementState(world, blockState, pos, null);
                 if (blockState != state) {
                     world.setBlockState(pos, blockState, 3);
                     this.updateForNewState(world, pos, state, blockState);
@@ -621,18 +763,23 @@ public class IndicatorLightBlock extends ApertureBlock implements BlockEntityPro
                 Block.createCuboidShape(3.0, 0.0, 3.0, 13.0, 1.0, 16.0), Direction.EAST,
                 Block.createCuboidShape(3.0, 0.0, 3.0, 16.0, 1.0, 13.0), Direction.WEST,
                 Block.createCuboidShape(0.0, 0.0, 3.0, 13.0, 1.0, 13.0)));
+        DIRECTION_TO_VERTICAL_SHAPE = Maps.newEnumMap(ImmutableMap.of(
+                Direction.NORTH, Block.createCuboidShape(3.0, 0.0, 0.0, 13.0, 16.0, 1.0),
+                Direction.SOUTH, Block.createCuboidShape(3.0, 0.0, 15.0, 13.0, 16.0, 16.0),
+                Direction.EAST, Block.createCuboidShape(15.0, 0.0, 3.0, 16.0, 16.0, 13.0),
+                Direction.WEST, Block.createCuboidShape(0.0, 0.0, 3.0, 1.0, 16.0, 13.0)));
         DIRECTION_TO_UP_SHAPE = Maps.newEnumMap(ImmutableMap.of(Direction.NORTH,
                 VoxelShapes.union((VoxelShape) DIRECTION_TO_SIDE_SHAPE.get(Direction.NORTH),
-                        Block.createCuboidShape(3.0, 0.0, 0.0, 13.0, 16.0, 1.0)),
+                        (VoxelShape) DIRECTION_TO_VERTICAL_SHAPE.get(Direction.NORTH)),
                 Direction.SOUTH,
                 VoxelShapes.union((VoxelShape) DIRECTION_TO_SIDE_SHAPE.get(Direction.SOUTH),
-                        Block.createCuboidShape(3.0, 0.0, 15.0, 13.0, 16.0, 16.0)),
+                        (VoxelShape) DIRECTION_TO_VERTICAL_SHAPE.get(Direction.SOUTH)),
                 Direction.EAST,
                 VoxelShapes.union((VoxelShape) DIRECTION_TO_SIDE_SHAPE.get(Direction.EAST),
-                        Block.createCuboidShape(15.0, 0.0, 3.0, 16.0, 16.0, 13.0)),
+                        (VoxelShape) DIRECTION_TO_VERTICAL_SHAPE.get(Direction.EAST)),
                 Direction.WEST,
                 VoxelShapes.union((VoxelShape) DIRECTION_TO_SIDE_SHAPE.get(Direction.WEST),
-                        Block.createCuboidShape(0.0, 0.0, 3.0, 1.0, 16.0, 13.0))));
+                        (VoxelShape) DIRECTION_TO_VERTICAL_SHAPE.get(Direction.WEST))));
         SHAPES = Maps.newHashMap();
     }
 
