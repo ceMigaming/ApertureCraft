@@ -142,156 +142,161 @@ public class IndicatorLightBlock extends ApertureBlock implements BlockEntityPro
 
     private BlockState getPlacementState(BlockView world, BlockState state, BlockPos pos,
             @Nullable PlayerEntity player) {
-        boolean bl = isNotConnected(state);
-        BlockState newState = this.getDefaultWireState(world,
+        boolean initiallyDisconnected = isNotConnected(state);
+        BlockState defaultWireState = this.getDefaultWireState(world,
                 this.getDefaultState().with(POWERED, state.get(POWERED)), pos);
-        if (bl && isNotConnected(newState)) {
+
+        // Early exit for completely disconnected case
+        if (initiallyDisconnected && isNotConnected(defaultWireState)) {
             return applyDiagonalConnections(world, pos, state);
-        } else {
-            boolean isNorthConnected = newState.get(WIRE_CONNECTION_NORTH).isConnected();
-            boolean isSouthConnected = newState.get(WIRE_CONNECTION_SOUTH).isConnected();
-            boolean isEastConnected = newState.get(WIRE_CONNECTION_EAST).isConnected();
-            boolean isWestConnected = newState.get(WIRE_CONNECTION_WEST).isConnected();
-            boolean isNorthSouthDisconnected = !isNorthConnected && !isSouthConnected;
-            boolean isEastWestDisconnected = !isEastConnected && !isWestConnected;
-            boolean hasBlockUnder = world.getBlockState(pos.down()).isSolidBlock(world, pos);
-            boolean hasConnectionAbove = world.getBlockState(pos.up()).isOf(this);
-
-            Direction newDir = Direction.NORTH;
-
-            if (!hasBlockUnder) {
-                state = state.with(WIRE_CONNECTION_NORTH, IndicatorLightConnection.NONE)
-                        .with(WIRE_CONNECTION_EAST, IndicatorLightConnection.NONE)
-                        .with(WIRE_CONNECTION_SOUTH, IndicatorLightConnection.NONE)
-                        .with(WIRE_CONNECTION_WEST, IndicatorLightConnection.NONE);
-                if (player != null
-                        && world.getBlockState(pos.offset(player.getHorizontalFacing())).isSolidBlock(world, pos)) {
-                    newDir = player.getHorizontalFacing();
-                } else {
-                    boolean allAir = true;
-                    for (Direction dir : Type.HORIZONTAL) {
-                        if (world.getBlockState(pos.offset(dir)).isSolidBlock(world, pos)) {
-                            allAir = false;
-                            newDir = dir;
-                            break;
-                        }
-                    }
-                    if (allAir) {
-                        return Blocks.AIR.getDefaultState();
-                    }
-                }
-                // If both this block and the adjacent block have no support beneath
-                // them, use a horizontal side connection. Otherwise fall back to the
-                // vertical side connection used for hanging on a solid face.
-                BlockPos adjPos = pos.offset(newDir);
-                boolean thisHasSupport = world.getBlockState(pos.down()).isSolidBlock(world, pos.down());
-                boolean adjHasSupport = world.getBlockState(adjPos.down()).isSolidBlock(world, adjPos.down());
-
-                // Improved diagonal logic: only use diagonal if both below and to the correct
-                // side
-                boolean hasLightBelow = world.getBlockState(pos.down()).isOf(this);
-                boolean hasLeft = world.getBlockState(pos.west()).isOf(this);
-                boolean hasRight = world.getBlockState(pos.east()).isOf(this);
-                IndicatorLightConnection connType;
-                if (!thisHasSupport && !adjHasSupport) {
-                    connType = IndicatorLightConnection.SIDE_HORIZONTAL;
-                } else if (hasLightBelow && hasLeft && newDir == Direction.EAST) {
-                    connType = IndicatorLightConnection.SIDE_DOWN_LEFT;
-                } else if (hasLightBelow && hasRight && newDir == Direction.WEST) {
-                    connType = IndicatorLightConnection.SIDE_DOWN_RIGHT;
-                } else if (hasLightBelow && hasLeft && newDir == Direction.SOUTH) {
-                    connType = IndicatorLightConnection.SIDE_DOWN_LEFT;
-                } else if (hasLightBelow && hasRight && newDir == Direction.NORTH) {
-                    connType = IndicatorLightConnection.SIDE_DOWN_RIGHT;
-                } else {
-                    connType = IndicatorLightConnection.SIDE_VERTICAL;
-                }
-                return applyDiagonalConnections(world, pos, state.with(
-                        (Property<IndicatorLightConnection>) DIRECTION_TO_WIRE_CONNECTION_PROPERTY.get(newDir),
-                        connType));
-            }
-
-            if (hasConnectionAbove) {
-                state = state.with(WIRE_CONNECTION_NORTH, IndicatorLightConnection.NONE)
-                        .with(WIRE_CONNECTION_EAST, IndicatorLightConnection.NONE)
-                        .with(WIRE_CONNECTION_SOUTH, IndicatorLightConnection.NONE)
-                        .with(WIRE_CONNECTION_WEST, IndicatorLightConnection.NONE);
-
-                if (isWestConnected) {
-                    state = (BlockState) state.with(WIRE_CONNECTION_WEST, IndicatorLightConnection.SIDE);
-                }
-
-                if (isEastConnected) {
-                    state = (BlockState) state.with(WIRE_CONNECTION_EAST, IndicatorLightConnection.SIDE);
-                }
-
-                if (isNorthConnected) {
-                    state = (BlockState) state.with(WIRE_CONNECTION_NORTH, IndicatorLightConnection.SIDE);
-                }
-
-                if (isSouthConnected) {
-                    state = (BlockState) state.with(WIRE_CONNECTION_SOUTH, IndicatorLightConnection.SIDE);
-                }
-                newDir = findVerticalConnection(world.getBlockState(pos.up()));
-                if (player != null
-                        && world.getBlockState(pos.offset(player.getHorizontalFacing())).isSolidBlock(world, pos)) {
-                    newDir = player.getHorizontalFacing();
-                    if (newDir != null) {
-                        return applyDiagonalConnections(world, pos, state.with(
-                                (Property<IndicatorLightConnection>) DIRECTION_TO_WIRE_CONNECTION_PROPERTY
-                                        .get(newDir),
-                                IndicatorLightConnection.UP));
-                    }
-                } else {
-                    if (newDir != null && world.getBlockState(pos.offset(newDir)).isSolidBlock(world, pos)) {
-                        return applyDiagonalConnections(world, pos, state.with(
-                                (Property<IndicatorLightConnection>) DIRECTION_TO_WIRE_CONNECTION_PROPERTY
-                                        .get(newDir),
-                                IndicatorLightConnection.UP));
-                    } else {
-                        boolean allAir = true;
-                        for (Direction dir : Type.HORIZONTAL) {
-                            if (world.getBlockState(pos.offset(dir)).isSolidBlock(world, pos)) {
-                                allAir = false;
-                                newDir = dir;
-                                break;
-                            }
-                        }
-                        if (!allAir) {
-                            if (world.getBlockState(pos.down()).isSolidBlock(world, pos.down())) {
-                                return applyDiagonalConnections(world, pos, state.with(
-                                        (Property<IndicatorLightConnection>) DIRECTION_TO_WIRE_CONNECTION_PROPERTY
-                                                .get(newDir),
-                                        IndicatorLightConnection.UP));
-                            }
-                            return applyDiagonalConnections(world, pos, state.with(
-                                    (Property<IndicatorLightConnection>) DIRECTION_TO_WIRE_CONNECTION_PROPERTY
-                                            .get(newDir),
-                                    IndicatorLightConnection.SIDE_VERTICAL));
-                        }
-                    }
-                }
-            }
-
-            if (!isWestConnected && isNorthSouthDisconnected) {
-                newState = (BlockState) newState.with(WIRE_CONNECTION_WEST, IndicatorLightConnection.SIDE);
-            }
-
-            if (!isEastConnected && isNorthSouthDisconnected) {
-                newState = (BlockState) newState.with(WIRE_CONNECTION_EAST, IndicatorLightConnection.SIDE);
-            }
-
-            if (!isNorthConnected && isEastWestDisconnected) {
-                newState = (BlockState) newState.with(WIRE_CONNECTION_NORTH, IndicatorLightConnection.SIDE);
-            }
-
-            if (!isSouthConnected && isEastWestDisconnected) {
-                newState = (BlockState) newState.with(WIRE_CONNECTION_SOUTH, IndicatorLightConnection.SIDE);
-            }
-
-            newState = applyDiagonalConnections(world, pos, newState);
-            return newState;
         }
+
+        switch (getPlacementMode(world, pos)) {
+            case FLOATING:
+                return placeFloating(world, pos, state, player);
+
+            case HANGING:
+                return placeHanging(world, pos, state, player);
+
+            case GROUNDED:
+                return placeGrounded(world, pos, defaultWireState);
+        }
+
+        // fallback, should not happen
+        return state;
+    }
+
+    private BlockState placeFloating(BlockView world, BlockPos pos, BlockState state,
+            @Nullable PlayerEntity player) {
+        state = state.with(WIRE_CONNECTION_NORTH, IndicatorLightConnection.NONE)
+                .with(WIRE_CONNECTION_EAST, IndicatorLightConnection.NONE)
+                .with(WIRE_CONNECTION_SOUTH, IndicatorLightConnection.NONE)
+                .with(WIRE_CONNECTION_WEST, IndicatorLightConnection.NONE);
+
+        Direction newDir = Direction.NORTH;
+
+        // Prefer player facing direction if supported
+        if (player != null) {
+            Direction playerFacing = player.getHorizontalFacing();
+            if (world.getBlockState(pos.offset(playerFacing)).isSolidBlock(world, pos)) {
+                newDir = playerFacing;
+            }
+        }
+
+        // If no player direction, pick first supported horizontal block
+        boolean allAir = true;
+        for (Direction dir : Direction.Type.HORIZONTAL) {
+            if (world.getBlockState(pos.offset(dir)).isSolidBlock(world, pos)) {
+                allAir = false;
+                newDir = dir;
+                break;
+            }
+        }
+        if (allAir)
+            return Blocks.AIR.getDefaultState();
+
+        BlockPos adjPos = pos.offset(newDir);
+        boolean thisHasSupport = world.getBlockState(pos.down()).isSolidBlock(world, pos.down());
+        boolean adjHasSupport = world.getBlockState(adjPos.down()).isSolidBlock(world, adjPos.down());
+
+        boolean hasLightBelow = world.getBlockState(pos.down()).isOf(this);
+        boolean hasLeft = world.getBlockState(pos.west()).isOf(this);
+        boolean hasRight = world.getBlockState(pos.east()).isOf(this);
+
+        IndicatorLightConnection connType;
+        if (!thisHasSupport && !adjHasSupport) {
+            connType = IndicatorLightConnection.SIDE_HORIZONTAL;
+        } else if (hasLightBelow && hasLeft && (newDir == Direction.EAST || newDir == Direction.SOUTH)) {
+            connType = IndicatorLightConnection.SIDE_DOWN_LEFT;
+        } else if (hasLightBelow && hasRight && (newDir == Direction.WEST || newDir == Direction.NORTH)) {
+            connType = IndicatorLightConnection.SIDE_DOWN_RIGHT;
+        } else {
+            connType = IndicatorLightConnection.SIDE_VERTICAL;
+        }
+
+        return applyDiagonalConnections(world, pos,
+                state.with(DIRECTION_TO_WIRE_CONNECTION_PROPERTY.get(newDir), connType));
+    }
+
+    private BlockState placeHanging(BlockView world, BlockPos pos, BlockState state,
+            @Nullable PlayerEntity player) {
+        // Clear all first
+        state = state.with(WIRE_CONNECTION_NORTH, IndicatorLightConnection.NONE)
+                .with(WIRE_CONNECTION_EAST, IndicatorLightConnection.NONE)
+                .with(WIRE_CONNECTION_SOUTH, IndicatorLightConnection.NONE)
+                .with(WIRE_CONNECTION_WEST, IndicatorLightConnection.NONE);
+
+        // Restore existing side connections
+        for (Direction dir : Direction.Type.HORIZONTAL) {
+            boolean connected = switch (dir) {
+                case NORTH -> state.get(WIRE_CONNECTION_NORTH).isConnected();
+                case SOUTH -> state.get(WIRE_CONNECTION_SOUTH).isConnected();
+                case EAST -> state.get(WIRE_CONNECTION_EAST).isConnected();
+                case WEST -> state.get(WIRE_CONNECTION_WEST).isConnected();
+                default -> false;
+            };
+            if (connected) {
+                state = state.with(DIRECTION_TO_WIRE_CONNECTION_PROPERTY.get(dir), IndicatorLightConnection.SIDE);
+            }
+        }
+
+        Direction newDir = findVerticalConnection(world.getBlockState(pos.up()));
+
+        // Prefer player facing if possible
+        if (player != null) {
+            Direction playerFacing = player.getHorizontalFacing();
+            if (world.getBlockState(pos.offset(playerFacing)).isSolidBlock(world, pos)) {
+                newDir = playerFacing;
+                return applyDiagonalConnections(world, pos,
+                        state.with(DIRECTION_TO_WIRE_CONNECTION_PROPERTY.get(newDir), IndicatorLightConnection.UP));
+            }
+        }
+
+        if (newDir != null && world.getBlockState(pos.offset(newDir)).isSolidBlock(world, pos)) {
+            return applyDiagonalConnections(world, pos,
+                    state.with(DIRECTION_TO_WIRE_CONNECTION_PROPERTY.get(newDir), IndicatorLightConnection.UP));
+        }
+
+        // Fallback to vertical or side vertical if below is solid
+        for (Direction dir : Direction.Type.HORIZONTAL) {
+            if (world.getBlockState(pos.offset(dir)).isSolidBlock(world, pos)) {
+                newDir = dir;
+                break;
+            }
+        }
+
+        if (world.getBlockState(pos.down()).isSolidBlock(world, pos.down())) {
+            return applyDiagonalConnections(world, pos,
+                    state.with(DIRECTION_TO_WIRE_CONNECTION_PROPERTY.get(newDir), IndicatorLightConnection.UP));
+        }
+
+        return applyDiagonalConnections(world, pos,
+                state.with(DIRECTION_TO_WIRE_CONNECTION_PROPERTY.get(newDir), IndicatorLightConnection.SIDE_VERTICAL));
+    }
+
+    private BlockState placeGrounded(BlockView world, BlockPos pos, BlockState state) {
+        boolean isNorthConnected = state.get(WIRE_CONNECTION_NORTH).isConnected();
+        boolean isSouthConnected = state.get(WIRE_CONNECTION_SOUTH).isConnected();
+        boolean isEastConnected = state.get(WIRE_CONNECTION_EAST).isConnected();
+        boolean isWestConnected = state.get(WIRE_CONNECTION_WEST).isConnected();
+
+        boolean northSouthDisconnected = !isNorthConnected && !isSouthConnected;
+        boolean eastWestDisconnected = !isEastConnected && !isWestConnected;
+
+        if (!isWestConnected && northSouthDisconnected) {
+            state = state.with(WIRE_CONNECTION_WEST, IndicatorLightConnection.SIDE);
+        }
+        if (!isEastConnected && northSouthDisconnected) {
+            state = state.with(WIRE_CONNECTION_EAST, IndicatorLightConnection.SIDE);
+        }
+        if (!isNorthConnected && eastWestDisconnected) {
+            state = state.with(WIRE_CONNECTION_NORTH, IndicatorLightConnection.SIDE);
+        }
+        if (!isSouthConnected && eastWestDisconnected) {
+            state = state.with(WIRE_CONNECTION_SOUTH, IndicatorLightConnection.SIDE);
+        }
+
+        return applyDiagonalConnections(world, pos, state);
     }
 
     private static final Set<IndicatorLightConnection> VERTICAL_LIKE = Set.of(
