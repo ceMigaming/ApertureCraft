@@ -5,7 +5,6 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import com.cemi.ApertureCraft;
 import com.cemi.block.ApertureBlocks;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
@@ -44,9 +43,6 @@ public interface RedstoneViewMixin {
             }
         }
 
-
-        ApertureCraft.LOGGER
-                .info("RedstoneViewMixin: getReceivedRedstonePower: " + maxRedstonePower);
 
         info.setReturnValue(maxRedstonePower);
         info.cancel();

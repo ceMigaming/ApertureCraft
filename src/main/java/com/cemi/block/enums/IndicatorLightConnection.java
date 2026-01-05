@@ -11,7 +11,11 @@ public enum IndicatorLightConnection implements StringIdentifiable {
     SIDE_UP_LEFT("side_up_left"),
     SIDE_UP_RIGHT("side_up_right"),
     SIDE_DOWN_RIGHT("side_down_right"),
-    SIDE_DOWN_LEFT("side_down_left");
+    SIDE_DOWN_LEFT("side_down_left"),
+    SIDE_LEFT_JUNCTION("side_left_junction"),
+    SIDE_RIGHT_JUNCTION("side_right_junction"),
+    SIDE_TOP_JUNCTION("side_top_junction"),
+    SIDE_BOTTOM_JUNCTION("side_bottom_junction");
 
     private final String name;
 
