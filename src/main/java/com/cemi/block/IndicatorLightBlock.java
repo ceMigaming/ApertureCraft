@@ -159,12 +159,12 @@ public class IndicatorLightBlock extends ApertureBlock implements BlockEntityPro
         if (bl && isNotConnected(newState)) {
             return newState;
         } else {
-            boolean bl2 = ((IndicatorLightConnection) newState.get(WIRE_CONNECTION_NORTH)).isConnected();
-            boolean bl3 = ((IndicatorLightConnection) newState.get(WIRE_CONNECTION_SOUTH)).isConnected();
-            boolean bl4 = ((IndicatorLightConnection) newState.get(WIRE_CONNECTION_EAST)).isConnected();
-            boolean bl5 = ((IndicatorLightConnection) newState.get(WIRE_CONNECTION_WEST)).isConnected();
-            boolean bl6 = !bl2 && !bl3;
-            boolean bl7 = !bl4 && !bl5;
+            boolean isNorthConnected = ((IndicatorLightConnection) newState.get(WIRE_CONNECTION_NORTH)).isConnected();
+            boolean isSouthConnected = ((IndicatorLightConnection) newState.get(WIRE_CONNECTION_SOUTH)).isConnected();
+            boolean isEastConnected = ((IndicatorLightConnection) newState.get(WIRE_CONNECTION_EAST)).isConnected();
+            boolean isWestConnected = ((IndicatorLightConnection) newState.get(WIRE_CONNECTION_WEST)).isConnected();
+            boolean isNorthSouthDisconnected = !isNorthConnected && !isSouthConnected;
+            boolean isEastWestDisconnected = !isEastConnected && !isWestConnected;
             boolean hasBlockUnder = world.getBlockState(pos.down()).isSolidBlock(world, pos);
             boolean hasConnectionAbove = world.getBlockState(pos.up()).isOf(this);
 
@@ -201,12 +201,34 @@ public class IndicatorLightBlock extends ApertureBlock implements BlockEntityPro
                         .with(WIRE_CONNECTION_EAST, IndicatorLightConnection.NONE)
                         .with(WIRE_CONNECTION_SOUTH, IndicatorLightConnection.NONE)
                         .with(WIRE_CONNECTION_WEST, IndicatorLightConnection.NONE);
+
+                if (isWestConnected) {
+                    state = (BlockState) state.with(WIRE_CONNECTION_WEST, IndicatorLightConnection.SIDE);
+                }
+
+                if (isEastConnected) {
+                    state = (BlockState) state.with(WIRE_CONNECTION_EAST, IndicatorLightConnection.SIDE);
+                }
+
+                if (isNorthConnected) {
+                    state = (BlockState) state.with(WIRE_CONNECTION_NORTH, IndicatorLightConnection.SIDE);
+                }
+
+                if (isSouthConnected) {
+                    state = (BlockState) state.with(WIRE_CONNECTION_SOUTH, IndicatorLightConnection.SIDE);
+                }
                 newDir = getDirectionFromBlockState(world.getBlockState(pos.up()));
                 if (player != null
                         && world.getBlockState(pos.offset(player.getHorizontalFacing())).isSolidBlock(world, pos)) {
                     newDir = player.getHorizontalFacing();
+                    if (newDir != null) {
+                        return state.with(
+                                (Property<IndicatorLightConnection>) DIRECTION_TO_WIRE_CONNECTION_PROPERTY
+                                        .get(newDir),
+                                IndicatorLightConnection.UP);
+                    }
                 } else {
-                    if (world.getBlockState(pos.offset(newDir)).isSolidBlock(world, pos)) {
+                    if (newDir != null && world.getBlockState(pos.offset(newDir)).isSolidBlock(world, pos)) {
                         return state.with(
                                 (Property<IndicatorLightConnection>) DIRECTION_TO_WIRE_CONNECTION_PROPERTY
                                         .get(newDir),
@@ -236,19 +258,19 @@ public class IndicatorLightBlock extends ApertureBlock implements BlockEntityPro
                 }
             }
 
-            if (!bl5 && bl6) {
+            if (!isWestConnected && isNorthSouthDisconnected) {
                 newState = (BlockState) newState.with(WIRE_CONNECTION_WEST, IndicatorLightConnection.SIDE);
             }
 
-            if (!bl4 && bl6) {
+            if (!isEastConnected && isNorthSouthDisconnected) {
                 newState = (BlockState) newState.with(WIRE_CONNECTION_EAST, IndicatorLightConnection.SIDE);
             }
 
-            if (!bl2 && bl7) {
+            if (!isNorthConnected && isEastWestDisconnected) {
                 newState = (BlockState) newState.with(WIRE_CONNECTION_NORTH, IndicatorLightConnection.SIDE);
             }
 
-            if (!bl3 && bl7) {
+            if (!isSouthConnected && isEastWestDisconnected) {
                 newState = (BlockState) newState.with(WIRE_CONNECTION_SOUTH, IndicatorLightConnection.SIDE);
             }
 
@@ -312,7 +334,10 @@ public class IndicatorLightBlock extends ApertureBlock implements BlockEntityPro
                             .get(tempDir);
                     return state.with(
                             s,
-                            isFullyConnected(state) || isNotConnected(state) ? IndicatorLightConnection.SIDE : IndicatorLightConnection.NONE);
+                            isVerticallyConnected(neighborPos, world, neighborState, direction)
+                                    ? (direction == Direction.UP ? IndicatorLightConnection.UP
+                                            : IndicatorLightConnection.SIDE_VERTICAL)
+                                    : IndicatorLightConnection.NONE);
                 } else
                     return state;
             }
@@ -368,6 +393,13 @@ public class IndicatorLightBlock extends ApertureBlock implements BlockEntityPro
                 && !((IndicatorLightConnection) state.get(WIRE_CONNECTION_SOUTH)).isConnected()
                 && !((IndicatorLightConnection) state.get(WIRE_CONNECTION_EAST)).isConnected()
                 && !((IndicatorLightConnection) state.get(WIRE_CONNECTION_WEST)).isConnected();
+    }
+
+    private static boolean isVerticallyConnected(BlockPos pos, WorldAccess world, BlockState state,
+            Direction direction) {
+        return world.getBlockState(pos.up().offset(direction)).isOf(ApertureBlocks.INDICATOR_LIGHT)
+                || world.getBlockState(pos.up()).isOf(ApertureBlocks.INDICATOR_LIGHT)
+                || world.getBlockState(pos.down()).isOf(ApertureBlocks.INDICATOR_LIGHT);
     }
 
     public void prepare(BlockState state, WorldAccess world, BlockPos pos, int flags,
