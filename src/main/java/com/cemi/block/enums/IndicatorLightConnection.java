@@ -34,4 +34,13 @@ public enum IndicatorLightConnection implements StringIdentifiable {
     public boolean isConnected() {
         return this != NONE;
     }
+
+    public boolean isVerticalLike() {
+        return this == SIDE_VERTICAL || isDiagonal();
+    }
+
+    public boolean isDiagonal() {
+        return this == SIDE_DOWN_LEFT || this == SIDE_DOWN_RIGHT
+            || this == SIDE_UP_LEFT || this == SIDE_UP_RIGHT;
+    }
 }
