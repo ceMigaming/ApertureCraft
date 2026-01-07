@@ -1,5 +1,6 @@
 package com.cemi.block;
 
+import java.util.EnumMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
@@ -58,6 +59,8 @@ public class IndicatorLightBlock extends ApertureBlock implements BlockEntityPro
     public static final EnumProperty<IndicatorLightConnection> WIRE_CONNECTION_EAST = ApertureProperties.EAST_WIRE_CONNECTION;
     public static final EnumProperty<IndicatorLightConnection> WIRE_CONNECTION_SOUTH = ApertureProperties.SOUTH_WIRE_CONNECTION;
     public static final EnumProperty<IndicatorLightConnection> WIRE_CONNECTION_WEST = ApertureProperties.WEST_WIRE_CONNECTION;
+    public static final BooleanProperty UP = BooleanProperty.of("up");
+    public static final BooleanProperty DOWN = BooleanProperty.of("down");
     public static final BooleanProperty POWERED = Properties.POWERED;
     public static final Map<Direction, EnumProperty<IndicatorLightConnection>> DIRECTION_TO_WIRE_CONNECTION_PROPERTY = Maps
             .newEnumMap(ImmutableMap.of(
@@ -77,6 +80,26 @@ public class IndicatorLightBlock extends ApertureBlock implements BlockEntityPro
             BlockFace.CEILING, Block.createCuboidShape(3, 15, 3, 13, 16, 13),
             BlockFace.WALL, Block.createCuboidShape(3, 3, 15, 13, 13, 16) // north wall
     );
+
+    private static final VoxelShape WALL_UP_SHAPE = Block.createCuboidShape(3, 0, 15, 13, 16, 16);
+    private static final VoxelShape FLOOR_VERTICAL_SHAPE = Block.createCuboidShape(
+            7, 1, 7, // start just above the base plate
+            9, 16, 9 // up to top of block
+    );
+
+    private static final VoxelShape CEILING_VERTICAL_SHAPE = Block.createCuboidShape(
+            7, 0, 7, // bottom of block
+            9, 15, 9 // stop just before ceiling plate
+    );
+
+    // Wall vertical arms BEFORE rotation (facing NORTH)
+    private static final VoxelShape WALL_UP_ARM = Block.createCuboidShape(
+            3, 8, 15,
+            13, 16, 16);
+
+    private static final VoxelShape WALL_DOWN_ARM = Block.createCuboidShape(
+            3, 0, 15,
+            13, 8, 16);
 
     private static final Map<BlockFace, Map<Direction, VoxelShape>> SIDE_SHAPES = Map.of(
             BlockFace.FLOOR, Map.of(
@@ -100,23 +123,44 @@ public class IndicatorLightBlock extends ApertureBlock implements BlockEntityPro
 
     private static final Map<BlockFace, Map<Direction, VoxelShape>> UP_SHAPES = Map.of(
             BlockFace.FLOOR, Map.of(
-                    Direction.NORTH, Block.createCuboidShape(3, 0, 0, 13, 16, 1),
-                    Direction.SOUTH, Block.createCuboidShape(3, 0, 15, 13, 16, 16),
-                    Direction.WEST, Block.createCuboidShape(0, 0, 3, 1, 16, 13),
-                    Direction.EAST, Block.createCuboidShape(15, 0, 3, 16, 16, 13)),
+                    Direction.NORTH,
+                    VoxelShapes.union((VoxelShape) SIDE_SHAPES.get(BlockFace.FLOOR).get(Direction.NORTH),
+                            Block.createCuboidShape(3, 0, 0, 13, 16, 1)),
+                    Direction.SOUTH,
+                    VoxelShapes.union((VoxelShape) SIDE_SHAPES.get(BlockFace.FLOOR).get(Direction.SOUTH),
+                            Block.createCuboidShape(3, 0, 15, 13, 16, 16)),
+                    Direction.WEST,
+                    VoxelShapes.union((VoxelShape) SIDE_SHAPES.get(BlockFace.FLOOR).get(Direction.WEST),
+                            Block.createCuboidShape(0, 0, 3, 1, 16, 13)),
+                    Direction.EAST,
+                    VoxelShapes.union((VoxelShape) SIDE_SHAPES.get(BlockFace.FLOOR).get(Direction.EAST),
+                            Block.createCuboidShape(15, 0, 3, 16, 16, 13))),
 
             BlockFace.CEILING, Map.of(
-                    Direction.NORTH, Block.createCuboidShape(3, 0, 0, 13, 16, 1),
-                    Direction.SOUTH, Block.createCuboidShape(3, 0, 15, 13, 16, 16),
-                    Direction.WEST, Block.createCuboidShape(0, 0, 3, 1, 16, 13),
-                    Direction.EAST, Block.createCuboidShape(15, 0, 3, 16, 16, 13)),
+                    Direction.NORTH,
+                    VoxelShapes.union((VoxelShape) SIDE_SHAPES.get(BlockFace.CEILING).get(Direction.NORTH),
+                            Block.createCuboidShape(3, 0, 0, 13, 16, 1)),
+                    Direction.SOUTH,
+                    VoxelShapes.union((VoxelShape) SIDE_SHAPES.get(BlockFace.CEILING).get(Direction.SOUTH),
+                            Block.createCuboidShape(3, 0, 15, 13, 16, 16)),
+                    Direction.WEST,
+                    VoxelShapes.union((VoxelShape) SIDE_SHAPES.get(BlockFace.CEILING).get(Direction.WEST),
+                            Block.createCuboidShape(0, 0, 3, 1, 16, 13)),
+                    Direction.EAST,
+                    VoxelShapes.union((VoxelShape) SIDE_SHAPES.get(BlockFace.CEILING).get(Direction.EAST),
+                            Block.createCuboidShape(15, 0, 3, 16, 16, 13))));
 
-            BlockFace.WALL, Map.of(
-                    Direction.NORTH, Block.createCuboidShape(3, 0, 15, 13, 3, 16), // down
-                    Direction.SOUTH, Block.createCuboidShape(3, 13, 15, 13, 16, 16), // up
-                    Direction.WEST, Block.createCuboidShape(13, 3, 15, 16, 13, 16), // left-up
-                    Direction.EAST, Block.createCuboidShape(0, 3, 15, 3, 13, 16) // right-up
-            ));
+    private static final Map<Direction, VoxelShape> FLOOR_UP_WALL_SHAPES = Map.of(
+            Direction.NORTH, Block.createCuboidShape(3, 0, 0, 13, 16, 1),
+            Direction.SOUTH, Block.createCuboidShape(3, 0, 15, 13, 16, 16),
+            Direction.WEST, Block.createCuboidShape(0, 0, 3, 1, 16, 13),
+            Direction.EAST, Block.createCuboidShape(15, 0, 3, 16, 16, 13));
+
+    private static final Map<Direction, VoxelShape> CEILING_DOWN_WALL_SHAPES = Map.of(
+            Direction.NORTH, Block.createCuboidShape(3, 0, 15, 13, 16, 16),
+            Direction.SOUTH, Block.createCuboidShape(3, 0, 0, 13, 16, 1),
+            Direction.WEST, Block.createCuboidShape(15, 0, 3, 16, 16, 13),
+            Direction.EAST, Block.createCuboidShape(0, 0, 3, 1, 16, 13));
 
     // --------------------
     // 2. Placement logic
@@ -128,37 +172,23 @@ public class IndicatorLightBlock extends ApertureBlock implements BlockEntityPro
         BlockPos sidePos = pos.offset(dir);
         BlockState sideState = world.getBlockState(sidePos);
 
-        // 1. Direct horizontal connection
-        if (connectsTo(sideState, dir)) {
+        BlockFace face = state.get(FACE);
+
+        // Same-face horizontal connection
+        if (sideState.isOf(this)
+                && sideState.get(FACE) == face
+                && connectsTo(sideState, dir)) {
             return IndicatorLightConnection.SIDE;
         }
 
-        if (sideState.isSolidBlock(world, sidePos)) {
+        // Solid blocks block floor / ceiling routing
+        if (sideState.isSolidBlock(world, sidePos) && face != BlockFace.WALL) {
             return IndicatorLightConnection.NONE;
         }
 
-        BlockFace face = state.get(FACE);
-
-        // 2. Vertical / "up" connection depends on mounting face
-        BlockPos upPos = null;
-
-        if (face == BlockFace.FLOOR) {
-            // Redstone goes down the block edge
-            upPos = sidePos.down();
-        } else if (face == BlockFace.CEILING) {
-            // Redstone goes up the block edge
-            upPos = sidePos.up();
-        } else if (face == BlockFace.WALL) {
-            // For walls, "up" means behind the wall
-            Direction wallFacing = state.get(FACING);
-            upPos = sidePos.offset(wallFacing.getOpposite());
-        }
-
-        if (upPos != null) {
-            BlockState upState = world.getBlockState(upPos);
-            if (connectsTo(upState, dir)) {
-                return IndicatorLightConnection.UP;
-            }
+        // Generic redstone-style horizontal connection
+        if (connectsTo(sideState, dir)) {
+            return IndicatorLightConnection.SIDE;
         }
 
         return IndicatorLightConnection.NONE;
@@ -171,6 +201,8 @@ public class IndicatorLightBlock extends ApertureBlock implements BlockEntityPro
                         .with(FACE, BlockFace.FLOOR)
                         .with(FACING, Direction.NORTH)
                         .with(POWERED, false)
+                        .with(UP, false)
+                        .with(DOWN, false)
                         .with(WIRE_CONNECTION_NORTH, IndicatorLightConnection.NONE)
                         .with(WIRE_CONNECTION_EAST, IndicatorLightConnection.NONE)
                         .with(WIRE_CONNECTION_SOUTH, IndicatorLightConnection.NONE)
@@ -183,25 +215,45 @@ public class IndicatorLightBlock extends ApertureBlock implements BlockEntityPro
 
     @Override
     public BlockState getPlacementState(ItemPlacementContext ctx) {
-        BlockFace face = switch (ctx.getSide()) {
-            case UP -> BlockFace.FLOOR;
-            case DOWN -> BlockFace.CEILING;
-            default -> BlockFace.WALL;
-        };
+        World world = ctx.getWorld();
+        BlockPos pos = ctx.getBlockPos();
+        Direction side = ctx.getSide();
+
+        BlockFace face;
+
+        if (side == Direction.UP) {
+            face = BlockFace.FLOOR;
+        } else if (side == Direction.DOWN) {
+            face = BlockFace.CEILING;
+        } else {
+            // Clicked a wall — prefer FLOOR if supported
+            BlockState below = world.getBlockState(pos.down());
+            if (below.isSolidBlock(world, pos.down())) {
+                face = BlockFace.FLOOR;
+            } else {
+                face = BlockFace.WALL;
+            }
+        }
 
         Direction facing = face == BlockFace.WALL
-                ? ctx.getSide().getOpposite()
+                ? side.getOpposite()
                 : ctx.getHorizontalPlayerFacing();
 
         BlockState state = getDefaultState()
                 .with(FACE, face)
                 .with(FACING, facing);
 
+        // Horizontal connections
         for (Direction dir : Direction.Type.HORIZONTAL) {
             state = state.with(
                     DIRECTION_TO_WIRE_CONNECTION_PROPERTY.get(dir),
-                    getConnection(ctx.getWorld(), ctx.getBlockPos(), dir, state));
+                    getConnection(world, pos, dir, state));
         }
+
+        // Vertical connections
+        state = state
+                .with(UP, hasVerticalConnection(world, pos, Direction.UP, state))
+                .with(DOWN, hasVerticalConnection(world, pos, Direction.DOWN, state));
 
         return state;
     }
@@ -219,25 +271,27 @@ public class IndicatorLightBlock extends ApertureBlock implements BlockEntityPro
             BlockPos pos,
             BlockPos neighborPos) {
 
-        // Vertical changes only matter for support
+        BlockState updated = state;
+
+        // Horizontal update
+        if (direction.getAxis().isHorizontal()) {
+            EnumProperty<IndicatorLightConnection> prop = DIRECTION_TO_WIRE_CONNECTION_PROPERTY.get(direction);
+
+            IndicatorLightConnection newConn = getConnection(world, pos, direction, state);
+
+            if (state.get(prop) != newConn) {
+                updated = updated.with(prop, newConn);
+            }
+        }
+
+        // Vertical update (directional!)
         if (direction == Direction.UP || direction == Direction.DOWN) {
-            return state;
+            updated = updated
+                    .with(UP, hasVerticalConnection(world, pos, Direction.UP, updated))
+                    .with(DOWN, hasVerticalConnection(world, pos, Direction.DOWN, updated));
         }
 
-        // Only horizontal directions affect connections
-        if (!direction.getAxis().isHorizontal()) {
-            return state;
-        }
-
-        IndicatorLightConnection newConn = getConnection(world, pos, direction, state);
-
-        EnumProperty<IndicatorLightConnection> prop = DIRECTION_TO_WIRE_CONNECTION_PROPERTY.get(direction);
-
-        if (state.get(prop) == newConn) {
-            return state;
-        }
-
-        return state.with(prop, newConn);
+        return updated;
     }
 
     public void prepare(BlockState state, WorldAccess world, BlockPos pos, int flags,
@@ -360,18 +414,17 @@ public class IndicatorLightBlock extends ApertureBlock implements BlockEntityPro
             shape = rotateShape(shape, facing);
         }
 
+        // Horizontal arms
         for (Direction dir : Direction.Type.HORIZONTAL) {
-            IndicatorLightConnection conn = state.get(DIRECTION_TO_WIRE_CONNECTION_PROPERTY.get(dir));
-
-            if (conn == IndicatorLightConnection.NONE)
+            if (state.get(DIRECTION_TO_WIRE_CONNECTION_PROPERTY.get(dir)) != IndicatorLightConnection.SIDE) {
                 continue;
-
-            Direction localDir = dir;
-            if (face == BlockFace.WALL) {
-                localDir = toWallLocal(dir, facing);
             }
 
-            VoxelShape arm = getConnectionShape(face, localDir, conn);
+            Direction localDir = face == BlockFace.WALL
+                    ? toWallLocal(dir, facing)
+                    : dir;
+
+            VoxelShape arm = SIDE_SHAPES.get(face).get(localDir);
 
             if (face == BlockFace.WALL) {
                 arm = rotateShape(arm, facing);
@@ -380,40 +433,77 @@ public class IndicatorLightBlock extends ApertureBlock implements BlockEntityPro
             shape = VoxelShapes.union(shape, arm);
         }
 
-        if (face == BlockFace.WALL) {
-            shape = VoxelShapes.union(shape, getWallVerticalShape(state, world, pos));
+        // Vertical arms (FACE-aware)
+        switch (face) {
+            case FLOOR -> {
+                if (state.get(UP)) {
+                    Direction wallFacing = getUpWallFacing(world, pos);
+                    if (wallFacing != null) {
+                        // vertical strip on wall
+                        shape = VoxelShapes.union(
+                                shape,
+                                FLOOR_UP_WALL_SHAPES.get(wallFacing));
+
+                        // short horizontal arm from dot → wall
+                        shape = VoxelShapes.union(
+                                shape,
+                                SIDE_SHAPES.get(BlockFace.FLOOR).get(wallFacing));
+                    }
+                }
+            }
+
+            case CEILING -> {
+                if (state.get(DOWN)) {
+                    Direction wallFacing = getDownWallFacing(world, pos);
+                    if (wallFacing != null) {
+                        shape = VoxelShapes.union(
+                                shape,
+                                CEILING_DOWN_WALL_SHAPES.get(wallFacing));
+
+                        shape = VoxelShapes.union(
+                                shape,
+                                SIDE_SHAPES.get(BlockFace.CEILING).get(wallFacing.getOpposite()));
+                    }
+                }
+            }
+
+            case WALL -> {
+                if (state.get(UP)) {
+                    shape = VoxelShapes.union(
+                            shape,
+                            rotateShape(WALL_UP_ARM, facing));
+                }
+
+                if (state.get(DOWN)) {
+                    shape = VoxelShapes.union(
+                            shape,
+                            rotateShape(WALL_DOWN_ARM, facing));
+                }
+            }
         }
 
         return shape;
     }
 
-    private VoxelShape getWallVerticalShape(
-            BlockState state, BlockView world, BlockPos pos) {
+    @Nullable
+    private Direction getUpWallFacing(BlockView world, BlockPos pos) {
+        BlockState above = world.getBlockState(pos.up());
 
-        Direction facing = state.get(FACING);
-        VoxelShape result = VoxelShapes.empty();
-
-        // Above
-        BlockPos upPos = pos.up();
-        BlockState upState = world.getBlockState(upPos);
-        if (upState.isOf(this) && upState.get(FACE) == BlockFace.WALL
-                && upState.get(FACING) == facing) {
-
-            VoxelShape up = UP_SHAPES.get(BlockFace.WALL).get(Direction.SOUTH);
-            result = VoxelShapes.union(result, rotateShape(up, facing));
+        if (above.isOf(this) && above.get(FACE) == BlockFace.WALL) {
+            return above.get(FACING);
         }
 
-        // Below
-        BlockPos downPos = pos.down();
-        BlockState downState = world.getBlockState(downPos);
-        if (downState.isOf(this) && downState.get(FACE) == BlockFace.WALL
-                && downState.get(FACING) == facing) {
+        return null;
+    }
 
-            VoxelShape down = UP_SHAPES.get(BlockFace.WALL).get(Direction.NORTH);
-            result = VoxelShapes.union(result, rotateShape(down, facing));
+    @Nullable
+    private Direction getDownWallFacing(BlockView world, BlockPos pos) {
+        BlockState below = world.getBlockState(pos.down());
+        if (below.isOf(this) && below.get(FACE) == BlockFace.WALL) {
+            // CEILING → WALL needs inversion
+            return below.get(FACING).getOpposite();
         }
-
-        return result;
+        return null;
     }
 
     private Direction toWallLocal(Direction worldDir, Direction facing) {
@@ -426,22 +516,80 @@ public class IndicatorLightBlock extends ApertureBlock implements BlockEntityPro
         };
     }
 
-    private VoxelShape getConnectionShape(
-            BlockFace face, Direction dir, IndicatorLightConnection conn) {
+    // private VoxelShape getConnectionShape(
+    // BlockFace face,
+    // Direction dir,
+    // IndicatorLightConnection conn) {
 
-        if (conn == IndicatorLightConnection.SIDE) {
-            Map<Direction, VoxelShape> byDir = SIDE_SHAPES.get(face);
-            Objects.requireNonNull(byDir, "Missing SIDE_SHAPES for face " + face);
-            return byDir.get(dir);
+    // return switch (conn) {
+    // case SIDE -> SIDE_SHAPES.get(face).get(dir);
+
+    // case UP_FLOOR -> UP_SHAPES.get(BlockFace.FLOOR).get(dir);
+    // case UP_CEILING -> UP_SHAPES.get(BlockFace.CEILING).get(dir);
+
+    // case UP_WALL -> WALL_UP_SHAPE;
+
+    // default -> VoxelShapes.empty();
+    // };
+    // }
+
+    private boolean hasVerticalConnection(
+            BlockView world, BlockPos pos, Direction verticalDir, BlockState state) {
+
+        BlockFace face = state.get(FACE);
+        BlockPos targetPos = pos.offset(verticalDir);
+        BlockState targetState = world.getBlockState(targetPos);
+
+        if (!targetState.isOf(this)) {
+            return false;
         }
 
-        if (conn == IndicatorLightConnection.UP) {
-            Map<Direction, VoxelShape> byDir = UP_SHAPES.get(face);
-            Objects.requireNonNull(byDir, "Missing UP_SHAPES for face " + face);
-            return byDir.get(dir);
+        BlockFace otherFace = targetState.get(FACE);
+
+        // ----------------------------
+        // 1. SAME-FACE vertical stacks
+        // ----------------------------
+        if (face == otherFace) {
+            return switch (face) {
+                case FLOOR -> verticalDir == Direction.UP;
+                case CEILING -> verticalDir == Direction.DOWN;
+                case WALL -> true; // wall ↕ wall always allowed
+            };
         }
 
-        return VoxelShapes.empty();
+        // --------------------------------
+        // 2. CROSS-FACE vertical transitions
+        // --------------------------------
+
+        // FLOOR → WALL (above)
+        if (face == BlockFace.FLOOR
+                && verticalDir == Direction.UP
+                && otherFace == BlockFace.WALL) {
+            return true;
+        }
+
+        // WALL → FLOOR (below)
+        if (face == BlockFace.WALL
+                && verticalDir == Direction.DOWN
+                && otherFace == BlockFace.FLOOR) {
+            return true;
+        }
+
+        // CEILING → WALL (below)
+        if (face == BlockFace.CEILING
+                && verticalDir == Direction.DOWN
+                && otherFace == BlockFace.WALL) {
+            return true;
+        }
+
+        // WALL → CEILING (above)
+        if (face == BlockFace.WALL
+                && verticalDir == Direction.UP
+                && otherFace == BlockFace.CEILING) {
+            return true;
+        }
+
+        return false;
     }
 
     // --------------------
@@ -640,7 +788,7 @@ public class IndicatorLightBlock extends ApertureBlock implements BlockEntityPro
     // --------------------
     protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
         builder.add(new Property[] { FACE, FACING, WIRE_CONNECTION_NORTH, WIRE_CONNECTION_EAST,
-                WIRE_CONNECTION_SOUTH, WIRE_CONNECTION_WEST, POWERED });
+                WIRE_CONNECTION_SOUTH, WIRE_CONNECTION_WEST, POWERED, UP, DOWN });
     }
 
     public static class InnerIndicatorLightBlock {
@@ -656,9 +804,8 @@ public class IndicatorLightBlock extends ApertureBlock implements BlockEntityPro
             ROTATION[BlockRotation.COUNTERCLOCKWISE_90.ordinal()] = 2;
             ROTATION[BlockRotation.CLOCKWISE_90.ordinal()] = 3;
 
-            SIDE[IndicatorLightConnection.UP.ordinal()] = 1;
-            SIDE[IndicatorLightConnection.SIDE.ordinal()] = 2;
-            SIDE[IndicatorLightConnection.NONE.ordinal()] = 3;
+            SIDE[IndicatorLightConnection.SIDE.ordinal()] = 1;
+            SIDE[IndicatorLightConnection.NONE.ordinal()] = 2;
         }
     }
 
