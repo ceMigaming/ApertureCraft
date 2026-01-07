@@ -2,14 +2,15 @@ package com.cemi.block;
 
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
-import java.util.function.Predicate;
 
 import org.jetbrains.annotations.Nullable;
 
 import com.cemi.block.entity.IndicatorLightBlockEntity;
 import com.cemi.block.enums.IndicatorLightConnection;
 import com.cemi.state.property.ApertureProperties;
+import com.cemi.util.VoxelShapeUtils;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -24,12 +25,13 @@ import net.minecraft.block.ObserverBlock;
 import net.minecraft.block.RedstoneWireBlock;
 import net.minecraft.block.RepeaterBlock;
 import net.minecraft.block.ShapeContext;
-import net.minecraft.block.TrapdoorBlock;
 import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.block.enums.BlockFace;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.BooleanProperty;
+import net.minecraft.state.property.DirectionProperty;
 import net.minecraft.state.property.EnumProperty;
 import net.minecraft.state.property.Properties;
 import net.minecraft.state.property.Property;
@@ -50,337 +52,165 @@ import net.minecraft.world.WorldAccess;
 @SuppressWarnings({ "deprecation", "null" })
 public class IndicatorLightBlock extends ApertureBlock implements BlockEntityProvider {
     public static final MapCodec<RedstoneWireBlock> CODEC = createCodec(RedstoneWireBlock::new);
-    public static final EnumProperty<IndicatorLightConnection> WIRE_CONNECTION_NORTH;
-    public static final EnumProperty<IndicatorLightConnection> WIRE_CONNECTION_EAST;
-    public static final EnumProperty<IndicatorLightConnection> WIRE_CONNECTION_SOUTH;
-    public static final EnumProperty<IndicatorLightConnection> WIRE_CONNECTION_WEST;
-    // public static final IntProperty POWER;
-    public static final BooleanProperty POWERED;
-    public static final Map<Direction, EnumProperty<IndicatorLightConnection>> DIRECTION_TO_WIRE_CONNECTION_PROPERTY;
+    public static final EnumProperty<BlockFace> FACE = Properties.BLOCK_FACE;
+    public static final DirectionProperty FACING = Properties.HORIZONTAL_FACING;
+    public static final EnumProperty<IndicatorLightConnection> WIRE_CONNECTION_NORTH = ApertureProperties.NORTH_WIRE_CONNECTION;
+    public static final EnumProperty<IndicatorLightConnection> WIRE_CONNECTION_EAST = ApertureProperties.EAST_WIRE_CONNECTION;
+    public static final EnumProperty<IndicatorLightConnection> WIRE_CONNECTION_SOUTH = ApertureProperties.SOUTH_WIRE_CONNECTION;
+    public static final EnumProperty<IndicatorLightConnection> WIRE_CONNECTION_WEST = ApertureProperties.WEST_WIRE_CONNECTION;
+    public static final BooleanProperty POWERED = Properties.POWERED;
+    public static final Map<Direction, EnumProperty<IndicatorLightConnection>> DIRECTION_TO_WIRE_CONNECTION_PROPERTY = Maps
+            .newEnumMap(ImmutableMap.of(
+                    Direction.NORTH, WIRE_CONNECTION_NORTH,
+                    Direction.EAST, WIRE_CONNECTION_EAST,
+                    Direction.SOUTH, WIRE_CONNECTION_SOUTH,
+                    Direction.WEST, WIRE_CONNECTION_WEST));
     protected static final int field_31222 = 1;
     protected static final int field_31223 = 3;
     protected static final int field_31224 = 13;
     protected static final int field_31225 = 3;
     protected static final int field_31226 = 13;
-    private static final VoxelShape DOT_SHAPE;
-    private static final Map<Direction, VoxelShape> DIRECTION_TO_SIDE_SHAPE;
-    private static final Map<Direction, VoxelShape> DIRECTION_TO_UP_SHAPE;
-    private static final Map<Direction, VoxelShape> DIRECTION_TO_HORIZONTAL_SHAPE;
-    private static final Map<Direction, VoxelShape> DIRECTION_TO_VERTICAL_SHAPE;
-    private static final Map<BlockState, VoxelShape> SHAPES;
-    private final BlockState dotState;
     private boolean wiresGivePower = true;
 
-    // --------------------
-    // 1. State topology (connections, diagonal validity)
-    // --------------------
-    private static boolean isFullyConnected(BlockState state) {
-        return ((IndicatorLightConnection) state.get(WIRE_CONNECTION_NORTH)).isConnected()
-                && ((IndicatorLightConnection) state.get(WIRE_CONNECTION_SOUTH)).isConnected()
-                && ((IndicatorLightConnection) state.get(WIRE_CONNECTION_EAST)).isConnected()
-                && ((IndicatorLightConnection) state.get(WIRE_CONNECTION_WEST)).isConnected();
-    }
+    private static final Map<BlockFace, VoxelShape> BASE_SHAPE = Map.of(
+            BlockFace.FLOOR, Block.createCuboidShape(3, 0, 3, 13, 1, 13),
+            BlockFace.CEILING, Block.createCuboidShape(3, 15, 3, 13, 16, 13),
+            BlockFace.WALL, Block.createCuboidShape(3, 3, 15, 13, 13, 16) // north wall
+    );
 
-    private static boolean isNotConnected(BlockState state) {
-        return !((IndicatorLightConnection) state.get(WIRE_CONNECTION_NORTH)).isConnected()
-                && !((IndicatorLightConnection) state.get(WIRE_CONNECTION_SOUTH)).isConnected()
-                && !((IndicatorLightConnection) state.get(WIRE_CONNECTION_EAST)).isConnected()
-                && !((IndicatorLightConnection) state.get(WIRE_CONNECTION_WEST)).isConnected();
-    }
+    private static final Map<BlockFace, Map<Direction, VoxelShape>> SIDE_SHAPES = Map.of(
+            BlockFace.FLOOR, Map.of(
+                    Direction.NORTH, Block.createCuboidShape(3, 0, 0, 13, 1, 3),
+                    Direction.SOUTH, Block.createCuboidShape(3, 0, 13, 13, 1, 16),
+                    Direction.WEST, Block.createCuboidShape(0, 0, 3, 3, 1, 13),
+                    Direction.EAST, Block.createCuboidShape(13, 0, 3, 16, 1, 13)),
 
-    private static boolean hasAnyDiagonal(BlockState state) {
-        for (Direction dir : Direction.Type.HORIZONTAL) {
-            IndicatorLightConnection conn = state.get(DIRECTION_TO_WIRE_CONNECTION_PROPERTY.get(dir));
-            if (isDiagonal(conn)) {
-                return true;
-            }
-        }
-        return false;
-    }
+            BlockFace.CEILING, Map.of(
+                    Direction.NORTH, Block.createCuboidShape(3, 15, 0, 13, 16, 3),
+                    Direction.SOUTH, Block.createCuboidShape(3, 15, 13, 13, 16, 16),
+                    Direction.WEST, Block.createCuboidShape(0, 15, 3, 3, 16, 13),
+                    Direction.EAST, Block.createCuboidShape(13, 15, 3, 16, 16, 13)),
 
-    private static boolean isDiagonal(IndicatorLightConnection conn) {
-        return conn == IndicatorLightConnection.SIDE_DOWN_LEFT
-                || conn == IndicatorLightConnection.SIDE_DOWN_RIGHT
-                || conn == IndicatorLightConnection.SIDE_UP_LEFT
-                || conn == IndicatorLightConnection.SIDE_UP_RIGHT;
-    }
+            BlockFace.WALL, Map.of(
+                    Direction.SOUTH, Block.createCuboidShape(3, 3, 14, 13, 13, 15), // forward (away from wall)
+                    Direction.NORTH, Block.createCuboidShape(3, 3, 15, 13, 13, 16), // backward (into wall, rarely used)
+                    Direction.EAST, Block.createCuboidShape(0, 3, 15, 3, 13, 16), // right
+                    Direction.WEST, Block.createCuboidShape(13, 3, 15, 16, 13, 16) // left
+            ));
 
-    private boolean hasVerticalSupport(BlockView world, BlockPos pos) {
-        return world.getBlockState(pos.up()).isOf(this)
-                || world.getBlockState(pos.down()).isOf(this);
-    }
+    private static final Map<BlockFace, Map<Direction, VoxelShape>> UP_SHAPES = Map.of(
+            BlockFace.FLOOR, Map.of(
+                    Direction.NORTH, Block.createCuboidShape(3, 0, 0, 13, 16, 1),
+                    Direction.SOUTH, Block.createCuboidShape(3, 0, 15, 13, 16, 16),
+                    Direction.WEST, Block.createCuboidShape(0, 0, 3, 1, 16, 13),
+                    Direction.EAST, Block.createCuboidShape(15, 0, 3, 16, 16, 13)),
 
-    private boolean hasSideSupport(BlockView world, BlockPos pos) {
-        return anyHorizontal(world, pos, s -> s.isOf(this));
-    }
+            BlockFace.CEILING, Map.of(
+                    Direction.NORTH, Block.createCuboidShape(3, 0, 0, 13, 16, 1),
+                    Direction.SOUTH, Block.createCuboidShape(3, 0, 15, 13, 16, 16),
+                    Direction.WEST, Block.createCuboidShape(0, 0, 3, 1, 16, 13),
+                    Direction.EAST, Block.createCuboidShape(15, 0, 3, 16, 16, 13)),
 
-    private boolean diagonalValid(BlockView world, BlockPos pos) {
-        return hasVerticalSupport(world, pos) && hasSideSupport(world, pos);
-    }
-
-    private static boolean anyHorizontal(BlockView world, BlockPos pos, Predicate<BlockState> test) {
-        for (Direction dir : Direction.Type.HORIZONTAL) {
-            if (test.test(world.getBlockState(pos.offset(dir)))) {
-                return true;
-            }
-        }
-        return false;
-    }
+            BlockFace.WALL, Map.of(
+                    Direction.NORTH, Block.createCuboidShape(3, 0, 15, 13, 3, 16), // down
+                    Direction.SOUTH, Block.createCuboidShape(3, 13, 15, 13, 16, 16), // up
+                    Direction.WEST, Block.createCuboidShape(13, 3, 15, 16, 13, 16), // left-up
+                    Direction.EAST, Block.createCuboidShape(0, 3, 15, 3, 13, 16) // right-up
+            ));
 
     // --------------------
     // 2. Placement logic
     // --------------------
-    public IndicatorLightBlock(AbstractBlock.Settings settings) {
-        super("indicator_light", settings);
-        this.setDefaultState(clearConnections(this.stateManager.getDefaultState()).with(POWERED, false));
-        this.dotState = (BlockState) ((BlockState) ((BlockState) ((BlockState) this
-                .getDefaultState().with(WIRE_CONNECTION_NORTH, IndicatorLightConnection.SIDE))
-                .with(WIRE_CONNECTION_EAST, IndicatorLightConnection.SIDE))
-                .with(WIRE_CONNECTION_SOUTH, IndicatorLightConnection.SIDE))
-                .with(WIRE_CONNECTION_WEST, IndicatorLightConnection.SIDE);
-        for (BlockState blockState : this.getStateManager().getStates()) {
-            if (!blockState.get(POWERED)) {
-                SHAPES.put(blockState, this.getShapeForState(blockState));
+
+    private IndicatorLightConnection getConnection(
+            BlockView world, BlockPos pos, Direction dir, BlockState state) {
+
+        BlockPos sidePos = pos.offset(dir);
+        BlockState sideState = world.getBlockState(sidePos);
+
+        // 1. Direct horizontal connection
+        if (connectsTo(sideState, dir)) {
+            return IndicatorLightConnection.SIDE;
+        }
+
+        if (sideState.isSolidBlock(world, sidePos)) {
+            return IndicatorLightConnection.NONE;
+        }
+
+        BlockFace face = state.get(FACE);
+
+        // 2. Vertical / "up" connection depends on mounting face
+        BlockPos upPos = null;
+
+        if (face == BlockFace.FLOOR) {
+            // Redstone goes down the block edge
+            upPos = sidePos.down();
+        } else if (face == BlockFace.CEILING) {
+            // Redstone goes up the block edge
+            upPos = sidePos.up();
+        } else if (face == BlockFace.WALL) {
+            // For walls, "up" means behind the wall
+            Direction wallFacing = state.get(FACING);
+            upPos = sidePos.offset(wallFacing.getOpposite());
+        }
+
+        if (upPos != null) {
+            BlockState upState = world.getBlockState(upPos);
+            if (connectsTo(upState, dir)) {
+                return IndicatorLightConnection.UP;
             }
         }
+
+        return IndicatorLightConnection.NONE;
+    }
+
+    public IndicatorLightBlock(AbstractBlock.Settings settings) {
+        super("indicator_light", settings);
+        this.setDefaultState(
+                this.stateManager.getDefaultState()
+                        .with(FACE, BlockFace.FLOOR)
+                        .with(FACING, Direction.NORTH)
+                        .with(POWERED, false)
+                        .with(WIRE_CONNECTION_NORTH, IndicatorLightConnection.NONE)
+                        .with(WIRE_CONNECTION_EAST, IndicatorLightConnection.NONE)
+                        .with(WIRE_CONNECTION_SOUTH, IndicatorLightConnection.NONE)
+                        .with(WIRE_CONNECTION_WEST, IndicatorLightConnection.NONE));
     }
 
     public MapCodec<RedstoneWireBlock> getCodec() {
         return CODEC;
     }
 
+    @Override
     public BlockState getPlacementState(ItemPlacementContext ctx) {
-        return this.getPlacementState(ctx.getWorld(), this.dotState, ctx.getBlockPos(), ctx.getPlayer());
-    }
-
-    private BlockState getPlacementState(
-            BlockView world,
-            BlockState state,
-            BlockPos pos,
-            @Nullable PlayerEntity player) {
-        boolean bl = isNotConnected(state);
-        BlockState baseState = this.getDefaultWireState(
-                world,
-                this.getDefaultState().with(POWERED, state.get(POWERED)),
-                pos);
-
-        if (bl && isNotConnected(baseState)) {
-            return applyDiagonalConnections(world, pos, state);
-        }
-
-        return switch (getPlacementMode(world, pos)) {
-            case FLOATING -> placeFloating(world, pos, baseState, player);
-            case HANGING -> placeHanging(world, pos, baseState, player);
-            case GROUNDED -> placeGrounded(world, pos, baseState);
+        BlockFace face = switch (ctx.getSide()) {
+            case UP -> BlockFace.FLOOR;
+            case DOWN -> BlockFace.CEILING;
+            default -> BlockFace.WALL;
         };
-    }
 
-    private BlockState getDefaultWireState(BlockView world, BlockState state, BlockPos pos) {
-        boolean bl = !world.getBlockState(pos.up()).isSolidBlock(world, pos);
-        Iterator<Direction> var5 = Type.HORIZONTAL.iterator();
-        while (var5.hasNext()) {
-            Direction direction = (Direction) var5.next();
-            if (!((IndicatorLightConnection) state
-                    .get((Property<IndicatorLightConnection>) DIRECTION_TO_WIRE_CONNECTION_PROPERTY
-                            .get(direction)))
-                    .isConnected()) {
-                IndicatorLightConnection IndicatorLightConnection = this.getRenderConnectionType(world, pos, pos,
-                        direction,
-                        bl);
-                state = (BlockState) state
-                        .with((Property<IndicatorLightConnection>) DIRECTION_TO_WIRE_CONNECTION_PROPERTY
-                                .get(direction), IndicatorLightConnection);
-            }
-        }
-        return state;
-    }
+        Direction facing = face == BlockFace.WALL
+                ? ctx.getSide().getOpposite()
+                : ctx.getHorizontalPlayerFacing();
 
-    private BlockState placeFloating(
-            BlockView world, BlockPos pos, BlockState state, @Nullable PlayerEntity player) {
-        state = clearConnections(state);
-
-        Direction dir = findPlayerOrSolidSide(world, pos, player);
-        if (dir == null)
-            return Blocks.AIR.getDefaultState();
-
-        IndicatorLightConnection conn = resolveFloatingConnection(world, pos, dir);
-
-        return applyDiagonalConnections(
-                world, pos,
-                state.with(DIRECTION_TO_WIRE_CONNECTION_PROPERTY.get(dir), conn));
-    }
-
-    private BlockState placeHanging(
-            BlockView world, BlockPos pos, BlockState state, @Nullable PlayerEntity player) {
-        BlockState result = reapplySideConnections(clearConnections(state), state);
-
-        Direction dir = findHangingDirection(world, pos, player);
-        if (dir == null) {
-            return result;
-        }
-
-        boolean grounded = world.getBlockState(pos.down())
-                .isSolidBlock(world, pos.down());
-
-        boolean verticalChain = canContinueVerticalDown(world, pos);
-
-        IndicatorLightConnection conn;
-        if (grounded && verticalChain) {
-            conn = IndicatorLightConnection.SIDE_VERTICAL;
-        } else if (grounded) {
-            conn = IndicatorLightConnection.UP;
-        } else {
-            conn = IndicatorLightConnection.SIDE_VERTICAL;
-        }
-
-        return applyDiagonalConnections(
-                world, pos,
-                result.with(DIRECTION_TO_WIRE_CONNECTION_PROPERTY.get(dir), conn));
-    }
-
-    @Nullable
-    private Direction findHangingDirection(
-            BlockView world, BlockPos pos, @Nullable PlayerEntity player) {
-        if (player != null) {
-            Direction facing = player.getHorizontalFacing();
-            if (world.getBlockState(pos.offset(facing))
-                    .isSolidBlock(world, pos.offset(facing))) {
-                return facing;
-            }
-        }
-
-        Direction vertical = findVerticalConnection(world.getBlockState(pos.up()));
-        if (vertical != null) {
-            return vertical;
-        }
-
-        return findSolidSide(world, pos);
-    }
-
-    private BlockState reapplySideConnections(BlockState target, BlockState source) {
-        for (Direction dir : Direction.Type.HORIZONTAL) {
-            var prop = DIRECTION_TO_WIRE_CONNECTION_PROPERTY.get(dir);
-            if (source.get(prop).isConnected()) {
-                target = target.with(prop, IndicatorLightConnection.SIDE);
-            }
-        }
-        return target;
-    }
-
-    private BlockState placeGrounded(BlockView world, BlockPos pos, BlockState state) {
-        boolean ns = !state.get(WIRE_CONNECTION_NORTH).isConnected()
-                && !state.get(WIRE_CONNECTION_SOUTH).isConnected();
-        boolean ew = !state.get(WIRE_CONNECTION_EAST).isConnected()
-                && !state.get(WIRE_CONNECTION_WEST).isConnected();
-
-        if (ns) {
-            state = state
-                    .with(WIRE_CONNECTION_EAST, IndicatorLightConnection.SIDE)
-                    .with(WIRE_CONNECTION_WEST, IndicatorLightConnection.SIDE);
-        }
-        if (ew) {
-            state = state
-                    .with(WIRE_CONNECTION_NORTH, IndicatorLightConnection.SIDE)
-                    .with(WIRE_CONNECTION_SOUTH, IndicatorLightConnection.SIDE);
-        }
-
-        return applyDiagonalConnections(world, pos, state);
-    }
-
-    private static final Set<IndicatorLightConnection> VERTICAL_LIKE = Set.of(
-            IndicatorLightConnection.SIDE_VERTICAL,
-            IndicatorLightConnection.SIDE_DOWN_LEFT,
-            IndicatorLightConnection.SIDE_DOWN_RIGHT,
-            IndicatorLightConnection.UP);
-
-    @Nullable
-    private Direction findVerticalConnection(BlockState state) {
-        for (Direction dir : Direction.Type.HORIZONTAL) {
-            if (VERTICAL_LIKE.contains(state.get(DIRECTION_TO_WIRE_CONNECTION_PROPERTY.get(dir)))) {
-                return dir;
-            }
-        }
-        return null;
-    }
-
-    @Nullable
-    private Direction findSolidSide(BlockView world, BlockPos pos) {
-        for (Direction dir : Direction.Type.HORIZONTAL) {
-            if (world.getBlockState(pos.offset(dir)).isSolidBlock(world, pos.offset(dir))) {
-                return dir;
-            }
-        }
-        return null;
-    }
-
-    private PlacementMode getPlacementMode(BlockView world, BlockPos pos) {
-        if (!world.getBlockState(pos.down()).isSolidBlock(world, pos.down())) {
-            return PlacementMode.FLOATING;
-        }
-        if (world.getBlockState(pos.up()).isOf(this)) {
-            return PlacementMode.HANGING;
-        }
-        return PlacementMode.GROUNDED;
-    }
-
-    private BlockState applyDiagonalConnections(
-            BlockView world, BlockPos pos, BlockState state) {
-
-        boolean hasAbove = world.getBlockState(pos.up()).isOf(this);
-        boolean hasBelow = world.getBlockState(pos.down()).isOf(this);
-        boolean grounded = world.getBlockState(pos.down())
-                .isSolidBlock(world, pos.down());
-
-        if (!hasAbove && !hasBelow)
-            return state;
+        BlockState state = getDefaultState()
+                .with(FACE, face)
+                .with(FACING, facing);
 
         for (Direction dir : Direction.Type.HORIZONTAL) {
-            EnumProperty<IndicatorLightConnection> prop = DIRECTION_TO_WIRE_CONNECTION_PROPERTY.get(dir);
-
-            IndicatorLightConnection conn = state.get(prop);
-            if (!conn.isConnected())
-                continue;
-
-            // 🔑 Prevent diagonal override of floor vertical
-            if (grounded && isFloorVerticalOrUp(conn)) {
-                continue;
-            }
-
-            Direction left = getLeft(dir);
-            Direction right = getRight(dir);
-
-            boolean hasLeft = world.getBlockState(pos.offset(left)).isOf(this);
-            boolean hasRight = world.getBlockState(pos.offset(right)).isOf(this);
-
-            if (hasBelow) {
-                if (hasLeft) {
-                    state = state.with(prop, IndicatorLightConnection.SIDE_DOWN_LEFT);
-                } else if (hasRight) {
-                    state = state.with(prop, IndicatorLightConnection.SIDE_DOWN_RIGHT);
-                }
-            } else if (hasAbove) {
-                if (hasLeft) {
-                    state = state.with(prop, IndicatorLightConnection.SIDE_UP_LEFT);
-                } else if (hasRight) {
-                    state = state.with(prop, IndicatorLightConnection.SIDE_UP_RIGHT);
-                }
-            }
+            state = state.with(
+                    DIRECTION_TO_WIRE_CONNECTION_PROPERTY.get(dir),
+                    getConnection(ctx.getWorld(), ctx.getBlockPos(), dir, state));
         }
 
         return state;
-    }
-
-    private boolean canContinueVerticalDown(BlockView world, BlockPos pos) {
-        return world.getBlockState(pos.down()).isOf(this);
-    }
-
-    private static boolean isFloorVerticalOrUp(IndicatorLightConnection conn) {
-        return conn == IndicatorLightConnection.SIDE_VERTICAL || conn == IndicatorLightConnection.UP;
     }
 
     // --------------------
     // 3. Neighbor update logic
     // --------------------
+
+    @Override
     public BlockState getStateForNeighborUpdate(
             BlockState state,
             Direction direction,
@@ -388,39 +218,26 @@ public class IndicatorLightBlock extends ApertureBlock implements BlockEntityPro
             WorldAccess world,
             BlockPos pos,
             BlockPos neighborPos) {
-        Direction newDir = direction;
+
+        // Vertical changes only matter for support
         if (direction == Direction.UP || direction == Direction.DOWN) {
-            BlockPos offsetPos = pos.offset(direction);
-            if (!world.getBlockState(offsetPos).isOf(this)) {
-                return getPlacementState(world, state, pos, null);
-            }
-            newDir = findVerticalConnection(world.getBlockState(offsetPos));
-            if (newDir != null && world.getBlockState(pos.down()).isSolidBlock(world, pos.down())) {
-                state = state.with(
-                        DIRECTION_TO_WIRE_CONNECTION_PROPERTY.get(newDir),
-                        IndicatorLightConnection.UP);
-            } else {
-                newDir = findSolidSide(world, pos);
-                if (newDir == null) {
-                    return Blocks.AIR.getDefaultState();
-                }
-            }
+            return state;
         }
-        BlockPos actualNeighborPos = pos.offset(newDir);
-        IndicatorLightConnection conn = getRenderConnectionType(world, pos, actualNeighborPos, newDir);
-        IndicatorLightConnection current = state.get(DIRECTION_TO_WIRE_CONNECTION_PROPERTY.get(newDir));
-        boolean forceRecompute = hasAnyDiagonal(state) && !diagonalValid(world, pos);
-        BlockState updated = !forceRecompute
-                && conn.isConnected() == current.isConnected()
-                && !isFullyConnected(state)
-                        ? state.with(DIRECTION_TO_WIRE_CONNECTION_PROPERTY.get(newDir), conn)
-                        : getPlacementState(
-                                world,
-                                dotState.with(POWERED, state.get(POWERED))
-                                        .with(DIRECTION_TO_WIRE_CONNECTION_PROPERTY.get(newDir), conn),
-                                pos,
-                                null);
-        return applyDiagonalConnections(world, pos, updated);
+
+        // Only horizontal directions affect connections
+        if (!direction.getAxis().isHorizontal()) {
+            return state;
+        }
+
+        IndicatorLightConnection newConn = getConnection(world, pos, direction, state);
+
+        EnumProperty<IndicatorLightConnection> prop = DIRECTION_TO_WIRE_CONNECTION_PROPERTY.get(direction);
+
+        if (state.get(prop) == newConn) {
+            return state;
+        }
+
+        return state.with(prop, newConn);
     }
 
     public void prepare(BlockState state, WorldAccess world, BlockPos pos, int flags,
@@ -530,39 +347,101 @@ public class IndicatorLightBlock extends ApertureBlock implements BlockEntityPro
     // --------------------
     // 4. Voxel shape generation
     // --------------------
-    private VoxelShape getShapeForState(BlockState state) {
-        VoxelShape voxelShape = DOT_SHAPE;
-        for (Direction direction : Type.HORIZONTAL) {
-            EnumProperty<IndicatorLightConnection> prop = DIRECTION_TO_WIRE_CONNECTION_PROPERTY
-                    .get(direction);
-            IndicatorLightConnection conn = state.get(prop);
-            switch (conn) {
-                case SIDE:
-                    voxelShape = VoxelShapes.union(voxelShape, DIRECTION_TO_SIDE_SHAPE.get(direction));
-                    break;
-                case UP:
-                    voxelShape = VoxelShapes.union(voxelShape, DIRECTION_TO_UP_SHAPE.get(direction));
-                    break;
-                case SIDE_VERTICAL:
-                case SIDE_DOWN_LEFT:
-                case SIDE_DOWN_RIGHT:
-                case SIDE_UP_LEFT:
-                case SIDE_UP_RIGHT:
-                    voxelShape = DIRECTION_TO_VERTICAL_SHAPE.get(direction);
-                    break;
-                case SIDE_HORIZONTAL:
-                    voxelShape = DIRECTION_TO_HORIZONTAL_SHAPE.get(direction);
-                    break;
-                default:
-                    break;
-            }
+    @Override
+    public VoxelShape getOutlineShape(
+            BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
+
+        BlockFace face = state.get(FACE);
+        Direction facing = state.get(FACING);
+
+        VoxelShape shape = BASE_SHAPE.get(face);
+
+        if (face == BlockFace.WALL) {
+            shape = rotateShape(shape, facing);
         }
-        return voxelShape;
+
+        for (Direction dir : Direction.Type.HORIZONTAL) {
+            IndicatorLightConnection conn = state.get(DIRECTION_TO_WIRE_CONNECTION_PROPERTY.get(dir));
+
+            if (conn == IndicatorLightConnection.NONE)
+                continue;
+
+            Direction localDir = dir;
+            if (face == BlockFace.WALL) {
+                localDir = toWallLocal(dir, facing);
+            }
+
+            VoxelShape arm = getConnectionShape(face, localDir, conn);
+
+            if (face == BlockFace.WALL) {
+                arm = rotateShape(arm, facing);
+            }
+
+            shape = VoxelShapes.union(shape, arm);
+        }
+
+        if (face == BlockFace.WALL) {
+            shape = VoxelShapes.union(shape, getWallVerticalShape(state, world, pos));
+        }
+
+        return shape;
     }
 
-    public VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos,
-            ShapeContext context) {
-        return (VoxelShape) SHAPES.get(state.with(POWERED, false));
+    private VoxelShape getWallVerticalShape(
+            BlockState state, BlockView world, BlockPos pos) {
+
+        Direction facing = state.get(FACING);
+        VoxelShape result = VoxelShapes.empty();
+
+        // Above
+        BlockPos upPos = pos.up();
+        BlockState upState = world.getBlockState(upPos);
+        if (upState.isOf(this) && upState.get(FACE) == BlockFace.WALL
+                && upState.get(FACING) == facing) {
+
+            VoxelShape up = UP_SHAPES.get(BlockFace.WALL).get(Direction.SOUTH);
+            result = VoxelShapes.union(result, rotateShape(up, facing));
+        }
+
+        // Below
+        BlockPos downPos = pos.down();
+        BlockState downState = world.getBlockState(downPos);
+        if (downState.isOf(this) && downState.get(FACE) == BlockFace.WALL
+                && downState.get(FACING) == facing) {
+
+            VoxelShape down = UP_SHAPES.get(BlockFace.WALL).get(Direction.NORTH);
+            result = VoxelShapes.union(result, rotateShape(down, facing));
+        }
+
+        return result;
+    }
+
+    private Direction toWallLocal(Direction worldDir, Direction facing) {
+        return switch (facing) {
+            case NORTH -> worldDir;
+            case SOUTH -> worldDir.getOpposite();
+            case EAST -> worldDir.rotateYCounterclockwise();
+            case WEST -> worldDir.rotateYClockwise();
+            default -> worldDir;
+        };
+    }
+
+    private VoxelShape getConnectionShape(
+            BlockFace face, Direction dir, IndicatorLightConnection conn) {
+
+        if (conn == IndicatorLightConnection.SIDE) {
+            Map<Direction, VoxelShape> byDir = SIDE_SHAPES.get(face);
+            Objects.requireNonNull(byDir, "Missing SIDE_SHAPES for face " + face);
+            return byDir.get(dir);
+        }
+
+        if (conn == IndicatorLightConnection.UP) {
+            Map<Direction, VoxelShape> byDir = UP_SHAPES.get(face);
+            Objects.requireNonNull(byDir, "Missing UP_SHAPES for face " + face);
+            return byDir.get(dir);
+        }
+
+        return VoxelShapes.empty();
     }
 
     // --------------------
@@ -724,180 +603,44 @@ public class IndicatorLightBlock extends ApertureBlock implements BlockEntityPro
         }
     }
 
-    private BlockState clearConnections(BlockState state) {
-        return state
-                .with(WIRE_CONNECTION_NORTH, IndicatorLightConnection.NONE)
-                .with(WIRE_CONNECTION_EAST, IndicatorLightConnection.NONE)
-                .with(WIRE_CONNECTION_SOUTH, IndicatorLightConnection.NONE)
-                .with(WIRE_CONNECTION_WEST, IndicatorLightConnection.NONE);
-    }
-
     // --------------------
     // 7. Debug logging (and onUse)
     // --------------------
-    public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player,
-            Hand hand, BlockHitResult hit) {
+    @Override
+    public ActionResult onUse(
+            BlockState state, World world, BlockPos pos,
+            PlayerEntity player, Hand hand, BlockHitResult hit) {
+
         if (!player.getAbilities().allowModifyWorld) {
             return ActionResult.PASS;
-        } else {
-            if (isFullyConnected(state) || isNotConnected(state)) {
-                BlockState blockState = isFullyConnected(state) ? this.getDefaultState() : this.dotState;
-                blockState = (BlockState) blockState.with(POWERED, (Boolean) state.get(POWERED));
-                blockState = this.getPlacementState(world, blockState, pos, null);
-                if (blockState != state) {
-                    world.setBlockState(pos, blockState, 3);
-                    this.updateForNewState(world, pos, state, blockState);
-                    return ActionResult.SUCCESS;
-                }
-            }
-            return ActionResult.PASS;
         }
-    }
 
-    private void updateForNewState(World world, BlockPos pos, BlockState oldState,
-            BlockState newState) {
-        Iterator<Direction> var5 = Type.HORIZONTAL.iterator();
-        while (var5.hasNext()) {
-            Direction direction = (Direction) var5.next();
-            BlockPos blockPos = pos.offset(direction);
-            if (((IndicatorLightConnection) oldState
-                    .get((Property<IndicatorLightConnection>) DIRECTION_TO_WIRE_CONNECTION_PROPERTY
-                            .get(direction)))
-                    .isConnected() != ((IndicatorLightConnection) newState.get(
-                            (Property<IndicatorLightConnection>) DIRECTION_TO_WIRE_CONNECTION_PROPERTY
-                                    .get(direction)))
-                            .isConnected()
-                    && world.getBlockState(blockPos).isSolidBlock(world, blockPos)) {
-                world.updateNeighborsExcept(blockPos, newState.getBlock(), direction.getOpposite());
-            }
+        BlockState newState = state;
+
+        for (Direction dir : Direction.Type.HORIZONTAL) {
+            EnumProperty<IndicatorLightConnection> prop = DIRECTION_TO_WIRE_CONNECTION_PROPERTY.get(dir);
+
+            newState = newState.with(
+                    prop,
+                    state.get(prop) == IndicatorLightConnection.NONE
+                            ? IndicatorLightConnection.SIDE
+                            : IndicatorLightConnection.NONE);
         }
+
+        if (newState != state) {
+            world.setBlockState(pos, newState, Block.NOTIFY_ALL);
+            return ActionResult.SUCCESS;
+        }
+
+        return ActionResult.PASS;
     }
 
     // --------------------
     // Utility and static methods
     // --------------------
-
-    @Nullable
-    private Direction findPlayerOrSolidSide(
-            BlockView world, BlockPos pos, @Nullable PlayerEntity player) {
-        if (player != null) {
-            Direction facing = player.getHorizontalFacing();
-            if (world.getBlockState(pos.offset(facing)).isSolidBlock(world, pos)) {
-                return facing;
-            }
-        }
-        return findSolidSide(world, pos);
-    }
-
-    private IndicatorLightConnection resolveFloatingConnection(
-            BlockView world, BlockPos pos, Direction dir) {
-        BlockPos adjPos = pos.offset(dir);
-
-        boolean thisHasSupport = world.getBlockState(pos.down()).isSolidBlock(world, pos.down());
-        boolean adjHasSupport = world.getBlockState(adjPos.down()).isSolidBlock(world, adjPos.down());
-
-        if (!thisHasSupport && !adjHasSupport) {
-            return IndicatorLightConnection.SIDE_HORIZONTAL;
-        }
-
-        boolean hasBelow = world.getBlockState(pos.down()).isOf(this);
-        boolean hasLeft = world.getBlockState(pos.west()).isOf(this);
-        boolean hasRight = world.getBlockState(pos.east()).isOf(this);
-
-        if (!hasBelow)
-            return IndicatorLightConnection.SIDE_VERTICAL;
-
-        return switch (dir) {
-            case EAST -> hasLeft ? IndicatorLightConnection.SIDE_DOWN_LEFT : IndicatorLightConnection.SIDE_VERTICAL;
-            case WEST -> hasRight ? IndicatorLightConnection.SIDE_DOWN_RIGHT : IndicatorLightConnection.SIDE_VERTICAL;
-            case SOUTH -> hasLeft ? IndicatorLightConnection.SIDE_DOWN_LEFT : IndicatorLightConnection.SIDE_VERTICAL;
-            case NORTH -> hasRight ? IndicatorLightConnection.SIDE_DOWN_RIGHT : IndicatorLightConnection.SIDE_VERTICAL;
-            default -> IndicatorLightConnection.SIDE_VERTICAL;
-        };
-    }
-
-    private IndicatorLightConnection getRenderConnectionType(BlockView world, BlockPos pos, BlockPos neighborPos,
-            Direction direction) {
-        return this.getRenderConnectionType(world, pos, neighborPos, direction,
-                !world.getBlockState(pos.up()).isSolidBlock(world, pos));
-    }
-
-    private IndicatorLightConnection getRenderConnectionType(BlockView world, BlockPos pos, BlockPos neighborPos,
-            Direction direction, boolean bl) {
-        BlockPos blockPos = pos.offset(direction);
-        BlockState blockState = world.getBlockState(blockPos);
-        if (bl) {
-            boolean bl2 = blockState.getBlock() instanceof TrapdoorBlock
-                    || this.canRunOnTop(world, blockPos, blockState);
-            if (bl2 && connectsTo(world.getBlockState(blockPos.up())) && !blockState.isAir()) {
-                if (blockState.isSideSolidFullSquare(world, blockPos, direction.getOpposite())) {
-                    boolean thisHasSupport = world.getBlockState(pos.down()).isSolidBlock(world, pos.down());
-                    boolean adjHasSupport = world.getBlockState(blockPos.down()).isSolidBlock(world, blockPos.down());
-                    if (!thisHasSupport && !adjHasSupport) {
-                        return IndicatorLightConnection.SIDE_HORIZONTAL;
-                    }
-                    if (!thisHasSupport && adjHasSupport) {
-                        return IndicatorLightConnection.SIDE_VERTICAL;
-                    }
-                    return IndicatorLightConnection.UP;
-                }
-
-                return IndicatorLightConnection.SIDE;
-            }
-        }
-
-        return !connectsTo(blockState, direction) && (blockState.isSolidBlock(world, blockPos)
-                || !connectsTo(world.getBlockState(blockPos.down()))) ? IndicatorLightConnection.NONE
-                        : IndicatorLightConnection.SIDE;
-    }
-
-    private boolean canRunOnTop(BlockView world, BlockPos pos, BlockState floor) {
-        return true;
-    }
-
     protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
-        builder.add(new Property[] { WIRE_CONNECTION_NORTH, WIRE_CONNECTION_EAST,
-                WIRE_CONNECTION_SOUTH, WIRE_CONNECTION_WEST, POWERED /* , POWER */ });
-    }
-
-    static {
-        WIRE_CONNECTION_NORTH = ApertureProperties.NORTH_WIRE_CONNECTION;
-        WIRE_CONNECTION_EAST = ApertureProperties.EAST_WIRE_CONNECTION;
-        WIRE_CONNECTION_SOUTH = ApertureProperties.SOUTH_WIRE_CONNECTION;
-        WIRE_CONNECTION_WEST = ApertureProperties.WEST_WIRE_CONNECTION;
-        POWERED = Properties.POWERED;
-        DIRECTION_TO_WIRE_CONNECTION_PROPERTY = Maps.newEnumMap(ImmutableMap.of(Direction.NORTH,
-                WIRE_CONNECTION_NORTH, Direction.EAST, WIRE_CONNECTION_EAST, Direction.SOUTH,
-                WIRE_CONNECTION_SOUTH, Direction.WEST, WIRE_CONNECTION_WEST));
-        DOT_SHAPE = Block.createCuboidShape(3.0, 0.0, 3.0, 13.0, 1.0, 13.0);
-        DIRECTION_TO_SIDE_SHAPE = Maps.newEnumMap(ImmutableMap.of(Direction.NORTH,
-                Block.createCuboidShape(3.0, 0.0, 0.0, 13.0, 1.0, 13.0), Direction.SOUTH,
-                Block.createCuboidShape(3.0, 0.0, 3.0, 13.0, 1.0, 16.0), Direction.EAST,
-                Block.createCuboidShape(3.0, 0.0, 3.0, 16.0, 1.0, 13.0), Direction.WEST,
-                Block.createCuboidShape(0.0, 0.0, 3.0, 13.0, 1.0, 13.0)));
-        DIRECTION_TO_VERTICAL_SHAPE = Maps.newEnumMap(ImmutableMap.of(
-                Direction.NORTH, Block.createCuboidShape(3.0, 0.0, 0.0, 13.0, 16.0, 1.0),
-                Direction.SOUTH, Block.createCuboidShape(3.0, 0.0, 15.0, 13.0, 16.0, 16.0),
-                Direction.EAST, Block.createCuboidShape(15.0, 0.0, 3.0, 16.0, 16.0, 13.0),
-                Direction.WEST, Block.createCuboidShape(0.0, 0.0, 3.0, 1.0, 16.0, 13.0)));
-        DIRECTION_TO_UP_SHAPE = Maps.newEnumMap(ImmutableMap.of(Direction.NORTH,
-                VoxelShapes.union((VoxelShape) DIRECTION_TO_SIDE_SHAPE.get(Direction.NORTH),
-                        (VoxelShape) DIRECTION_TO_VERTICAL_SHAPE.get(Direction.NORTH)),
-                Direction.SOUTH,
-                VoxelShapes.union((VoxelShape) DIRECTION_TO_SIDE_SHAPE.get(Direction.SOUTH),
-                        (VoxelShape) DIRECTION_TO_VERTICAL_SHAPE.get(Direction.SOUTH)),
-                Direction.EAST,
-                VoxelShapes.union((VoxelShape) DIRECTION_TO_SIDE_SHAPE.get(Direction.EAST),
-                        (VoxelShape) DIRECTION_TO_VERTICAL_SHAPE.get(Direction.EAST)),
-                Direction.WEST,
-                VoxelShapes.union((VoxelShape) DIRECTION_TO_SIDE_SHAPE.get(Direction.WEST),
-                        (VoxelShape) DIRECTION_TO_VERTICAL_SHAPE.get(Direction.WEST))));
-        DIRECTION_TO_HORIZONTAL_SHAPE = Maps.newEnumMap(ImmutableMap.of(
-                Direction.NORTH, Block.createCuboidShape(0.0, 3.0, 0.0, 16.0, 13.0, 1.0),
-                Direction.SOUTH, Block.createCuboidShape(0.0, 3.0, 15.0, 16.0, 13.0, 16.0),
-                Direction.EAST, Block.createCuboidShape(15.0, 3.0, 0.0, 16.0, 13.0, 16.0),
-                Direction.WEST, Block.createCuboidShape(0.0, 3.0, 0.0, 1.0, 13.0, 16.0)));
-        SHAPES = Maps.newHashMap();
+        builder.add(new Property[] { FACE, FACING, WIRE_CONNECTION_NORTH, WIRE_CONNECTION_EAST,
+                WIRE_CONNECTION_SOUTH, WIRE_CONNECTION_WEST, POWERED });
     }
 
     public static class InnerIndicatorLightBlock {
@@ -924,30 +667,13 @@ public class IndicatorLightBlock extends ApertureBlock implements BlockEntityPro
         return new IndicatorLightBlockEntity(pos, state);
     }
 
-    private static Direction getLeft(Direction dir) {
-        return switch (dir) {
-            case NORTH -> Direction.WEST;
-            case SOUTH -> Direction.EAST;
-            case EAST -> Direction.NORTH;
-            case WEST -> Direction.SOUTH;
-            default -> dir;
+    private static VoxelShape rotateShape(VoxelShape shape, Direction facing) {
+        return switch (facing) {
+            case SOUTH -> shape;
+            case WEST -> VoxelShapeUtils.rotateShape(Direction.SOUTH, Direction.WEST, shape);
+            case NORTH -> VoxelShapeUtils.rotateShape(Direction.SOUTH, Direction.NORTH, shape);
+            case EAST -> VoxelShapeUtils.rotateShape(Direction.SOUTH, Direction.EAST, shape);
+            default -> shape;
         };
     }
-
-    private static Direction getRight(Direction dir) {
-        return switch (dir) {
-            case NORTH -> Direction.EAST;
-            case SOUTH -> Direction.WEST;
-            case EAST -> Direction.SOUTH;
-            case WEST -> Direction.NORTH;
-            default -> dir;
-        };
-    }
-
-    private enum PlacementMode {
-        FLOATING,
-        HANGING,
-        GROUNDED
-    }
-
 }

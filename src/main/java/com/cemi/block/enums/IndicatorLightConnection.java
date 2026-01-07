@@ -3,19 +3,9 @@ package com.cemi.block.enums;
 import net.minecraft.util.StringIdentifiable;
 
 public enum IndicatorLightConnection implements StringIdentifiable {
-    UP("up"),
-    SIDE("side"),
     NONE("none"),
-    SIDE_HORIZONTAL("side_horizontal"),
-    SIDE_VERTICAL("side_vertical"),
-    SIDE_UP_LEFT("side_up_left"),
-    SIDE_UP_RIGHT("side_up_right"),
-    SIDE_DOWN_RIGHT("side_down_right"),
-    SIDE_DOWN_LEFT("side_down_left"),
-    SIDE_LEFT_JUNCTION("side_left_junction"),
-    SIDE_RIGHT_JUNCTION("side_right_junction"),
-    SIDE_TOP_JUNCTION("side_top_junction"),
-    SIDE_BOTTOM_JUNCTION("side_bottom_junction");
+    SIDE("side"),
+    UP("up");
 
     private final String name;
 
@@ -33,14 +23,5 @@ public enum IndicatorLightConnection implements StringIdentifiable {
 
     public boolean isConnected() {
         return this != NONE;
-    }
-
-    public boolean isVerticalLike() {
-        return this == SIDE_VERTICAL || isDiagonal();
-    }
-
-    public boolean isDiagonal() {
-        return this == SIDE_DOWN_LEFT || this == SIDE_DOWN_RIGHT
-            || this == SIDE_UP_LEFT || this == SIDE_UP_RIGHT;
     }
 }
