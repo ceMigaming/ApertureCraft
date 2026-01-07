@@ -4,7 +4,8 @@ import net.minecraft.util.StringIdentifiable;
 
 public enum IndicatorLightConnection implements StringIdentifiable {
     NONE("none"),
-    SIDE("side");
+    SIDE("side"),
+    UP("up");
 
     private final String name;
 

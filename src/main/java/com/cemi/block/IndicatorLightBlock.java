@@ -26,8 +26,10 @@ import net.minecraft.block.ObserverBlock;
 import net.minecraft.block.RedstoneWireBlock;
 import net.minecraft.block.RepeaterBlock;
 import net.minecraft.block.ShapeContext;
+import net.minecraft.block.TrapdoorBlock;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.enums.BlockFace;
+import net.minecraft.block.enums.WireConnection;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.state.StateManager;
@@ -169,29 +171,51 @@ public class IndicatorLightBlock extends ApertureBlock implements BlockEntityPro
     private IndicatorLightConnection getConnection(
             BlockView world, BlockPos pos, Direction dir, BlockState state) {
 
-        BlockPos sidePos = pos.offset(dir);
-        BlockState sideState = world.getBlockState(sidePos);
+        if (!dir.getAxis().isHorizontal()) {
+            return IndicatorLightConnection.NONE;
+        }
 
         BlockFace face = state.get(FACE);
 
-        // Same-face horizontal connection
-        if (sideState.isOf(this)
-                && sideState.get(FACE) == face
-                && connectsTo(sideState, dir)) {
-            return IndicatorLightConnection.SIDE;
+        boolean canGoUp = !world.getBlockState(pos.up()).isSolidBlock(world, pos);
+
+        BlockPos sidePos = pos.offset(dir);
+        BlockState sideState = world.getBlockState(sidePos);
+
+        /* ===== 1. Diagonal UP connection ===== */
+        if (canGoUp) {
+            boolean canClimb = sideState.isOf(this)
+                    || canRunOnTop(world, sidePos, sideState);
+
+            if (canClimb && connectsTo(world.getBlockState(sidePos.up()))) {
+                if (sideState.isSideSolidFullSquare(world, sidePos, dir.getOpposite())) {
+                    return IndicatorLightConnection.UP;
+                }
+                return IndicatorLightConnection.SIDE;
+            }
         }
 
-        // Solid blocks block floor / ceiling routing
+        /* ===== 2. Blocked by solid wall ===== */
         if (sideState.isSolidBlock(world, sidePos) && face != BlockFace.WALL) {
             return IndicatorLightConnection.NONE;
         }
 
-        // Generic redstone-style horizontal connection
+        /* ===== 3. Same-level connection ===== */
         if (connectsTo(sideState, dir)) {
             return IndicatorLightConnection.SIDE;
         }
 
+        /* ===== 4. Downward diagonal fallback ===== */
+        if (!sideState.isSolidBlock(world, sidePos)
+                && connectsTo(world.getBlockState(sidePos.down()))) {
+            return IndicatorLightConnection.SIDE;
+        }
+
         return IndicatorLightConnection.NONE;
+    }
+
+    private boolean canRunOnTop(BlockView world, BlockPos pos, BlockState floor) {
+        return floor.isSideSolidFullSquare(world, pos, Direction.UP) || floor.isOf(Blocks.HOPPER);
     }
 
     public IndicatorLightBlock(AbstractBlock.Settings settings) {
@@ -325,16 +349,23 @@ public class IndicatorLightBlock extends ApertureBlock implements BlockEntityPro
         }
     }
 
-    public void onBlockAdded(BlockState state, World world, BlockPos pos, BlockState oldState,
-            boolean notify) {
+    @Override
+    public void onBlockAdded(
+            BlockState state, World world, BlockPos pos,
+            BlockState oldState, boolean notify) {
+
         if (!oldState.isOf(state.getBlock()) && !world.isClient) {
+
             this.update(world, pos, state);
-            Iterator<Direction> var6 = Type.VERTICAL.iterator();
-            while (var6.hasNext()) {
-                Direction direction = (Direction) var6.next();
-                world.updateNeighborsAlways(pos.offset(direction), this);
+
+            // 🔑 FORCE diagonal re-evaluation
+            for (Direction dir : Direction.Type.HORIZONTAL) {
+                BlockPos side = pos.offset(dir);
+
+                world.updateNeighborsAlways(side, this);
+                world.updateNeighborsAlways(side.up(), this);
+                world.updateNeighborsAlways(side.down(), this);
             }
-            this.updateOffsetNeighbors(world, pos);
         }
     }
 
@@ -436,19 +467,20 @@ public class IndicatorLightBlock extends ApertureBlock implements BlockEntityPro
         // Vertical arms (FACE-aware)
         switch (face) {
             case FLOOR -> {
-                if (state.get(UP)) {
-                    Direction wallFacing = getUpWallFacing(world, pos);
-                    if (wallFacing != null) {
-                        // vertical strip on wall
-                        shape = VoxelShapes.union(
-                                shape,
-                                FLOOR_UP_WALL_SHAPES.get(wallFacing));
-
-                        // short horizontal arm from dot → wall
-                        shape = VoxelShapes.union(
-                                shape,
-                                SIDE_SHAPES.get(BlockFace.FLOOR).get(wallFacing));
+                for (Direction dir : Direction.Type.HORIZONTAL) {
+                    if (state.get(DIRECTION_TO_WIRE_CONNECTION_PROPERTY.get(dir)) != IndicatorLightConnection.UP) {
+                        continue;
                     }
+
+                    Direction wallFacing = dir;
+
+                    shape = VoxelShapes.union(
+                            shape,
+                            FLOOR_UP_WALL_SHAPES.get(wallFacing));
+
+                    shape = VoxelShapes.union(
+                            shape,
+                            SIDE_SHAPES.get(BlockFace.FLOOR).get(wallFacing));
                 }
             }
 
@@ -487,21 +519,26 @@ public class IndicatorLightBlock extends ApertureBlock implements BlockEntityPro
 
     @Nullable
     private Direction getUpWallFacing(BlockView world, BlockPos pos) {
-        BlockState above = world.getBlockState(pos.up());
+        BlockPos up = pos.up();
 
-        if (above.isOf(this) && above.get(FACE) == BlockFace.WALL) {
-            return above.get(FACING);
+        for (Direction dir : Direction.Type.HORIZONTAL) {
+            BlockState side = world.getBlockState(up.offset(dir));
+            if (side.isSideSolidFullSquare(world, up.offset(dir), dir.getOpposite())) {
+                return dir;
+            }
         }
-
         return null;
     }
 
     @Nullable
     private Direction getDownWallFacing(BlockView world, BlockPos pos) {
-        BlockState below = world.getBlockState(pos.down());
-        if (below.isOf(this) && below.get(FACE) == BlockFace.WALL) {
-            // CEILING → WALL needs inversion
-            return below.get(FACING).getOpposite();
+        BlockPos down = pos.down();
+
+        for (Direction dir : Direction.Type.HORIZONTAL) {
+            BlockState side = world.getBlockState(down.offset(dir));
+            if (side.isSideSolidFullSquare(world, down.offset(dir), dir.getOpposite())) {
+                return dir;
+            }
         }
         return null;
     }
@@ -537,56 +574,77 @@ public class IndicatorLightBlock extends ApertureBlock implements BlockEntityPro
             BlockView world, BlockPos pos, Direction verticalDir, BlockState state) {
 
         BlockFace face = state.get(FACE);
-        BlockPos targetPos = pos.offset(verticalDir);
-        BlockState targetState = world.getBlockState(targetPos);
 
-        if (!targetState.isOf(this)) {
-            return false;
+        // Direct vertical neighbor
+        BlockPos directPos = pos.offset(verticalDir);
+        BlockState directState = world.getBlockState(directPos);
+
+        if (directState.isOf(this)) {
+            BlockFace otherFace = directState.get(FACE);
+
+            // Same-face stacks
+            if (face == otherFace) {
+                return switch (face) {
+                    case FLOOR -> verticalDir == Direction.UP;
+                    case CEILING -> verticalDir == Direction.DOWN;
+                    case WALL -> true;
+                };
+            }
+
+            // Cross-face direct
+            if (face == BlockFace.FLOOR && verticalDir == Direction.UP && otherFace == BlockFace.WALL)
+                return true;
+            if (face == BlockFace.WALL && verticalDir == Direction.DOWN && otherFace == BlockFace.FLOOR)
+                return true;
+            if (face == BlockFace.CEILING && verticalDir == Direction.DOWN && otherFace == BlockFace.WALL)
+                return true;
+            if (face == BlockFace.WALL && verticalDir == Direction.UP && otherFace == BlockFace.CEILING)
+                return true;
         }
 
-        BlockFace otherFace = targetState.get(FACE);
+        // -----------------------------------------
+        // ⭐ VANILLA EDGE-ROUTING (missing piece)
+        // -----------------------------------------
 
-        // ----------------------------
-        // 1. SAME-FACE vertical stacks
-        // ----------------------------
-        if (face == otherFace) {
-            return switch (face) {
-                case FLOOR -> verticalDir == Direction.UP;
-                case CEILING -> verticalDir == Direction.DOWN;
-                case WALL -> true; // wall ↕ wall always allowed
-            };
+        if (face == BlockFace.FLOOR && verticalDir == Direction.UP) {
+            for (Direction dir : Direction.Type.HORIZONTAL) {
+
+                BlockPos wallPos = pos.offset(dir);
+                BlockState wallState = world.getBlockState(wallPos);
+
+                if (!wallState.isOf(this))
+                    continue;
+                if (wallState.get(FACE) != BlockFace.WALL)
+                    continue;
+                if (wallState.get(FACING) != dir.getOpposite())
+                    continue;
+
+                // 🔑 SAME support block check
+                BlockPos support = pos.offset(dir);
+                if (world.getBlockState(support).isSolidBlock(world, support)) {
+                    return true;
+                }
+            }
         }
 
-        // --------------------------------
-        // 2. CROSS-FACE vertical transitions
-        // --------------------------------
+        if (face == BlockFace.CEILING && verticalDir == Direction.DOWN) {
+            for (Direction dir : Direction.Type.HORIZONTAL) {
 
-        // FLOOR → WALL (above)
-        if (face == BlockFace.FLOOR
-                && verticalDir == Direction.UP
-                && otherFace == BlockFace.WALL) {
-            return true;
-        }
+                BlockPos wallPos = pos.offset(dir);
+                BlockState wallState = world.getBlockState(wallPos);
 
-        // WALL → FLOOR (below)
-        if (face == BlockFace.WALL
-                && verticalDir == Direction.DOWN
-                && otherFace == BlockFace.FLOOR) {
-            return true;
-        }
+                if (!wallState.isOf(this))
+                    continue;
+                if (wallState.get(FACE) != BlockFace.WALL)
+                    continue;
+                if (wallState.get(FACING) != dir.getOpposite())
+                    continue;
 
-        // CEILING → WALL (below)
-        if (face == BlockFace.CEILING
-                && verticalDir == Direction.DOWN
-                && otherFace == BlockFace.WALL) {
-            return true;
-        }
-
-        // WALL → CEILING (above)
-        if (face == BlockFace.WALL
-                && verticalDir == Direction.UP
-                && otherFace == BlockFace.CEILING) {
-            return true;
+                BlockPos support = pos.offset(dir);
+                if (world.getBlockState(support).isSolidBlock(world, support)) {
+                    return true;
+                }
+            }
         }
 
         return false;
@@ -804,8 +862,9 @@ public class IndicatorLightBlock extends ApertureBlock implements BlockEntityPro
             ROTATION[BlockRotation.COUNTERCLOCKWISE_90.ordinal()] = 2;
             ROTATION[BlockRotation.CLOCKWISE_90.ordinal()] = 3;
 
-            SIDE[IndicatorLightConnection.SIDE.ordinal()] = 1;
-            SIDE[IndicatorLightConnection.NONE.ordinal()] = 2;
+            SIDE[IndicatorLightConnection.UP.ordinal()] = 1;
+            SIDE[IndicatorLightConnection.SIDE.ordinal()] = 2;
+            SIDE[IndicatorLightConnection.NONE.ordinal()] = 3;
         }
     }
 
