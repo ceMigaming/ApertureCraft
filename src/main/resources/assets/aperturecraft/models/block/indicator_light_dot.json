@@ -5,15 +5,15 @@
   },
   "elements": [
     {
-      "from": [3, 0, 3],
-      "to": [13, 1, 13],
+      "from": [3, 0.25, 3],
+      "to": [13, 0.25, 13],
       "faces": {
-        "down": { "texture": "#dot" },
-        "up":   { "texture": "#dot" },
-        "north": { "texture": "#dot" },
-        "south": { "texture": "#dot" },
-        "west":  { "texture": "#dot" },
-        "east":  { "texture": "#dot" }
+        "down": { "texture": "#dot", "tintindex": 0 },
+        "up":   { "texture": "#dot", "tintindex": 0 },
+        "north": { "texture": "#dot", "tintindex": 0 },
+        "south": { "texture": "#dot", "tintindex": 0 },
+        "west":  { "texture": "#dot", "tintindex": 0 },
+        "east":  { "texture": "#dot", "tintindex": 0 }
       }
     }
   ]

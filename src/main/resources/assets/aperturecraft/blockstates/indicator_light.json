@@ -1,36 +1,277 @@
 {
   "multipart": [
     {
-      "when": { "face": "floor" },
-      "apply": { "model": "aperturecraft:block/indicator_light_floor" }
+      "when": {
+        "face": "wall",
+        "facing": "north"
+      },
+      "apply": {
+        "model": "aperturecraft:block/indicator_light_wall",
+        "uvlock": true
+      }
     },
     {
-      "when": { "face": "ceiling" },
-      "apply": { "model": "aperturecraft:block/indicator_light_ceiling" }
+      "when": {
+        "face": "wall",
+        "facing": "south"
+      },
+      "apply": {
+        "model": "aperturecraft:block/indicator_light_wall",
+        "y": 180,
+        "uvlock": true
+      }
     },
     {
-      "when": { "face": "wall" },
-      "apply": { "model": "aperturecraft:block/indicator_light_wall" }
+      "when": {
+        "face": "wall",
+        "facing": "east"
+      },
+      "apply": {
+        "model": "aperturecraft:block/indicator_light_wall",
+        "y": 90,
+        "uvlock": true
+      }
     },
     {
-      "when": { "powered": true },
-      "apply": { "model": "aperturecraft:block/indicator_light_dot" }
+      "when": {
+        "face": "wall",
+        "facing": "west"
+      },
+      "apply": {
+        "model": "aperturecraft:block/indicator_light_wall",
+        "y": 270,
+        "uvlock": true
+      }
     },
     {
-      "when": { "north": "side" },
-      "apply": { "model": "aperturecraft:block/indicator_light_line_north" }
+      "when": {
+        "OR": [
+          {
+            "face": "floor",
+            "north": "side|up"
+          },
+          {
+            "up": "true",
+            "facing": "north"
+          }
+        ]
+      },
+      "apply": {
+        "model": "aperturecraft:block/indicator_light_arm_north"
+      }
     },
     {
-      "when": { "east": "side" },
-      "apply": { "model": "aperturecraft:block/indicator_light_line_east" }
+      "when": {
+        "OR": [
+          {
+            "face": "floor",
+            "south": "side|up"
+          },
+          {
+            "up": "true",
+            "facing": "south"
+          }
+        ]
+      },
+      "apply": {
+        "model": "aperturecraft:block/indicator_light_arm_north",
+        "y": 180
+      }
     },
     {
-      "when": { "south": "side" },
-      "apply": { "model": "aperturecraft:block/indicator_light_line_south" }
+      "when": {
+        "OR": [
+          {
+            "face": "floor",
+            "east": "side|up"
+          },
+          {
+            "up": "true",
+            "face": "floor",
+            "facing": "east"
+          }
+        ]
+      },
+      "apply": {
+        "model": "aperturecraft:block/indicator_light_arm_north",
+        "y": 90
+      }
     },
     {
-      "when": { "west": "side" },
-      "apply": { "model": "aperturecraft:block/indicator_light_line_west" }
+      "when": {
+        "OR": [
+          {
+            "face": "floor",
+            "west": "side|up"
+          },
+          {
+            "up": "true",
+            "facing": "west"
+          }
+        ]
+      },
+      "apply": {
+        "model": "aperturecraft:block/indicator_light_arm_north",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "OR": [
+          {
+            "face": "floor",
+            "east": "none",
+            "north": "none",
+            "south": "none",
+            "west": "none"
+          },
+          {
+            "face": "floor",
+            "north": "side|up",
+            "east": "side|up",
+            "south": "none",
+            "west": "none"
+          },
+          {
+            "face": "floor",
+            "north": "none",
+            "east": "side|up",
+            "south": "side|up",
+            "west": "none"
+          },
+          {
+            "face": "floor",
+            "north": "none",
+            "east": "none",
+            "south": "side|up",
+            "west": "side|up"
+          },
+          {
+            "face": "floor",
+            "north": "side|up",
+            "east": "none",
+            "south": "none",
+            "west": "side|up"
+          }
+        ]
+      },
+      "apply": {
+        "model": "aperturecraft:block/indicator_light_dot"
+      }
+    },
+    {
+      "when": {
+        "OR": [
+          {
+            "face": "floor",
+            "east": "side|up",
+            "west": "side|up"
+          },
+          {
+            "face": "floor",
+            "north": "side|up",
+            "south": "side|up"
+          },
+          {
+            "face": "floor",
+            "north": "side|up",
+            "east": "none",
+            "south": "none",
+            "west": "none"
+          },
+          {
+            "face": "floor",
+            "north": "none",
+            "east": "side|up",
+            "south": "none",
+            "west": "none"
+          },
+          {
+            "face": "floor",
+            "north": "none",
+            "east": "none",
+            "south": "side|up",
+            "west": "none"
+          },
+          {
+            "face": "floor",
+            "north": "none",
+            "east": "none",
+            "south": "none",
+            "west": "side|up"
+          }
+        ]
+      },
+      "apply": {
+        "model": "aperturecraft:block/indicator_light_dot_alt"
+      }
+    },
+    {
+      "when": {
+        "OR": [
+          {
+            "north": "up"
+          },
+          {
+            "up": "true",
+            "facing": "north"
+          }
+        ]
+      },
+      "apply": {
+        "model": "aperturecraft:block/indicator_light_wall"
+      }
+    },
+    {
+      "when": {
+        "OR": [
+          {
+            "east": "up"
+          },
+          {
+            "up": "true",
+            "facing": "east"
+          }
+        ]
+      },
+      "apply": {
+        "model": "aperturecraft:block/indicator_light_wall",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "OR": [
+          {
+            "south": "up"
+          },
+          {
+            "up": "true",
+            "facing": "south"
+          }
+        ]
+      },
+      "apply": {
+        "model": "aperturecraft:block/indicator_light_wall",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "OR": [
+          {
+            "west": "up"
+          },
+          {
+            "up": "true",
+            "facing": "west"
+          }
+        ]
+      },
+      "apply": {
+        "model": "aperturecraft:block/indicator_light_wall",
+        "y": 270
+      }
     }
   ]
 }
