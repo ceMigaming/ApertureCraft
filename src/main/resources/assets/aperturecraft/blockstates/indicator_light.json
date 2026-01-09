@@ -51,6 +51,7 @@
             "north": "side|up"
           },
           {
+            "face": "floor",
             "up": "true",
             "facing": "north"
           }
@@ -68,6 +69,7 @@
             "south": "side|up"
           },
           {
+            "face": "floor",
             "up": "true",
             "facing": "south"
           }
@@ -86,8 +88,8 @@
             "east": "side|up"
           },
           {
-            "up": "true",
             "face": "floor",
+            "up": "true",
             "facing": "east"
           }
         ]
@@ -105,6 +107,7 @@
             "west": "side|up"
           },
           {
+            "face": "floor",
             "up": "true",
             "facing": "west"
           }
