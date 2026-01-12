@@ -383,63 +383,126 @@
     },
     {
       "when": {
-        "OR": [
-          {
-            "north": "up"
-          },
-          {
-            "up": "true",
-            "facing": "north"
-          },
-          {
-            "down": "true",
-            "facing": "north"
-          }
-        ]
+        "face": "wall",
+        "facing": "north",
+        "west": "side|up"
       },
       "apply": {
-        "model": "aperturecraft:block/indicator_light_wall"
+        "model": "aperturecraft:block/indicator_light_arm_wall_left"
       }
     },
     {
       "when": {
-        "OR": [
-          {
-            "east": "up"
-          },
-          {
-            "up": "true",
-            "facing": "east"
-          },
-          {
-            "down": "true",
-            "facing": "east"
-          }
-        ]
+        "face": "wall",
+        "facing": "north",
+        "east": "side|up"
       },
       "apply": {
-        "model": "aperturecraft:block/indicator_light_wall",
+        "model": "aperturecraft:block/indicator_light_arm_wall_right"
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "east",
+        "north": "side|up"
+      },
+      "apply": {
+        "model": "aperturecraft:block/indicator_light_arm_wall_left",
         "y": 90
       }
     },
     {
       "when": {
-        "OR": [
+        "face": "wall",
+        "facing": "east",
+        "south": "side|up"
+      },
+      "apply": {
+        "model": "aperturecraft:block/indicator_light_arm_wall_right",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "south",
+        "east": "side|up"
+      },
+      "apply": {
+        "model": "aperturecraft:block/indicator_light_arm_wall_left",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "south",
+        "west": "side|up"
+      },
+      "apply": {
+        "model": "aperturecraft:block/indicator_light_arm_wall_right",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "west",
+        "south": "side|up"
+      },
+      "apply": {
+        "model": "aperturecraft:block/indicator_light_arm_wall_left",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "face": "wall",
+        "facing": "west",
+        "north": "side|up"
+      },
+      "apply": {
+        "model": "aperturecraft:block/indicator_light_arm_wall_right",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "OR":[
           {
-            "south": "up"
+            "face": "wall",
+            "facing": "north",
+            "up": "true"
           },
           {
-            "up": "true",
-            "facing": "south"
-          },
-          {
-            "down": "true",
-            "facing": "south"
+            "face": "wall",
+            "facing": "north",
+            "north": "side|up"
           }
         ]
       },
       "apply": {
-        "model": "aperturecraft:block/indicator_light_wall",
+        "model": "aperturecraft:block/indicator_light_arm_wall_top"
+      }
+    },
+    {
+      "when": {
+        "OR": [
+          {
+            "face": "wall",
+            "facing": "south",
+            "up": "true"
+          },
+          {
+            "face": "wall",
+            "facing": "south",
+            "south": "side|up"
+          }
+        ]
+      },
+      "apply": {
+        "model": "aperturecraft:block/indicator_light_arm_wall_top",
         "y": 180
       }
     },
@@ -447,20 +510,401 @@
       "when": {
         "OR": [
           {
-            "west": "up"
+            "face": "wall",
+            "facing": "east",
+            "up": "true"
           },
           {
-            "up": "true",
-            "facing": "west"
-          },
-          {
-            "down": "true",
-            "facing": "west"
+            "face": "wall",
+            "facing": "east",
+            "east": "side|up"
           }
         ]
       },
       "apply": {
-        "model": "aperturecraft:block/indicator_light_wall",
+        "model": "aperturecraft:block/indicator_light_arm_wall_top",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "OR": [
+          {
+            "face": "wall",
+            "facing": "west",
+            "up": "true"
+          },
+          {
+            "face": "wall",
+            "facing": "west",
+            "west": "side|up"
+          }
+        ]
+      },
+      "apply": {
+        "model": "aperturecraft:block/indicator_light_arm_wall_top",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "OR": [
+          {
+            "face": "wall",
+            "facing": "north",
+            "down": "true"
+          },
+          {
+            "face": "wall",
+            "facing": "north",
+            "south": "side|up"
+          }
+        ]
+      },
+      "apply": {
+        "model": "aperturecraft:block/indicator_light_arm_wall_bottom"
+      }
+    },
+    {
+      "when": {
+        "OR": [
+          {
+            "face": "wall",
+            "facing": "south",
+            "down": "true"
+          },
+          {
+            "face": "wall",
+            "facing": "south",
+            "north": "side|up"
+          }
+        ]
+      },
+      "apply": {
+        "model": "aperturecraft:block/indicator_light_arm_wall_bottom",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "OR": [
+          {
+            "face": "wall",
+            "facing": "east",
+            "down": "true"
+          },
+          {
+            "face": "wall",
+            "facing": "east",
+            "west": "side|up"
+          }
+        ]
+      },
+      "apply": {
+        "model": "aperturecraft:block/indicator_light_arm_wall_bottom",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "OR": [
+          {
+            "face": "wall",
+            "facing": "west",
+            "down": "true"
+          },
+          {
+            "face": "wall",
+            "facing": "west",
+            "east": "side|up"
+          }
+        ]
+      },
+      "apply": {
+        "model": "aperturecraft:block/indicator_light_arm_wall_bottom",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "OR": [
+          {
+            "face": "wall",
+            "facing": "north",
+            "up": "true"
+          },
+          {
+            "face": "wall",
+            "facing": "north",
+            "north": "side|up"
+          }
+        ]
+      },
+      "apply": {
+        "model": "aperturecraft:block/indicator_light_arm_wall_top"
+      }
+    },
+    {
+      "when": {
+        "OR": [
+          {
+            "face": "wall",
+            "facing": "north",
+            "down": "true"
+          },
+          {
+            "face": "wall",
+            "facing": "north",
+            "south": "side|up"
+          }
+        ]
+      },
+      "apply": {
+        "model": "aperturecraft:block/indicator_light_arm_wall_bottom"
+      }
+    },
+    {
+      "when": {
+        "OR": [
+          {
+            "face": "wall",
+            "facing": "south",
+            "up": "true"
+          },
+          {
+            "face": "wall",
+            "facing": "south",
+            "south": "side|up"
+          }
+        ]
+      },
+      "apply": {
+        "model": "aperturecraft:block/indicator_light_arm_wall_top",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "OR": [
+          {
+            "face": "wall",
+            "facing": "south",
+            "down": "true"
+          },
+          {
+            "face": "wall",
+            "facing": "south",
+            "north": "side|up"
+          }
+        ]
+      },
+      "apply": {
+        "model": "aperturecraft:block/indicator_light_arm_wall_bottom",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "OR": [
+          {
+            "face": "wall",
+            "facing": "east",
+            "up": "true"
+          },
+          {
+            "face": "wall",
+            "facing": "east",
+            "east": "side|up"
+          }
+        ]
+      },
+      "apply": {
+        "model": "aperturecraft:block/indicator_light_arm_wall_top",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "OR": [
+          {
+            "face": "wall",
+            "facing": "east",
+            "down": "true"
+          },
+          {
+            "face": "wall",
+            "facing": "east",
+            "west": "side|up"
+          }
+        ]
+      },
+      "apply": {
+        "model": "aperturecraft:block/indicator_light_arm_wall_bottom",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "OR": [
+          {
+            "face": "wall",
+            "facing": "west",
+            "up": "true"
+          },
+          {
+            "face": "wall",
+            "facing": "west",
+            "west": "side|up"
+          }
+        ]
+      },
+      "apply": {
+        "model": "aperturecraft:block/indicator_light_arm_wall_top",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "OR": [
+          {
+            "face": "wall",
+            "facing": "west",
+            "down": "true"
+          },
+          {
+            "face": "wall",
+            "facing": "west",
+            "east": "side|up"
+          }
+        ]
+      },
+      "apply": {
+        "model": "aperturecraft:block/indicator_light_arm_wall_bottom",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "face": "floor",
+        "facing": "north",
+        "up": "true"
+      },
+      "apply": {
+        "model": "aperturecraft:block/indicator_light_wall_vertical"
+      }
+    },
+    {
+      "when": {
+        "face": "ceiling",
+        "facing": "north",
+        "down": "true"
+      },
+      "apply": {
+        "model": "aperturecraft:block/indicator_light_wall_vertical"
+      }
+    },
+    {
+      "when": {
+        "face": "floor",
+        "facing": "south",
+        "up": "true"
+      },
+      "apply": {
+        "model": "aperturecraft:block/indicator_light_wall_vertical",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "face": "ceiling",
+        "facing": "south",
+        "down": "true"
+      },
+      "apply": {
+        "model": "aperturecraft:block/indicator_light_wall_vertical",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "face": "floor",
+        "facing": "east",
+        "up": "true"
+      },
+      "apply": {
+        "model": "aperturecraft:block/indicator_light_wall_vertical",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "face": "ceiling",
+        "facing": "east",
+        "down": "true"
+      },
+      "apply": {
+        "model": "aperturecraft:block/indicator_light_wall_vertical",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "face": "floor",
+        "facing": "west",
+        "up": "true"
+      },
+      "apply": {
+        "model": "aperturecraft:block/indicator_light_wall_vertical",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "face": "ceiling",
+        "facing": "west",
+        "down": "true"
+      },
+      "apply": {
+        "model": "aperturecraft:block/indicator_light_wall_vertical",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "face": "floor",
+        "north": "up"
+      },
+      "apply": {
+        "model": "aperturecraft:block/indicator_light_wall_vertical"
+      }
+    },
+    {
+      "when": {
+        "face": "floor",
+        "east": "up"
+      },
+      "apply": {
+        "model": "aperturecraft:block/indicator_light_wall_vertical",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "face": "floor",
+        "south": "up"
+      },
+      "apply": {
+        "model": "aperturecraft:block/indicator_light_wall_vertical",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "face": "floor",
+        "west": "up"
+      },
+      "apply": {
+        "model": "aperturecraft:block/indicator_light_wall_vertical",
         "y": 270
       }
     }

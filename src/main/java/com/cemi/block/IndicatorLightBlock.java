@@ -930,35 +930,6 @@ public class IndicatorLightBlock extends ApertureBlock implements BlockEntityPro
         }
     }
 
-    @Override
-    public ActionResult onUse(
-            BlockState state, World world, BlockPos pos,
-            PlayerEntity player, Hand hand, BlockHitResult hit) {
-
-        if (!player.getAbilities().allowModifyWorld) {
-            return ActionResult.PASS;
-        }
-
-        BlockState newState = state;
-
-        for (Direction dir : Direction.Type.HORIZONTAL) {
-            EnumProperty<IndicatorLightConnection> prop = DIRECTION_TO_WIRE_CONNECTION_PROPERTY.get(dir);
-
-            newState = newState.with(
-                    prop,
-                    state.get(prop) == IndicatorLightConnection.NONE
-                            ? IndicatorLightConnection.SIDE
-                            : IndicatorLightConnection.NONE);
-        }
-
-        if (newState != state) {
-            world.setBlockState(pos, newState, Block.NOTIFY_ALL);
-            return ActionResult.SUCCESS;
-        }
-
-        return ActionResult.PASS;
-    }
-
     protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
         builder.add(new Property[] { FACE, FACING, WIRE_CONNECTION_NORTH, WIRE_CONNECTION_EAST,
                 WIRE_CONNECTION_SOUTH, WIRE_CONNECTION_WEST, POWERED, UP, DOWN });
