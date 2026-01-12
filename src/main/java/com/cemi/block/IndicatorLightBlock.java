@@ -1,9 +1,13 @@
 package com.cemi.block;
 
+import java.util.ArrayDeque;
 import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Queue;
 import java.util.Set;
 
 import org.jetbrains.annotations.Nullable;
@@ -80,21 +84,17 @@ public class IndicatorLightBlock extends ApertureBlock implements BlockEntityPro
     private static final Map<BlockFace, VoxelShape> BASE_SHAPE = Map.of(
             BlockFace.FLOOR, Block.createCuboidShape(3, 0, 3, 13, 1, 13),
             BlockFace.CEILING, Block.createCuboidShape(3, 15, 3, 13, 16, 13),
-            BlockFace.WALL, Block.createCuboidShape(3, 3, 15, 13, 13, 16) // north wall
-    );
+            BlockFace.WALL, Block.createCuboidShape(3, 3, 15, 13, 13, 16));
 
     private static final VoxelShape WALL_UP_SHAPE = Block.createCuboidShape(3, 0, 15, 13, 16, 16);
     private static final VoxelShape FLOOR_VERTICAL_SHAPE = Block.createCuboidShape(
-            7, 1, 7, // start just above the base plate
-            9, 16, 9 // up to top of block
-    );
+            7, 1, 7,
+            9, 16, 9);
 
     private static final VoxelShape CEILING_VERTICAL_SHAPE = Block.createCuboidShape(
-            7, 0, 7, // bottom of block
-            9, 15, 9 // stop just before ceiling plate
-    );
+            7, 0, 7,
+            9, 15, 9);
 
-    // Wall vertical arms BEFORE rotation (facing NORTH)
     private static final VoxelShape WALL_UP_ARM = Block.createCuboidShape(
             3, 8, 15,
             13, 16, 16);
@@ -117,11 +117,10 @@ public class IndicatorLightBlock extends ApertureBlock implements BlockEntityPro
                     Direction.EAST, Block.createCuboidShape(13, 15, 3, 16, 16, 13)),
 
             BlockFace.WALL, Map.of(
-                    Direction.SOUTH, Block.createCuboidShape(3, 13, 15, 13, 16, 16), // up
-                    Direction.NORTH, Block.createCuboidShape(3, 0, 15, 13, 3, 16), // down
-                    Direction.EAST, Block.createCuboidShape(0, 3, 15, 3, 13, 16), // right
-                    Direction.WEST, Block.createCuboidShape(13, 3, 15, 16, 13, 16) // left
-            ));
+                    Direction.SOUTH, Block.createCuboidShape(3, 13, 15, 13, 16, 16),
+                    Direction.NORTH, Block.createCuboidShape(3, 0, 15, 13, 3, 16),
+                    Direction.EAST, Block.createCuboidShape(0, 3, 15, 3, 13, 16),
+                    Direction.WEST, Block.createCuboidShape(13, 3, 15, 16, 13, 16)));
 
     private static final Map<BlockFace, Map<Direction, VoxelShape>> UP_SHAPES = Map.of(
             BlockFace.FLOOR, Map.of(
@@ -163,10 +162,6 @@ public class IndicatorLightBlock extends ApertureBlock implements BlockEntityPro
             Direction.SOUTH, Block.createCuboidShape(3, 0, 0, 13, 16, 1),
             Direction.WEST, Block.createCuboidShape(15, 0, 3, 16, 16, 13),
             Direction.EAST, Block.createCuboidShape(0, 0, 3, 1, 16, 13));
-
-    // --------------------
-    // 2. Placement logic
-    // --------------------
 
     private IndicatorLightConnection getConnection(
             BlockView world, BlockPos pos, Direction dir, BlockState state) {
@@ -250,10 +245,12 @@ public class IndicatorLightBlock extends ApertureBlock implements BlockEntityPro
         } else if (side == Direction.DOWN) {
             face = BlockFace.CEILING;
         } else {
-            // Clicked a wall — prefer FLOOR if supported
             BlockState below = world.getBlockState(pos.down());
+            BlockState above = world.getBlockState(pos.up());
             if (below.isSolidBlock(world, pos.down())) {
                 face = BlockFace.FLOOR;
+            } else if (above.isSolidBlock(world, pos.up())) {
+                face = BlockFace.CEILING;
             } else {
                 face = BlockFace.WALL;
             }
@@ -267,14 +264,12 @@ public class IndicatorLightBlock extends ApertureBlock implements BlockEntityPro
                 .with(FACE, face)
                 .with(FACING, facing);
 
-        // Horizontal connections
         for (Direction dir : Direction.Type.HORIZONTAL) {
             state = state.with(
                     DIRECTION_TO_WIRE_CONNECTION_PROPERTY.get(dir),
                     getConnection(world, pos, dir, state));
         }
 
-        // Vertical connections
         boolean hasUpConnection = hasVerticalConnection(world, pos, Direction.UP, state);
         boolean hasDownConnection = hasVerticalConnection(world, pos, Direction.DOWN, state);
         state = state
@@ -291,10 +286,6 @@ public class IndicatorLightBlock extends ApertureBlock implements BlockEntityPro
         return state;
     }
 
-    // --------------------
-    // 3. Neighbor update logic
-    // --------------------
-
     @Override
     public BlockState getStateForNeighborUpdate(
             BlockState state,
@@ -306,7 +297,6 @@ public class IndicatorLightBlock extends ApertureBlock implements BlockEntityPro
 
         BlockState updated = state;
 
-        // Horizontal update
         if (direction.getAxis().isHorizontal()) {
             EnumProperty<IndicatorLightConnection> prop = DIRECTION_TO_WIRE_CONNECTION_PROPERTY.get(direction);
 
@@ -317,7 +307,6 @@ public class IndicatorLightBlock extends ApertureBlock implements BlockEntityPro
             }
         }
 
-        // Vertical update (directional!)
         if (direction == Direction.UP || direction == Direction.DOWN) {
 
             boolean hasUpConnection = hasVerticalConnection(world, pos, Direction.UP, state);
@@ -381,7 +370,6 @@ public class IndicatorLightBlock extends ApertureBlock implements BlockEntityPro
 
             this.update(world, pos, state);
 
-            // 🔑 FORCE diagonal re-evaluation
             for (Direction dir : Direction.Type.HORIZONTAL) {
                 BlockPos side = pos.offset(dir);
 
@@ -452,9 +440,6 @@ public class IndicatorLightBlock extends ApertureBlock implements BlockEntityPro
         }
     }
 
-    // --------------------
-    // 4. Voxel shape generation
-    // --------------------
     @Override
     public VoxelShape getOutlineShape(
             BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
@@ -462,16 +447,12 @@ public class IndicatorLightBlock extends ApertureBlock implements BlockEntityPro
         BlockFace face = state.get(FACE);
         Direction facing = state.get(FACING);
 
-        // Base shape
         VoxelShape shape = BASE_SHAPE.get(face);
 
         if (face == BlockFace.WALL) {
             shape = rotateShape(shape, facing);
         }
 
-        // ----------------------------
-        // Horizontal arms (SIDE + UP)
-        // ----------------------------
         for (Direction dir : Direction.Type.HORIZONTAL) {
             IndicatorLightConnection conn = state.get(DIRECTION_TO_WIRE_CONNECTION_PROPERTY.get(dir));
 
@@ -479,9 +460,8 @@ public class IndicatorLightBlock extends ApertureBlock implements BlockEntityPro
                 continue;
             }
 
-            // Only SIDE connections are wall-local
             Direction localDir = (face == BlockFace.WALL && conn == IndicatorLightConnection.SIDE)
-                    ? dir // toWallLocal(dir, facing)
+                    ? dir
                     : dir;
 
             VoxelShape arm = SIDE_SHAPES.get(face).get(localDir);
@@ -506,9 +486,6 @@ public class IndicatorLightBlock extends ApertureBlock implements BlockEntityPro
             shape = VoxelShapes.union(shape, arm);
         }
 
-        // ----------------------------
-        // Vertical arms (FACE-aware)
-        // ----------------------------
         switch (face) {
 
             case FLOOR -> {
@@ -519,17 +496,14 @@ public class IndicatorLightBlock extends ApertureBlock implements BlockEntityPro
                 BlockPos wallPos = pos.up();
                 BlockState wallState = world.getBlockState(wallPos);
 
-                // Only render if the wall actually has an indicator light
                 if (!wallState.isOf(this)) {
                     break;
                 }
 
-                // Vertical strip climbing the wall
                 shape = VoxelShapes.union(
                         shape,
                         FLOOR_UP_WALL_SHAPES.get(wallState.get(FACING)));
 
-                // Horizontal floor arm reaching the wall
                 shape = VoxelShapes.union(
                         shape,
                         SIDE_SHAPES.get(BlockFace.FLOOR).get(wallState.get(FACING)));
@@ -542,13 +516,13 @@ public class IndicatorLightBlock extends ApertureBlock implements BlockEntityPro
 
                         shape = VoxelShapes.union(
                                 shape,
-                                CEILING_DOWN_WALL_SHAPES.get(wallFacing));
+                                CEILING_DOWN_WALL_SHAPES.get(wallFacing.getOpposite()));
 
                         shape = VoxelShapes.union(
                                 shape,
                                 SIDE_SHAPES
                                         .get(BlockFace.CEILING)
-                                        .get(wallFacing.getOpposite()));
+                                        .get(wallFacing));
                     }
                 }
             }
@@ -612,14 +586,12 @@ public class IndicatorLightBlock extends ApertureBlock implements BlockEntityPro
 
         BlockFace face = state.get(FACE);
 
-        // Direct vertical neighbor
         BlockPos directPos = pos.offset(verticalDir);
         BlockState directState = world.getBlockState(directPos);
 
         if (directState.isOf(this)) {
             BlockFace otherFace = directState.get(FACE);
 
-            // Same-face stacks
             if (face == otherFace) {
                 return switch (face) {
                     case FLOOR -> verticalDir == Direction.UP;
@@ -628,7 +600,6 @@ public class IndicatorLightBlock extends ApertureBlock implements BlockEntityPro
                 };
             }
 
-            // Cross-face direct
             if (face == BlockFace.FLOOR && verticalDir == Direction.UP && otherFace == BlockFace.WALL)
                 return true;
             if (face == BlockFace.WALL && verticalDir == Direction.DOWN && otherFace == BlockFace.FLOOR)
@@ -638,10 +609,6 @@ public class IndicatorLightBlock extends ApertureBlock implements BlockEntityPro
             if (face == BlockFace.WALL && verticalDir == Direction.UP && otherFace == BlockFace.CEILING)
                 return true;
         }
-
-        // -----------------------------------------
-        // ⭐ VANILLA EDGE-ROUTING (missing piece)
-        // -----------------------------------------
 
         if (face == BlockFace.FLOOR && verticalDir == Direction.UP) {
             for (Direction dir : Direction.Type.HORIZONTAL) {
@@ -656,7 +623,6 @@ public class IndicatorLightBlock extends ApertureBlock implements BlockEntityPro
                 if (wallState.get(FACING) != dir.getOpposite())
                     continue;
 
-                // 🔑 SAME support block check
                 BlockPos support = pos.offset(dir);
                 if (world.getBlockState(support).isSolidBlock(world, support)) {
                     return true;
@@ -687,9 +653,6 @@ public class IndicatorLightBlock extends ApertureBlock implements BlockEntityPro
         return false;
     }
 
-    // --------------------
-    // 5. Redstone power propagation
-    // --------------------
     private void update(World world, BlockPos pos, BlockState state) {
         int i = this.getReceivedRedstonePower(world, pos);
         IndicatorLightBlockEntity blockEntity = (IndicatorLightBlockEntity) world.getBlockEntity(pos);
@@ -716,40 +679,150 @@ public class IndicatorLightBlock extends ApertureBlock implements BlockEntityPro
 
     private int getReceivedRedstonePower(World world, BlockPos pos) {
         this.wiresGivePower = false;
-        int i = world.getReceivedRedstonePower(pos);
+
+        int direct = world.getReceivedRedstonePower(pos);
+
         this.wiresGivePower = true;
-        int j = 0;
-        if (i < 15) {
-            Iterator var5 = Type.HORIZONTAL.iterator();
 
-            while (true) {
-                while (var5.hasNext()) {
-                    Direction direction = (Direction) var5.next();
-                    BlockPos blockPos = pos.offset(direction);
-                    BlockState blockState = world.getBlockState(blockPos);
-                    j = Math.max(j, this.increasePower(world, blockPos));
-                    BlockPos blockPos2 = pos.up();
-                    if (blockState.isSolidBlock(world, blockPos)
-                            && !world.getBlockState(blockPos2).isSolidBlock(world, blockPos2)) {
-                        j = Math.max(j, this.increasePower(world, blockPos.up()));
-                    } else if (!blockState.isSolidBlock(world, blockPos)) {
-                        j = Math.max(j, this.increasePower(world, blockPos.down()));
-                    }
-                }
+        int propagated = scanNetwork(world, pos);
 
-                return Math.max(i, j - 1);
-            }
-        } else {
-            return Math.max(i, j - 1);
-        }
+        return Math.max(direct, propagated);
     }
 
-    private int increasePower(World world, BlockPos pos) {
-        BlockEntity blockEntity = world.getBlockEntity(pos);
-        if (blockEntity instanceof IndicatorLightBlockEntity iLBlockEntity) {
-            return iLBlockEntity.getPower();
+    private int scanNetwork(World world, BlockPos origin) {
+        Queue<BlockPos> queue = new ArrayDeque<>();
+        Map<BlockPos, Integer> bestDistance = new HashMap<>();
+
+        queue.add(origin);
+        bestDistance.put(origin, 0);
+
+        int bestPowerAtOrigin = 0;
+
+        while (!queue.isEmpty()) {
+            BlockPos pos = queue.poll();
+            int dist = bestDistance.get(pos);
+
+            // Only external redstone injects power
+            this.wiresGivePower = false;
+            int external = world.getReceivedRedstonePower(pos);
+            this.wiresGivePower = true;
+
+            int powerHere = Math.max(0, external - dist);
+            bestPowerAtOrigin = Math.max(bestPowerAtOrigin, powerHere);
+
+            // 🚫 DO NOT stop traversal based on power
+            // Traversal must reach distant sources
+
+            BlockState state = world.getBlockState(pos);
+
+            // Horizontal
+            for (Direction dir : Direction.Type.HORIZONTAL) {
+                if (hasSideConnection(state, dir)) {
+                    relax(world, pos.offset(dir), dist, bestDistance, queue);
+                }
+            }
+
+            // Step up
+            for (Direction dir : Direction.Type.HORIZONTAL) {
+                if (hasSideConnection(state, dir) && canStepUp(world, pos, dir)) {
+                    relax(world, pos.offset(dir).up(), dist, bestDistance, queue);
+                }
+            }
+
+            // Step down
+            for (Direction dir : Direction.Type.HORIZONTAL) {
+                if (hasSideConnection(state, dir) && canStepDown(world, pos, dir)) {
+                    relax(world, pos.offset(dir).down(), dist, bestDistance, queue);
+                }
+            }
+
+            // Vertical
+            if (canConnectUp(world, pos)) {
+                relax(world, pos.up(), dist, bestDistance, queue);
+            }
+
+            if (canConnectDown(world, pos)) {
+                relax(world, pos.down(), dist, bestDistance, queue);
+            }
         }
-        return 0;
+
+        return bestPowerAtOrigin;
+    }
+
+    private boolean hasSideConnection(BlockState state, Direction dir) {
+        EnumProperty<IndicatorLightConnection> prop = DIRECTION_TO_WIRE_CONNECTION_PROPERTY.get(dir);
+
+        return state.contains(prop) && state.get(prop).isConnected();
+    }
+
+    private boolean canStepUp(World world, BlockPos pos, Direction dir) {
+        BlockPos side = pos.offset(dir);
+        BlockPos aboveSide = side.up();
+
+        BlockState aboveSideState = world.getBlockState(aboveSide);
+
+        if (!aboveSideState.isOf(this))
+            return false;
+
+        return true;
+    }
+
+    private boolean canStepDown(World world, BlockPos pos, Direction dir) {
+        BlockPos side = pos.offset(dir);
+        BlockPos belowSide = side.down();
+
+        BlockState belowSideState = world.getBlockState(belowSide);
+
+        return belowSideState.isOf(this);
+    }
+
+    private boolean canConnectUp(World world, BlockPos pos) {
+        if (!world.getBlockState(pos).contains(UP))
+            return false;
+        if (!world.getBlockState(pos).get(UP))
+            return false;
+
+        BlockState aboveSideState = world.getBlockState(pos.up());
+
+        if (!aboveSideState.isOf(this))
+            return false;
+
+        return true;
+    }
+
+    private boolean canConnectDown(World world, BlockPos pos) {
+        if (!world.getBlockState(pos).contains(DOWN))
+            return false;
+        if (!world.getBlockState(pos).get(DOWN))
+            return false;
+
+        BlockState belowSideState = world.getBlockState(pos.down());
+
+        if (!belowSideState.isOf(this))
+            return false;
+
+        return true;
+    }
+
+    private void relax(
+            World world,
+            BlockPos to,
+            int fromDistance,
+            Map<BlockPos, Integer> bestDistance,
+            Queue<BlockPos> queue) {
+
+        BlockState state = world.getBlockState(to);
+        if (!state.isOf(this))
+            return;
+
+        int newDist = fromDistance + 1;
+        int oldDist = bestDistance.getOrDefault(to, Integer.MAX_VALUE);
+
+        // Only revisit if this path is stronger (shorter)
+        if (newDist < oldDist) {
+            bestDistance.put(to, newDist);
+            queue.add(to);
+        }
     }
 
     public int getStrongRedstonePower(BlockState state, BlockView world, BlockPos pos,
@@ -800,9 +873,6 @@ public class IndicatorLightBlock extends ApertureBlock implements BlockEntityPro
         return this.wiresGivePower;
     }
 
-    // --------------------
-    // 6. Rotation / mirroring
-    // --------------------
     public BlockState rotate(BlockState state, BlockRotation rotation) {
         switch (InnerIndicatorLightBlock.ROTATION[rotation.ordinal()]) {
             case 1:
@@ -860,9 +930,6 @@ public class IndicatorLightBlock extends ApertureBlock implements BlockEntityPro
         }
     }
 
-    // --------------------
-    // 7. Debug logging (and onUse)
-    // --------------------
     @Override
     public ActionResult onUse(
             BlockState state, World world, BlockPos pos,
@@ -892,9 +959,6 @@ public class IndicatorLightBlock extends ApertureBlock implements BlockEntityPro
         return ActionResult.PASS;
     }
 
-    // --------------------
-    // Utility and static methods
-    // --------------------
     protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
         builder.add(new Property[] { FACE, FACING, WIRE_CONNECTION_NORTH, WIRE_CONNECTION_EAST,
                 WIRE_CONNECTION_SOUTH, WIRE_CONNECTION_WEST, POWERED, UP, DOWN });
