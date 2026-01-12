@@ -462,7 +462,7 @@ public class IndicatorLightBlock extends ApertureBlock implements BlockEntityPro
             }
 
             Direction localDir = (face == BlockFace.WALL && conn == IndicatorLightConnection.SIDE)
-                    ? dir
+                    ? toWallLocal(dir, facing)
                     : dir;
 
             VoxelShape arm = SIDE_SHAPES.get(face).get(localDir);
