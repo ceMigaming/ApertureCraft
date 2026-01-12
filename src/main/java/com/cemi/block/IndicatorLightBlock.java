@@ -201,7 +201,8 @@ public class IndicatorLightBlock extends ApertureBlock implements BlockEntityPro
         }
 
         /* ===== 4. Downward diagonal fallback ===== */
-        if (!sideState.isSolidBlock(world, sidePos)
+        if (!sideState.isSolidBlock(world, sidePos) 
+                && world.getBlockState(pos.down()).isSolidBlock(world, pos.down())
                 && connectsTo(world.getBlockState(sidePos.down()))) {
             return IndicatorLightConnection.SIDE;
         }
@@ -702,16 +703,12 @@ public class IndicatorLightBlock extends ApertureBlock implements BlockEntityPro
             BlockPos pos = queue.poll();
             int dist = bestDistance.get(pos);
 
-            // Only external redstone injects power
             this.wiresGivePower = false;
             int external = world.getReceivedRedstonePower(pos);
             this.wiresGivePower = true;
 
             int powerHere = Math.max(0, external - dist);
             bestPowerAtOrigin = Math.max(bestPowerAtOrigin, powerHere);
-
-            // 🚫 DO NOT stop traversal based on power
-            // Traversal must reach distant sources
 
             BlockState state = world.getBlockState(pos);
 
@@ -761,17 +758,20 @@ public class IndicatorLightBlock extends ApertureBlock implements BlockEntityPro
 
         BlockState aboveSideState = world.getBlockState(aboveSide);
 
-        if (!aboveSideState.isOf(this))
+        if (!world.getBlockState(side).isSolidBlock(world, side))
             return false;
 
-        return true;
+        return aboveSideState.isOf(this);
     }
 
     private boolean canStepDown(World world, BlockPos pos, Direction dir) {
-        BlockPos side = pos.offset(dir);
-        BlockPos belowSide = side.down();
+        BlockPos below = pos.down();
+        BlockPos belowSide = below.offset(dir);
 
         BlockState belowSideState = world.getBlockState(belowSide);
+
+        if (!world.getBlockState(below).isSolidBlock(world, below))
+            return false;
 
         return belowSideState.isOf(this);
     }
