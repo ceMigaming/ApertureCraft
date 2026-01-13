@@ -1,6 +1,8 @@
 package com.cemi.entity;
 
 import java.util.Collections;
+
+import com.cemi.ApertureCraft;
 import com.cemi.networking.ApertureNetworkingConstants;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
@@ -16,6 +18,7 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Arm;
 import net.minecraft.util.Hand;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
@@ -26,6 +29,7 @@ public class RadioEntity extends MobEntity implements GeoEntity, Pickable {
 
     private PlayerEntity holder = null;
     private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
+    Vec3d holdTarget;
 
     private boolean isPlaying = false;
 
@@ -124,12 +128,14 @@ public class RadioEntity extends MobEntity implements GeoEntity, Pickable {
     public void pickUp(PlayerEntity player) {
         holder = player;
         setNoGravity(true);
+        fallDistance = 0;
     }
 
     @Override
     public void drop() {
         holder = null;
         setNoGravity(false);
+        fallDistance = 0;
     }
 
     @Override

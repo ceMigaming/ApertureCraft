@@ -24,7 +24,7 @@ public class RadioRenderer extends GeoEntityRenderer<RadioEntity> {
     @Override
     public void render(RadioEntity entity, float entityYaw, float partialTick,
             MatrixStack poseStack, VertexConsumerProvider bufferSource, int packedLight) {
-        renderText(entity.getPos(), entityYaw, poseStack, bufferSource);
+        renderText(entity.getLerpedPos(partialTick), entityYaw, poseStack, bufferSource);
         super.render(entity, entityYaw, partialTick, poseStack, bufferSource, packedLight);
     }
 

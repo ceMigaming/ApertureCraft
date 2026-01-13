@@ -17,11 +17,11 @@ import net.minecraft.util.Formatting;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-public class BlockCollumn extends ApertureBlock {
+public class BlockColumn extends ApertureBlock {
 
     public static final BooleanProperty UPPER = BooleanProperty.of("upper");
 
-    public BlockCollumn(String name, Settings settings) {
+    public BlockColumn(String name, Settings settings) {
         super(name, settings);
         setDefaultState(getDefaultState().with(UPPER, false));
     }
@@ -35,10 +35,10 @@ public class BlockCollumn extends ApertureBlock {
         BlockPos upperBlockPos = new BlockPos(pos.getX(), pos.getY() + 1, pos.getZ());
         BlockPos lowerBlockPos = new BlockPos(pos.getX(), pos.getY() - 1, pos.getZ());
         if (world.isAir(upperBlockPos)) {
-            world.setBlockState(pos, state.with(BlockCollumn.UPPER, false));
+            world.setBlockState(pos, state.with(BlockColumn.UPPER, false));
             world.setBlockState(upperBlockPos, state.with(UPPER, true));
         } else if (world.isAir(lowerBlockPos)) {
-            world.setBlockState(pos, state.with(BlockCollumn.UPPER, true));
+            world.setBlockState(pos, state.with(BlockColumn.UPPER, true));
             world.setBlockState(lowerBlockPos, state.with(UPPER, false));
         } else {
             GhostBlockEntity upperGhostBlockEntity = ApertureEntities.GHOSTBLOCK.create(world);

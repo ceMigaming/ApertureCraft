@@ -84,12 +84,14 @@ public class StorageCubeEntity extends MobEntity implements GeoEntity, Pickable 
     public void pickUp(PlayerEntity player) {
         holder = player;
         setNoGravity(true);
+        fallDistance = 0;
     }
 
     @Override
     public void drop() {
         holder = null;
         setNoGravity(false);
+        fallDistance = 0;
     }
 
     @Override

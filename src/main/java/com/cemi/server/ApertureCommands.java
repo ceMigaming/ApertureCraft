@@ -33,7 +33,7 @@ public class ApertureCommands {
 																	new ClickEvent(ClickEvent.Action.RUN_COMMAND,
 																			"/tp " + entry.getKey().toShortString().replace(",", ""))).withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Text.literal("Teleport"))).withUnderline(true)));
 												}
-												return Text.literal("Notes: \n").append(text);
+												return text;
 											},
 											false);
 									return 1;

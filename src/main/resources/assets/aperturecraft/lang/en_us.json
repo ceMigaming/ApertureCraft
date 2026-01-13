@@ -1,16 +1,35 @@
 {
-    "aperturecraft.block_collumn.no_space": "No space for collumn",
+    "aperturecraft.block_column.no_space": "No space for column",
     "aperturecraft.large_tile.no_space": "No space for large tile",
+    
     "itemGroup.aperturecraft.aperture_blocks": "ApertureCraft Blocks",
+    "itemGroup.aperturecraft.aperture_items": "ApertureCraft Items",
+    "itemGroup.aperturecraft.aperture_logic": "ApertureCraft Logic",
     "block.aperturecraft.concrete_tile_small": "Small Concrete Tile",
     "block.aperturecraft.concrete_tile_medium": "Medium Concrete Tile",
     "block.aperturecraft.concrete_tile_large": "Large Concrete Tile",
     "block.aperturecraft.concrete_pillar": "Concrete Pillar",
-    "block.aperturecraft.small_metal_tile": "Small Metal Tile",
-    "block.aperturecraft.medium_metal_tile": "Medium Metal Tile",
-    "block.aperturecraft.large_metal_tile": "Large Metal Tile",
+    
+    "block.aperturecraft.metal_tile_small": "Small Metal Tile",
+    "block.aperturecraft.metal_tile_medium": "Medium Metal Tile",
+    "block.aperturecraft.metal_tile_large": "Large Metal Tile",
     "block.aperturecraft.metal_pillar": "Metal Pillar",
-    "itemGroup.aperturecraft.aperture_items": "ApertureCraft Items",
+
+    "block.aperturecraft.glass_pane": "Glass Pane",
+    "block.aperturecraft.glass_pane_seemed": "Seemed Glass Pane",
+    "block.aperturecraft.glass_block": "Glass Block",
+    "block.aperturecraft.glass_block_seemed": "Seemed Glass Block",
+
+    "block.aperturecraft.floor_button": "Floor Button",
+    "block.aperturecraft.pedestal_button": "Pedestal Button",
+    "block.aperturecraft.indicator_light": "Indicator Light",
+    "block.aperturecraft.indicator": "Indicator",
+    "block.aperturecraft.door": "Door",
+    "block.aperturecraft.cube_dropper": "Cube Dropper",
+    "block.aperturecraft.hep_launcher": "High Energy Pellet Launcher",
+    "block.aperturecraft.todo": "To-Do Block",
+
     "item.aperturecraft.neurotoxin_bucket": "Neurotoxin Bucket",
+    
     "subtitles.aperturecraft.radioloop": "Still Alive (Radio Loop)"
 }

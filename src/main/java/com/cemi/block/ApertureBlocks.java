@@ -29,7 +29,7 @@ public class ApertureBlocks {
             FabricBlockSettings.create().strength(4.f));
     public static final LargeTileBlock CONCRETE_LARGE_TILE = new LargeTileBlock("concrete_tile_large",
             FabricBlockSettings.create().strength(4.f));
-    public static final BlockCollumn CONCRETE_PILLAR = new BlockCollumn("concrete_pillar",
+    public static final BlockColumn CONCRETE_PILLAR = new BlockColumn("concrete_pillar",
             FabricBlockSettings.create().strength(4.f));
 
     // metal
@@ -39,7 +39,7 @@ public class ApertureBlocks {
             FabricBlockSettings.create().strength(4.f));
     public static final LargeTileBlock METAL_LARGE_TILE = new LargeTileBlock("metal_tile_large",
             FabricBlockSettings.create().strength(4.f));
-    public static final BlockCollumn METAL_PILLAR = new BlockCollumn("metal_pillar",
+    public static final BlockColumn METAL_PILLAR = new BlockColumn("metal_pillar",
             FabricBlockSettings.create().strength(4.f));
 
     // glass
