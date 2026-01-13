@@ -1,12 +1,9 @@
 package com.cemi.block;
 
 import java.util.ArrayDeque;
-import java.util.EnumMap;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Queue;
 import java.util.Set;
 
@@ -30,23 +27,19 @@ import net.minecraft.block.ObserverBlock;
 import net.minecraft.block.RedstoneWireBlock;
 import net.minecraft.block.RepeaterBlock;
 import net.minecraft.block.ShapeContext;
-import net.minecraft.block.TrapdoorBlock;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.enums.BlockFace;
-import net.minecraft.block.enums.WireConnection;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemPlacementContext;
+import net.minecraft.item.ItemStack;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.BooleanProperty;
 import net.minecraft.state.property.DirectionProperty;
 import net.minecraft.state.property.EnumProperty;
 import net.minecraft.state.property.Properties;
 import net.minecraft.state.property.Property;
-import net.minecraft.util.ActionResult;
 import net.minecraft.util.BlockMirror;
 import net.minecraft.util.BlockRotation;
-import net.minecraft.util.Hand;
-import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Direction.Type;
@@ -85,15 +78,6 @@ public class IndicatorLightBlock extends ApertureBlock implements BlockEntityPro
             BlockFace.FLOOR, Block.createCuboidShape(3, 0, 3, 13, 1, 13),
             BlockFace.CEILING, Block.createCuboidShape(3, 15, 3, 13, 16, 13),
             BlockFace.WALL, Block.createCuboidShape(3, 3, 15, 13, 13, 16));
-
-    private static final VoxelShape WALL_UP_SHAPE = Block.createCuboidShape(3, 0, 15, 13, 16, 16);
-    private static final VoxelShape FLOOR_VERTICAL_SHAPE = Block.createCuboidShape(
-            7, 1, 7,
-            9, 16, 9);
-
-    private static final VoxelShape CEILING_VERTICAL_SHAPE = Block.createCuboidShape(
-            7, 0, 7,
-            9, 15, 9);
 
     private static final VoxelShape WALL_UP_ARM = Block.createCuboidShape(
             3, 8, 15,
@@ -190,6 +174,22 @@ public class IndicatorLightBlock extends ApertureBlock implements BlockEntityPro
             }
         }
 
+        // ceiling to wall over an edge
+        if (face == BlockFace.CEILING) {
+            boolean canGoAround = !world.getBlockState(pos.offset(dir)).isSolidBlock(world, pos);
+
+            if (canGoAround) {
+                BlockPos wallPos = pos.offset(dir).up();
+                BlockState wallState = world.getBlockState(wallPos);
+
+                if (wallState.isOf(this)
+                        && wallState.get(FACE) == BlockFace.WALL
+                        && wallState.get(FACING) == dir.getOpposite()) {
+                    return IndicatorLightConnection.SIDE;
+                }
+            }
+        }
+
         /* ===== 2. Blocked by solid wall ===== */
         if (sideState.isSolidBlock(world, sidePos) && face != BlockFace.WALL) {
             return IndicatorLightConnection.NONE;
@@ -200,14 +200,67 @@ public class IndicatorLightBlock extends ApertureBlock implements BlockEntityPro
             return IndicatorLightConnection.SIDE;
         }
 
+        if (hasPerpendicularWallWrap(world, pos, state, dir)) {
+            return IndicatorLightConnection.SIDE;
+        }
+
         /* ===== 4. Downward diagonal fallback ===== */
-        if (!sideState.isSolidBlock(world, sidePos) 
+        if (!sideState.isSolidBlock(world, sidePos)
                 && world.getBlockState(pos.down()).isSolidBlock(world, pos.down())
                 && connectsTo(world.getBlockState(sidePos.down()))) {
             return IndicatorLightConnection.SIDE;
         }
 
+        // wall to ceiling fallback
+        if (face == BlockFace.WALL && dir == state.get(FACING).getOpposite()) {
+            boolean canGoAround = !world.getBlockState(pos.down()).isSolidBlock(world, pos);
+
+            if (canGoAround) {
+                BlockPos ceilPos = pos.offset(state.get(FACING)).down();
+                BlockState ceilState = world.getBlockState(ceilPos);
+
+                if (ceilState.isOf(this)
+                        && ceilState.get(FACE) == BlockFace.CEILING) {
+                    return IndicatorLightConnection.UP;
+                }
+            }
+        }
+
         return IndicatorLightConnection.NONE;
+    }
+
+    private boolean hasPerpendicularWallWrap(
+            BlockView world,
+            BlockPos pos,
+            BlockState state,
+            Direction dir) {
+
+        if (state.get(FACE) != BlockFace.WALL)
+            return false;
+
+        Direction facing = state.get(FACING);
+
+        // Only perpendicular directions
+        if (facing.getAxis() == dir.getAxis())
+            return false;
+
+        // The block we are attached to
+        BlockPos support = pos.offset(facing);
+
+        // Candidate neighbor on another face of the same block
+        BlockPos neighborPos = support.offset(dir);
+        BlockState neighbor = world.getBlockState(neighborPos);
+
+        if (!neighbor.isOf(this))
+            return false;
+
+        if (neighbor.get(FACE) != BlockFace.WALL)
+            return false;
+
+        Direction neighborFacing = neighbor.get(FACING);
+
+        // Neighbor must also be attached to the same support block
+        return neighborPos.offset(neighborFacing).equals(support);
     }
 
     private boolean canRunOnTop(BlockView world, BlockPos pos, BlockState floor) {
@@ -358,8 +411,84 @@ public class IndicatorLightBlock extends ApertureBlock implements BlockEntityPro
                             world.getBlockState(blockPos2), mutable, blockPos2, flags,
                             maxUpdateDepth);
                 }
+                mutable.set(pos, direction).move(direction.rotateYClockwise());
+                BlockState blockState3 = world.getBlockState(mutable);
+                if (blockState3.isOf(this)) {
+                    BlockPos blockPos3 = mutable.offset(direction.rotateYClockwise().getOpposite());
+                    world.replaceWithStateForNeighborUpdate(direction.rotateYClockwise().getOpposite(),
+                            world.getBlockState(blockPos3), mutable, blockPos3, flags,
+                            maxUpdateDepth);
+                }
+                mutable.set(pos, direction).move(direction.rotateYCounterclockwise());
+                BlockState blockState4 = world.getBlockState(mutable);
+                if (blockState4.isOf(this)) {
+                    BlockPos blockPos4 = mutable.offset(direction.rotateYCounterclockwise().getOpposite());
+                    world.replaceWithStateForNeighborUpdate(direction.rotateYCounterclockwise().getOpposite(),
+                            world.getBlockState(blockPos4), mutable, blockPos4, flags,
+                            maxUpdateDepth);
+                }
+                mutable.set(pos, Direction.UP).move(direction);
+                BlockState blockState5 = world.getBlockState(mutable);
+                if (blockState5.isOf(this)) {
+                    BlockPos blockPos5 = mutable.offset(Direction.DOWN);
+                    world.replaceWithStateForNeighborUpdate(Direction.DOWN,
+                            world.getBlockState(blockPos5), mutable, blockPos5, flags,
+                            maxUpdateDepth);
+                }
+                mutable.set(pos, Direction.DOWN).move(direction);
+                BlockState blockState6 = world.getBlockState(mutable);
+                if (blockState6.isOf(this)) {
+                    BlockPos blockPos6 = mutable.offset(Direction.UP);
+                    world.replaceWithStateForNeighborUpdate(Direction.UP,
+                            world.getBlockState(blockPos6), mutable, blockPos6, flags,
+                            maxUpdateDepth);
+                }
+
+                if (state.contains(FACING) && state.get(FACE) == BlockFace.WALL) {
+                    mutable.set(pos).move(Direction.DOWN).move(state.get(FACING));
+                    BlockState ceilState = world.getBlockState(mutable);
+                    if (ceilState.isOf(this)) {
+                        BlockPos ceilPos = mutable.offset(state.get(FACING).getOpposite());
+                        world.replaceWithStateForNeighborUpdate(state.get(FACING).getOpposite(),
+                                world.getBlockState(ceilPos), mutable, ceilPos, flags,
+                                maxUpdateDepth);
+                    }
+                }
+
+                if(state.get(FACE) == BlockFace.CEILING) {
+                    mutable.set(pos, direction).move(Direction.UP);
+                    BlockState wallState = world.getBlockState(mutable);
+                    if (wallState.isOf(this)) {
+                        BlockPos wallPos = mutable.offset(Direction.DOWN);
+                        world.replaceWithStateForNeighborUpdate(direction,
+                                world.getBlockState(wallPos), mutable, wallPos, flags,
+                                maxUpdateDepth);
+                    }
+                }
             }
         }
+    }
+
+    private boolean isPerpendicularWallLightOn(
+            BlockState state,
+            BlockPos lightPos,
+            BlockPos supportPos,
+            Direction otherFacing) {
+
+        if (!state.isOf(this))
+            return false;
+
+        if (state.get(FACE) != BlockFace.WALL)
+            return false;
+
+        Direction facing = state.get(FACING);
+
+        // Must be on the same block
+        if (!lightPos.offset(facing).equals(supportPos))
+            return false;
+
+        // Must be perpendicular, not opposite
+        return facing.getAxis() != otherFacing.getAxis();
     }
 
     @Override
@@ -377,6 +506,8 @@ public class IndicatorLightBlock extends ApertureBlock implements BlockEntityPro
                 world.updateNeighborsAlways(side, this);
                 world.updateNeighborsAlways(side.up(), this);
                 world.updateNeighborsAlways(side.down(), this);
+                world.updateNeighborsAlways(side.offset(dir.rotateYClockwise()), this);
+                world.updateNeighborsAlways(side.offset(dir.rotateYCounterclockwise()), this);
             }
         }
     }
@@ -398,6 +529,7 @@ public class IndicatorLightBlock extends ApertureBlock implements BlockEntityPro
         }
     }
 
+    @Override
     public void neighborUpdate(BlockState state, World world, BlockPos pos, Block sourceBlock,
             BlockPos sourcePos, boolean notify) {
         if (!world.isClient) {
@@ -461,14 +593,14 @@ public class IndicatorLightBlock extends ApertureBlock implements BlockEntityPro
                 continue;
             }
 
-            Direction localDir = (face == BlockFace.WALL && conn == IndicatorLightConnection.SIDE)
+            Direction localDir = (face == BlockFace.WALL && (conn == IndicatorLightConnection.SIDE || conn == IndicatorLightConnection.UP))
                     ? toWallLocal(dir, facing)
                     : dir;
 
             VoxelShape arm = SIDE_SHAPES.get(face).get(localDir);
 
             if (face == BlockFace.WALL && conn == IndicatorLightConnection.UP) {
-                arm = SIDE_SHAPES.get(face).get(Direction.SOUTH);
+                arm = SIDE_SHAPES.get(face).get(localDir.getOpposite());
                 arm = rotateShape(arm, facing);
             }
 
@@ -733,6 +865,28 @@ public class IndicatorLightBlock extends ApertureBlock implements BlockEntityPro
                 }
             }
 
+            // 🔁 Wall-around-block (perpendicular only)
+            if (state.isOf(this) && state.get(FACE) == BlockFace.WALL) {
+                Direction facing = state.get(FACING);
+                BlockPos support = pos.offset(facing);
+
+                for (Direction dir : Direction.Type.HORIZONTAL) {
+                    BlockPos neighbor = support.offset(dir);
+                    if (neighbor.equals(pos))
+                        continue;
+
+                    BlockState neighborState = world.getBlockState(neighbor);
+
+                    if (isPerpendicularWallLightOn(
+                            neighborState,
+                            neighbor,
+                            support,
+                            facing)) {
+                        relax(world, neighbor, dist, bestDistance, queue);
+                    }
+                }
+            }
+
             // Vertical
             if (canConnectUp(world, pos)) {
                 relax(world, pos.up(), dist, bestDistance, queue);
@@ -847,7 +1001,13 @@ public class IndicatorLightBlock extends ApertureBlock implements BlockEntityPro
             return 0;
         }
 
-        IndicatorLightConnection conn = state.get(DIRECTION_TO_WIRE_CONNECTION_PROPERTY.get(direction));
+        var connProp = DIRECTION_TO_WIRE_CONNECTION_PROPERTY.get(direction);
+
+        if (connProp == null || !state.contains(connProp)) {
+            return 0;
+        }
+
+        IndicatorLightConnection conn = state.get(connProp);
 
         return conn.isConnected() ? power : 0;
     }
