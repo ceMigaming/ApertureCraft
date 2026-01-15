@@ -9,7 +9,7 @@ import net.minecraft.client.gui.hud.InGameOverlayRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 
 @Mixin(InGameOverlayRenderer.class)
-public class MixinInGameOverlayRenderer {
+public class InGameOverlayRendererMixin {
     @Inject(at = @At("HEAD"),
             method = "renderOverlays(Lnet/minecraft/client/MinecraftClient;Lnet/minecraft/client/util/math/MatrixStack;)V",
             cancellable = true)

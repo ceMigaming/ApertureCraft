@@ -13,7 +13,7 @@ import net.minecraft.client.render.GameRenderer;
 import net.minecraft.resource.ResourceFactory;
 
 @Mixin(GameRenderer.class)
-public class MixinGameRenderer_Shaders {
+public class GameRenderer_ShadersMixin {
     @Shadow
     @Final
     private Map<String, ShaderProgram> programs;
