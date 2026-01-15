@@ -6,6 +6,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import com.cemi.fluid.ApertureFluids;
 import com.cemi.registry.tag.ApertureFluidTags;
 import com.mojang.blaze3d.systems.RenderSystem;
 
@@ -59,5 +60,4 @@ public abstract class BackgroundRendererMixin {
 			ci.cancel();
 		}
 	}
-
 }

@@ -5,7 +5,8 @@
     "mixins": [
         "EntityMixin",
         "RedstoneViewMixin",
-        "PlayerLookupMixin"
+        "PlayerLookupMixin",
+        "LivingEntityMixin"
     ],
     "injectors": {
         "defaultRequire": 1
