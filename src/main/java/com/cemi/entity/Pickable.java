@@ -20,7 +20,7 @@ public interface Pickable {
     }
 
     public default float getHoldDistance() {
-        return 3;
+        return 5;
     }
 
     public default void handlePickedUp(World world, PlayerEntity player, Entity entity) {

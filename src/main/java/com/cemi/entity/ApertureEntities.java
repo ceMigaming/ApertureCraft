@@ -26,7 +26,7 @@ public class ApertureEntities {
 
     public static final EntityType<RadioEntity> RADIO = Registry.register(Registries.ENTITY_TYPE,
             new Identifier(ApertureCraft.MOD_ID, "radio"), EntityType.Builder
-                    .create(RadioEntity::new, SpawnGroup.MISC).setDimensions(1.0f, 1.0f).build());
+                    .create(RadioEntity::new, SpawnGroup.MISC).setDimensions(0.5f, 0.5f).build());
 
     public static final EntityType<StorageCubeEntity> RUSTY_STORAGE_CUBE = Registry.register(
             Registries.ENTITY_TYPE, new Identifier(ApertureCraft.MOD_ID, "rusty_storage_cube"),
@@ -50,7 +50,7 @@ public class ApertureEntities {
 
     public static final EntityType<TurretEntity> TURRET = Registry.register(Registries.ENTITY_TYPE,
             new Identifier(ApertureCraft.MOD_ID, "turret"), EntityType.Builder
-                    .create(TurretEntity::new, SpawnGroup.MISC).setDimensions(1.0f, 1.0f).build());
+                    .create(TurretEntity::new, SpawnGroup.MISC).setDimensions(0.4f, 1.0f).build());
 
     public static final EntityType<RocketTurretEntity> ROCKET_TURRET = Registry.register(
             Registries.ENTITY_TYPE, new Identifier(ApertureCraft.MOD_ID, "rocket_turret"),
@@ -61,10 +61,8 @@ public class ApertureEntities {
             Registries.ENTITY_TYPE, new Identifier(ApertureCraft.MOD_ID, "portal_projectile"),
             EntityType.Builder.create(PortalProjectileEntity::new, SpawnGroup.MISC)
                     .setDimensions(.5f, .5f).build());
-    
 
-    
-
-    public static void registerEntities() {}
+    public static void registerEntities() {
+    }
 
 }
