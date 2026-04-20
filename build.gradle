@@ -113,3 +113,11 @@ publishing {
 		// retrieving dependencies.
 	}
 }
+
+loom {
+    accessWidenerPath = file("src/main/resources/aperturecraft.accesswidener")
+	
+	mixin {
+		add sourceSets.main, "aperturecraft.refmap.json"
+	}
+}

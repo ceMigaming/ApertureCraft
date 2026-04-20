@@ -8,9 +8,11 @@
         "BackgroundRendererMixin",
         "CameraAccessor",
         "CameraSubmersionMixin",
-        "BackgroundRendererAccessor"
+        "BackgroundRendererAccessor",
+        "WindowMixin"
     ],
     "injectors": {
         "defaultRequire": 1
-    }
+    },
+    "refmap": "aperturecraft.refmap.json"
 }

@@ -1,0 +1,9 @@
+accessWidener v2 named
+
+# RenderPhase inner classes
+accessible class net/minecraft/client/render/RenderPhase$Texture
+accessible class net/minecraft/client/render/RenderPhase$ShaderProgram
+
+# RenderLayer builder
+accessible class net/minecraft/client/render/RenderLayer$MultiPhaseParameters
+accessible method net/minecraft/client/render/RenderLayer$MultiPhaseParameters builder ()Lnet/minecraft/client/render/RenderLayer$MultiPhaseParameters$Builder;

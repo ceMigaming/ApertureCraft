@@ -22,6 +22,13 @@ public class AperturePortal extends Portal {
             return 0xFFFFFF;
     }
 
+    public int getOtherColor() {
+        if (this.portalNbt.contains("otherColor"))
+            return this.portalNbt.getInt("otherColor");
+        else
+            return 0xFFFFFF;
+    }
+
     public void setNbt(NbtCompound nbt) {
         this.portalNbt = nbt;
     }
@@ -29,7 +36,6 @@ public class AperturePortal extends Portal {
     public NbtCompound getNbt() {
         return this.portalNbt;
     }
-
 
     @Override
     protected void readCustomDataFromNbt(NbtCompound compoundTag) {

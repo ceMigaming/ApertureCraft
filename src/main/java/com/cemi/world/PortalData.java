@@ -11,6 +11,7 @@ public class PortalData {
     public String channel = "main";
     public boolean isMaster = false;
     public int color = 0xFF9A00;
+    public int otherColor = 0xFF9A00;
     private Vec3d pos = Vec3d.ZERO;
     private PortalData other = null;
     private RegistryKey<World> dimension = World.OVERWORLD;
@@ -29,6 +30,11 @@ public class PortalData {
 
     public PortalData setColor(int color) {
         this.color = color;
+        return this;
+    }
+
+    public PortalData setOtherColor(int otherColor) {
+        this.otherColor = otherColor;
         return this;
     }
 
@@ -71,6 +77,10 @@ public class PortalData {
         return color;
     }
 
+    public int getOtherColor() {
+        return otherColor;
+    }
+
     public RegistryKey<World> getDimension() {
         return dimension;
     }
@@ -85,6 +95,7 @@ public class PortalData {
         this.channel = nbt.getString("channel");
         this.isMaster = nbt.getBoolean("isMaster");
         this.color = nbt.getInt("color");
+        this.otherColor = nbt.getInt("otherColor");
         this.setPos(nbt.getDouble("x"), nbt.getDouble("y"), nbt.getDouble("z"));
         return this;
     }
@@ -94,6 +105,7 @@ public class PortalData {
         nbt.putString("channel", this.channel);
         nbt.putBoolean("isMaster", this.isMaster);
         nbt.putInt("color", this.color);
+        nbt.putInt("otherColor", this.otherColor);
         nbt.putDouble("x", this.pos.getX());
         nbt.putDouble("y", this.pos.getY());
         nbt.putDouble("z", this.pos.getZ());
@@ -120,6 +132,7 @@ public class PortalData {
         this.channel = "main";
         this.isMaster = false;
         this.color = 0xFF9A00;
+        this.otherColor = 0xFF9A00;
         this.pos = Vec3d.ZERO;
         this.other = null;
         this.dimension = World.OVERWORLD;

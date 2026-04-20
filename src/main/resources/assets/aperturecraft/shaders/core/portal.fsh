@@ -1,3 +1,4 @@
+// Based on iChun's Portal Gun mod's portal shader
 #version 330
 #ifdef GL_ES
 precision mediump float;
@@ -5,7 +6,7 @@ precision mediump float;
 
 uniform vec2 uResolution;
 
-uniform sampler2D sampler;
+uniform sampler2D Sampler0;
 
 in vec2 a_texCoord0;
 
@@ -124,7 +125,8 @@ void main(void) {
 
     vec3 theColor = vec3(theColorR, theColorG, theColorB);
 
-    //gl_FragColor = texture(sampler, a_texCoord0);
+    //gl_FragColor = texture(Sampler0, a_texCoord0);
+    outColor = texture(Sampler0, a_texCoord0);
 
     float w = 1.0, h = 1.0;
     vec2 sp = (coord - 0.5) / vec2(w, h);// TODO: Change
@@ -237,5 +239,6 @@ void main(void) {
         }
     }
 
-    gl_FragColor = color;
+    // gl_FragColor = color;
+    outColor = color;
 }
