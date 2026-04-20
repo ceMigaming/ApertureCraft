@@ -147,7 +147,6 @@ public class ApertureCubeDropperBlock extends ApertureBlock implements BlockEnti
         }
         if (world.isReceivingRedstonePower(pos)) {
             BlockPos masterPos = ((ApertureCubeDropperBlockEntity) world.getBlockEntity(pos)).getMasterPos();
-            System.out.println(masterPos);
             world.scheduleBlockTick(masterPos, this, 0);
         }
     }

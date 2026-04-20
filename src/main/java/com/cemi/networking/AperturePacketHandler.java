@@ -42,11 +42,9 @@ public class AperturePacketHandler {
                     String note = buf.readString();
 
                     server.execute(() -> {
-                        System.out.println("Received from client: " + note);
                         ServerWorld serverWorld = player.getServerWorld();
                         TodoNotesData data = WorldDataManager.getData(serverWorld);
                         data.addNote(pos, note);
-                        System.out.println("Data in persistent storage: " + data.getNote(pos));
                         if(player.getWorld().getBlockEntity(pos) instanceof TodoBlockEntity todoBlockEntity) {
                             todoBlockEntity.setText(note);
                         }

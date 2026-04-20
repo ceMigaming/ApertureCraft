@@ -23,7 +23,6 @@ public class WindowMixin implements AutoCloseable {
     )
     private void enableDebugContext(WindowEventHandler eventHandler, MonitorTracker monitorTracker,
             WindowSettings settings, @Nullable String videoMode, String title, CallbackInfo ci) {
-        System.out.println("Enabling OpenGL debug context");
         GLFW.glfwWindowHint(GLFW.GLFW_OPENGL_DEBUG_CONTEXT, GLFW.GLFW_TRUE);
     }
 

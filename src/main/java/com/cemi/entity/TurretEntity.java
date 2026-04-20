@@ -91,16 +91,21 @@ public class TurretEntity extends MobEntity implements GeoEntity, Pickable {
 
         if (player != null && EntityHelper.isPlayerInFront(this, player)) {
             if (!isOpen) {
-                System.out.println("OPENING");
                 triggerAnim("controller", "open");
                 isOpen = true;
             }
         } else {
             if (isOpen) {
-                System.out.println("CLOSING");
                 triggerAnim("controller", "close");
                 isOpen = false;
             }
+        }
+    }
+
+    private void AttackPlayer(PlayerEntity player) {
+        if (!isShooting) {
+            triggerAnim("controller", "shoot");
+            isShooting = true;
         }
     }
 
