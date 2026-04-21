@@ -129,6 +129,10 @@ public class ApertureCubeDropperBlock extends ApertureBlock implements BlockEnti
 
         ApertureCubeDropperBlockEntity blockEntity = (ApertureCubeDropperBlockEntity) world.getBlockEntity(pos);
         BlockPos masterPos = blockEntity.getMasterPos();
+
+        ApertureCubeDropperBlockEntity masterBlockEntity = (ApertureCubeDropperBlockEntity) world.getBlockEntity(masterPos);
+        masterBlockEntity.killEntity();
+
         int masterX = masterPos.getX();
         int masterY = masterPos.getY();
         int masterZ = masterPos.getZ();
