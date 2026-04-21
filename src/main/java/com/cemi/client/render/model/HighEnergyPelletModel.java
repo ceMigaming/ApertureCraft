@@ -24,7 +24,7 @@ public class HighEnergyPelletModel extends EntityModel<HighEnergyPelletEntity> {
 		ModelData modelData = new ModelData();
 		ModelPartData modelPartData = modelData.getRoot();
 		ModelPartData bb_main = modelPartData.addChild("bb_main",
-				ModelPartBuilder.create().uv(0, 0).cuboid(-8.0F, -16.0F, 0.0F, 16.0F, 16.0F, 0.0F, new Dilation(0.0F)),
+				ModelPartBuilder.create().uv(0, 0).cuboid(-8.0F, -16.0F, 0.0F, 16.0F, 16.0F, 0.01F, new Dilation(0.0F)),
 				ModelTransform.pivot(0.0F, 24.0F, 0.0F));
 		return TexturedModelData.of(modelData, 16, 16);
 	}

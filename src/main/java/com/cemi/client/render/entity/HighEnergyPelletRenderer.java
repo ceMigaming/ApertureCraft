@@ -1,20 +1,30 @@
 package com.cemi.client.render.entity;
 
+import org.joml.Matrix4f;
+
 import com.cemi.ApertureCraft;
 import com.cemi.client.render.model.HighEnergyPelletModel;
 import com.cemi.entity.HighEnergyPelletEntity;
 import com.mojang.blaze3d.systems.RenderSystem;
 
-import net.fabricmc.fabric.api.renderer.v1.material.MaterialFinder;
-import net.minecraft.client.render.LightmapTextureManager;
-import net.minecraft.client.render.RenderLayer;
-import net.minecraft.client.render.VertexConsumer;
+import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.render.BufferBuilder;
+import net.minecraft.client.render.BufferRenderer;
+import net.minecraft.client.render.Camera;
+import net.minecraft.client.render.GameRenderer;
+import net.minecraft.client.render.Tessellator;
 import net.minecraft.client.render.VertexConsumerProvider;
+import net.minecraft.client.render.VertexFormat;
+import net.minecraft.client.render.VertexFormats;
 import net.minecraft.client.render.entity.EntityRenderer;
 import net.minecraft.client.render.entity.EntityRendererFactory.Context;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.client.world.ClientWorld;
+import net.minecraft.entity.Entity;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.Vec3d;
 
 public class HighEnergyPelletRenderer extends EntityRenderer<HighEnergyPelletEntity> {
 
@@ -30,24 +40,78 @@ public class HighEnergyPelletRenderer extends EntityRenderer<HighEnergyPelletEnt
         return new Identifier(ApertureCraft.MOD_ID, "textures/entity/hep.png");
     }
 
-    @Override
-    public void render(HighEnergyPelletEntity entity, float yaw, float tickDelta,
-            MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light) {
-        float lifeTime = entity.getLifeTime() / 240.0f; // 12 * 20
-        // TODO find a better way to do this
-        RenderLayer renderLayer = RenderLayer.getEntityTranslucentCull(getTexture(entity));
-        if (renderLayer != null) {
-            matrices.translate(0.0f, -0.5f, 0.0f);
-            VertexConsumer vertexConsumer = vertexConsumers.getBuffer(renderLayer);
-            matrices.scale(0.5f, 0.5f, 0.5f);
-            matrices.push();
-            
-            matrices.multiply(this.dispatcher.getRotation());
-            matrices.translate(0.0f, -0.75f, 0.0f);
-            model.render(matrices, vertexConsumer, LightmapTextureManager.pack(15, 15), 0, 1.0f, 1.0f, 1.0f,
-                    MathHelper.clamp(1.0f + (float) Math.log10(lifeTime), 0.5f, 1.0f));
-            matrices.pop();
+    public static void renderSprite(WorldRenderContext context) {
+        MinecraftClient client = MinecraftClient.getInstance();
+        ClientWorld world = client.world;
+
+        if (world == null)
+            return;
+
+        Camera camera = context.camera();
+        Vec3d camPos = camera.getPos();
+
+        MatrixStack matrices = context.matrixStack();
+
+        matrices.translate(-camPos.x, -camPos.y, -camPos.z);
+
+        for (Entity entity : world.getEntities()) {
+            if (!(entity instanceof HighEnergyPelletEntity pellet))
+                continue;
+
+            renderPellet(pellet, context);
         }
-        super.render(entity, yaw, tickDelta, matrices, vertexConsumers, light);
+
+    }
+
+    private static void renderPellet(HighEnergyPelletEntity entity, WorldRenderContext context) {
+
+        float lifeTime = entity.getLifeTime() / 240.0f; // 12 * 20
+
+        MatrixStack matrices = context.matrixStack();
+
+        matrices.push();
+
+        float tickDelta = context.tickDelta();
+
+        double x = MathHelper.lerp(tickDelta, entity.prevX, entity.getX());
+        double y = MathHelper.lerp(tickDelta, entity.prevY, entity.getY());
+        double z = MathHelper.lerp(tickDelta, entity.prevZ, entity.getZ());
+
+        matrices.translate(x, y + 0.25, z);
+
+        // Billboard
+        matrices.multiply(context.camera().getRotation().rotateY((float) Math.PI));
+
+        Matrix4f matrix = matrices.peek().getPositionMatrix();
+
+        matrix.rotateZ(lifeTime*20);
+
+        RenderSystem.enableBlend();
+        RenderSystem.defaultBlendFunc();
+        RenderSystem.setShader(GameRenderer::getPositionTexColorProgram);
+        RenderSystem.setShaderTexture(0, new Identifier(ApertureCraft.MOD_ID, "textures/entity/hep.png"));
+        RenderSystem.disableCull();
+
+        BufferBuilder buffer = Tessellator.getInstance().getBuffer();
+        buffer.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_TEXTURE_COLOR);
+
+        float size = 0.25f + (float) Math.sin(lifeTime * 500) * 0.015f;
+
+        float alpha = MathHelper.clamp(1.0f + (float) Math.log10(lifeTime), 0.6f, 1f);
+        float r = 1.0f;
+        float g = (float) Math.cos(lifeTime * 100) * 0.1f + 0.9f;
+        float b = (float) Math.sin(lifeTime * 100) * 0.1f + 0.9f;
+
+        buffer.vertex(matrix, -size, -size, 0).texture(0, 1).color(r, g, b, alpha).next();
+        buffer.vertex(matrix, size, -size, 0).texture(1, 1).color(r, g, b, alpha).next();
+        buffer.vertex(matrix, size, size, 0).texture(1, 0).color(r, g, b, alpha).next();
+        buffer.vertex(matrix, -size, size, 0).texture(0, 0).color(r, g, b, alpha).next();
+
+        BufferRenderer.drawWithGlobalProgram(buffer.end());
+
+        RenderSystem.disableBlend();
+        RenderSystem.enableCull();
+
+        matrices.pop();
     }
 }

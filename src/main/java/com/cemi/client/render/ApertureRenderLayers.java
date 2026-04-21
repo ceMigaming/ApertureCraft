@@ -1,7 +1,5 @@
 package com.cemi.client.render;
 
-import java.util.OptionalDouble;
-
 import com.cemi.block.ApertureBlocks;
 import com.cemi.util.ShaderHelper;
 
@@ -63,7 +61,7 @@ public class ApertureRenderLayers {
                     .transparency(RenderPhase.ADDITIVE_TRANSPARENCY)
                     .cull(RenderPhase.DISABLE_CULLING)
                     .layering(RenderPhase.VIEW_OFFSET_Z_LAYERING)
-                    .depthTest(RenderPhase.ALWAYS_DEPTH_TEST) // or ALWAYS_DEPTH_TEST
+                    .depthTest(RenderPhase.ALWAYS_DEPTH_TEST)
                     .writeMaskState(RenderPhase.COLOR_MASK)
                     .build(false));
 }

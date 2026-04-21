@@ -34,12 +34,6 @@ public class PortalOverlayRenderer {
     private static Identifier portalOutlineFancy = new Identifier(ApertureCraft.MOD_ID,
             "textures/entity/portaloutlinefancy.png");
 
-    public static void init() {
-        WorldRenderEvents.AFTER_TRANSLUCENT.register(context -> {
-            PortalOverlayRenderer.render(context);
-        });
-    }
-
     public static void render(WorldRenderContext context) {
         MinecraftClient client = MinecraftClient.getInstance();
 
@@ -140,7 +134,6 @@ public class PortalOverlayRenderer {
     private static Identifier getTexture(Portal entity) {
         return entity.isVisible() ? portalOpen : portalClosed;
     }
-
     private static void flush(VertexConsumerProvider bufferSource) {
         if (bufferSource instanceof VertexConsumerProvider.Immediate immediate) {
             immediate.draw();

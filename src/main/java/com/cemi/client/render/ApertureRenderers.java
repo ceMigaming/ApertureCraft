@@ -22,6 +22,7 @@ import com.cemi.entity.ApertureEntities;
 import net.fabricmc.fabric.api.client.rendering.v1.BlockEntityRendererRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
+import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
 
 @SuppressWarnings("deprecation")
 public class ApertureRenderers {
@@ -60,6 +61,11 @@ public class ApertureRenderers {
         // Render Layers
         EntityModelLayerRegistry.registerModelLayer(CustomPortalEntityRenderer.OVERLAY_MODEL_LAYER,
                 PortalOverlayModel::getTexturedModelData);
+
+        WorldRenderEvents.AFTER_TRANSLUCENT.register(context -> {
+            PortalOverlayRenderer.render(context);
+            HighEnergyPelletRenderer.renderSprite(context);
+        });
     }
 
 }

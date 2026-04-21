@@ -31,6 +31,5 @@ public class ApertureCraftClient implements ClientModInitializer {
         ApertureColorProviders.registerColorProviders();
         AperturePacketHandler.registerPacketHandlers();
         ApertureCraftInput.registerInput();
-        PortalOverlayRenderer.init();
     }
 }
