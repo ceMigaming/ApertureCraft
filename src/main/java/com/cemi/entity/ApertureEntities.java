@@ -1,6 +1,8 @@
 package com.cemi.entity;
 
 import com.cemi.ApertureCraft;
+
+import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.SpawnGroup;
 import net.minecraft.registry.Registries;
@@ -64,5 +66,4 @@ public class ApertureEntities {
 
     public static void registerEntities() {
     }
-
 }

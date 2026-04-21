@@ -5,13 +5,20 @@ import java.util.Comparator;
 import com.cemi.util.EntityHelper;
 
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.attribute.DefaultAttributeContainer;
+import net.minecraft.entity.attribute.EntityAttribute;
+import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.registry.tag.DamageTypeTags;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
+import net.minecraft.util.hit.BlockHitResult;
+import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.Box;
+import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.RaycastContext;
 import net.minecraft.world.World;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
@@ -33,6 +40,15 @@ public class TurretEntity extends MobEntity implements GeoEntity, Pickable {
     private boolean wasOpen = false;
     private boolean isOpen = false;
     private boolean isShooting = false;
+    private int attackCooldown = 0;
+
+    public Vec3d laserEnd = null;
+    public Vec3d lastLaserEnd = null;
+
+    private PlayerEntity player = null; // current target
+
+    private int openTimer = 0;
+    private static final int OPEN_DURATION = 20; // 1 second (adjust to your animation)
 
     protected TurretEntity(EntityType<? extends MobEntity> entityType, World world) {
         super(entityType, world);
@@ -77,35 +93,101 @@ public class TurretEntity extends MobEntity implements GeoEntity, Pickable {
 
     @Override
     public void tick() {
+        super.tick();
+
+        if (attackCooldown > 0) {
+            attackCooldown--;
+        }
+
+        if (openTimer > 0) {
+            openTimer--;
+        }
+
         if (holder != null) {
             handlePickedUp(getWorld(), holder, this);
         }
-        super.tick();
-        Box box = getBoundingBox().expand(5.0); // 10 block radius
 
-        var player = getWorld().getEntitiesByClass(
+        Box box = getBoundingBox().expand(8.5); // 17 block radius
+
+        player = getWorld().getEntitiesByClass(
                 PlayerEntity.class,
                 box,
                 plr -> !plr.isSpectator()).stream().min(Comparator.comparingDouble(this::squaredDistanceTo))
                 .orElse(null);
 
-        if (player != null && EntityHelper.isPlayerInFront(this, player)) {
+        if (player != null
+                && EntityHelper.isPlayerInFront(this, player)
+                && EntityHelper.hasLineOfSight(this, player)) {
+
             if (!isOpen) {
                 triggerAnim("controller", "open");
                 isOpen = true;
+                openTimer = OPEN_DURATION;
             }
+
+            // Attack every 10 ticks (0.5 sec)
+            if (attackCooldown == 0 && openTimer == 0) {
+                AttackPlayer(player);
+                attackCooldown = 10;
+                triggerAnim("controller", "shoot");
+            }
+
         } else {
             if (isOpen) {
                 triggerAnim("controller", "close");
                 isOpen = false;
+                player = null;
+                lastLaserEnd = null;
             }
         }
+
+        Vec3d start = this.getPos().add(0, getEyeHeight(getPose()), 0);
+
+        // Determine intended target
+        Vec3d targetPos;
+        if (player != null && isOpen) {
+            targetPos = player.getPos().add(0, player.getEyeHeight(player.getPose()) * 0.75, 0);
+        } else {
+            targetPos = this.getRotationVec(1.0f)
+                    .multiply(10.0)
+                    .add(start);
+        }
+
+        // 🔥 Raycast to stop at walls
+        BlockHitResult hit = this.getWorld().raycast(new RaycastContext(
+                start,
+                targetPos,
+                RaycastContext.ShapeType.COLLIDER,
+                RaycastContext.FluidHandling.NONE,
+                this));
+
+        Vec3d finalTarget;
+
+        // If we hit a block, clamp the beam
+        if (hit.getType() == HitResult.Type.BLOCK) {
+            // small offset so it doesn't clip into the block
+            finalTarget = hit.getPos().add(Vec3d.of(hit.getSide().getVector()).multiply(0.01f));
+            lastLaserEnd = finalTarget; // snap to block immediately to avoid weird lerp behavior when looking at walls
+            laserEnd = finalTarget;
+        } else {
+            finalTarget = targetPos;
+        }
+
+        lastLaserEnd = laserEnd == null ? finalTarget : laserEnd;
+
+        // Different smoothing speeds feel nicer
+        double alpha = (player != null && isOpen) ? 0.5 : 0.1;
+
+        laserEnd = lastLaserEnd.lerp(finalTarget, alpha);
     }
 
     private void AttackPlayer(PlayerEntity player) {
-        if (!isShooting) {
-            triggerAnim("controller", "shoot");
-            isShooting = true;
+        if (!this.getWorld().isClient) {
+            float damage = (float) this.getAttributeValue(EntityAttributes.GENERIC_ATTACK_DAMAGE);
+
+            player.damage(
+                    this.getDamageSources().mobAttack(this),
+                    damage);
         }
     }
 
@@ -121,4 +203,15 @@ public class TurretEntity extends MobEntity implements GeoEntity, Pickable {
         return source.isIn(DamageTypeTags.BYPASSES_INVULNERABILITY) ? super.damage(source, amount) : false;
     }
 
+    public static DefaultAttributeContainer.Builder createTurretAttributes() {
+        return MobEntity.createMobAttributes()
+                .add(EntityAttributes.GENERIC_MAX_HEALTH, 2.0)
+                .add(EntityAttributes.GENERIC_ATTACK_DAMAGE, 8.0);
+    }
+
+    public PlayerEntity getTarget() {
+        if (isOpen)
+            return player;
+        return null;
+    }
 }

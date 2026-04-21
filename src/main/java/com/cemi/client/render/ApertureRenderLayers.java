@@ -1,5 +1,7 @@
 package com.cemi.client.render;
 
+import java.util.OptionalDouble;
+
 import com.cemi.block.ApertureBlocks;
 import com.cemi.util.ShaderHelper;
 
@@ -11,6 +13,9 @@ import net.minecraft.client.render.VertexFormats;
 import net.minecraft.util.Identifier;
 
 public class ApertureRenderLayers {
+
+    public static final Identifier LASER_TEXTURE = new Identifier("minecraft", "textures/misc/white.png");
+
     public static void registerRenderLayers() {
         BlockRenderLayerMap.INSTANCE.putBlock(ApertureBlocks.INDICATOR_LIGHT,
                 RenderLayer.getCutout());
@@ -44,4 +49,21 @@ public class ApertureRenderLayers {
                         .overlay(RenderPhase.ENABLE_OVERLAY_COLOR)
                         .build(true));
     }
+
+    public static final RenderLayer LASER = RenderLayer.of(
+            "laser",
+            VertexFormats.POSITION_COLOR_TEXTURE,
+            VertexFormat.DrawMode.QUADS,
+            256,
+            false,
+            true,
+            RenderLayer.MultiPhaseParameters.builder()
+                    .program(RenderPhase.POSITION_COLOR_TEXTURE_PROGRAM)
+                    .texture(new RenderPhase.Texture(LASER_TEXTURE, false, false))
+                    .transparency(RenderPhase.ADDITIVE_TRANSPARENCY)
+                    .cull(RenderPhase.DISABLE_CULLING)
+                    .layering(RenderPhase.VIEW_OFFSET_Z_LAYERING)
+                    .depthTest(RenderPhase.ALWAYS_DEPTH_TEST) // or ALWAYS_DEPTH_TEST
+                    .writeMaskState(RenderPhase.COLOR_MASK)
+                    .build(false));
 }

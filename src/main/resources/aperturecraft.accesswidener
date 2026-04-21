@@ -7,3 +7,6 @@ accessible class net/minecraft/client/render/RenderPhase$ShaderProgram
 # RenderLayer builder
 accessible class net/minecraft/client/render/RenderLayer$MultiPhaseParameters
 accessible method net/minecraft/client/render/RenderLayer$MultiPhaseParameters builder ()Lnet/minecraft/client/render/RenderLayer$MultiPhaseParameters$Builder;
+
+accessible class net/minecraft/client/render/RenderPhase$LineWidth
+accessible method net/minecraft/client/render/RenderPhase$LineWidth <init> (Ljava/util/OptionalDouble;)V
