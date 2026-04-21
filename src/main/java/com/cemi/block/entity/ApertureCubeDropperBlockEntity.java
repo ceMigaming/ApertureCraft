@@ -80,7 +80,6 @@ public class ApertureCubeDropperBlockEntity extends BlockEntity implements GeoBl
     @Override
     public void readNbt(NbtCompound nbt) {
         super.readNbt(nbt);
-        System.out.println("READ NBT for " + this.pos);
         this.masterPos = BlockPos.fromLong(nbt.getLong("masterPos"));
         if (nbt.contains("trackedEntity"))
             this.trackedEntityUuid = UUID.fromString(nbt.getString("trackedEntity"));
