@@ -90,6 +90,17 @@ public class ApertureCubeDropperBlockEntity extends BlockEntity implements GeoBl
         }
     }
 
+    public void killEntity() {
+        var trackedEntityOpt = world
+                .getEntitiesByType(spawnableEntity, Box.enclosing(pos.add(-100, -100, -100), pos.add(100, 100, 100)),
+                        en -> en.getUuid().equals(trackedEntityUuid))
+                .stream().findFirst();
+        if (trackedEntityOpt.isPresent()) {
+            var trackedEntity = trackedEntityOpt.get();
+            trackedEntity.kill();
+        }
+    }
+
     public void spawnEntity() {
         var trackedEntityOpt = world
                 .getEntitiesByType(spawnableEntity, Box.enclosing(pos.add(-100, -100, -100), pos.add(100, 100, 100)),

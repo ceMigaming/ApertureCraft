@@ -196,6 +196,7 @@ public class ApertureCubeDropperBlock extends ApertureBlock implements BlockEnti
                 BlockPos masterPos = blockEntity.getMasterPos();
                 ApertureCubeDropperBlockEntity masterBlockEntity = (ApertureCubeDropperBlockEntity) world
                         .getBlockEntity(masterPos);
+                masterBlockEntity.killEntity();
                 masterBlockEntity.setSpawnableEntity(((SpawnEggItem) itemStack.getItem()).getEntityType(null));
                 return ActionResult.success(true);
             }
