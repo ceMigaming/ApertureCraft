@@ -10,6 +10,7 @@ import net.minecraft.registry.Registry;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
+// Creative Tabs
 public class ApertureItemGroups {
     private static final ItemGroup APERTURE_BLOCKS = FabricItemGroup.builder()
             .icon(() -> new ItemStack(ApertureBlocks.SMALL_CONCRETE_TILE))
@@ -18,6 +19,7 @@ public class ApertureItemGroups {
             .entries((context, entries) -> {
                 entries.add(ApertureBlocks.SMALL_CONCRETE_TILE);
                 entries.add(ApertureBlocks.MEDIUM_CONCRETE_TILE);
+                entries.add(ApertureBlocks.PORTAL1_CONCRETE_TILE);
                 entries.add(ApertureBlocks.CONCRETE_PILLAR);
                 entries.add(ApertureBlocks.CONCRETE_LARGE_TILE);
                 entries.add(ApertureBlocks.SMALL_METAL_TILE);
@@ -35,6 +37,8 @@ public class ApertureItemGroups {
             .displayName(Text.translatable("itemGroup." + ApertureCraft.MOD_ID + ".aperture_items"))
             .entries((context, entries) -> {
                 entries.add(ApertureItems.NEUROTOXIN_BUCKET);
+                entries.add(ApertureItems.LONG_FALL_BOOTS);
+                entries.add(ApertureItems.PORTAL_GUN);
             }).build();
 
     private static final ItemGroup APERTURE_LOGIC = FabricItemGroup.builder()

@@ -1,0 +1,6 @@
+{
+  "parent": "block/cube_all",
+  "textures": {
+    "all": "aperturecraft:block/portal1_concrete_tile"
+  }
+}

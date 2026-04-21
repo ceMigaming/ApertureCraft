@@ -2,7 +2,7 @@
     "multipart": [
         {
             "apply": {
-                "model": "minecraft:block/air"
+                "model": "aperturecraft:block/companion_cube_dropper"
             }
         }
     ]

@@ -2,7 +2,7 @@
     "multipart": [
         {
             "apply": {
-                "model": "minecraft:block/air"
+                "model": "aperturecraft:block/pedestal_button"
             }
         }
     ]
