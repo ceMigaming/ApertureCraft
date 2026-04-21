@@ -13,9 +13,14 @@ import net.minecraft.block.ShapeContext;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.SpawnEggItem;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.state.StateManager.Builder;
 import net.minecraft.state.property.BooleanProperty;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.Hand;
+import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.random.Random;
@@ -90,6 +95,8 @@ public class ApertureCubeDropperBlock extends ApertureBlock implements BlockEnti
                 }
             }
         }
+        ApertureCubeDropperBlockEntity masterBE = (ApertureCubeDropperBlockEntity) world.getBlockEntity(pos);
+        masterBE.setSpawnableEntity(this.spawnableEntity);
         super.onBlockAdded(state, world, pos, oldState, notify);
     }
 
@@ -155,9 +162,12 @@ public class ApertureCubeDropperBlock extends ApertureBlock implements BlockEnti
     public void scheduledTick(BlockState state, ServerWorld world, BlockPos pos, Random random) {
         ApertureCubeDropperBlockEntity blockEntity = (ApertureCubeDropperBlockEntity) world.getBlockEntity(pos);
         BlockPos masterPos = ((ApertureCubeDropperBlockEntity) world.getBlockEntity(pos)).getMasterPos();
+        ApertureCubeDropperBlockEntity masterBlockEntity = (ApertureCubeDropperBlockEntity) world
+                .getBlockEntity(masterPos);
+
         if (!blockEntity.getTriggered()) {
             blockEntity.triggerAnim("controller", "open");
-            blockEntity.spawnEntity(spawnableEntity);
+            masterBlockEntity.spawnEntity();
             blockEntity.setTriggered(true);
             world.scheduleBlockTick(masterPos, this, 4);
         } else {
@@ -171,5 +181,25 @@ public class ApertureCubeDropperBlock extends ApertureBlock implements BlockEnti
         builder.add(IS_SLAVE);
         builder.add(CAN_GO_THROUGH);
         super.appendProperties(builder);
+    }
+
+    @Override
+    public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand,
+            BlockHitResult hit) {
+        if(world.isClient) {
+            return ActionResult.PASS;
+        }
+        if (player.isCreative()) {
+            ItemStack itemStack = player.getStackInHand(hand);
+            if (itemStack.getItem() instanceof SpawnEggItem) {
+                ApertureCubeDropperBlockEntity blockEntity = (ApertureCubeDropperBlockEntity) world.getBlockEntity(pos);
+                BlockPos masterPos = blockEntity.getMasterPos();
+                ApertureCubeDropperBlockEntity masterBlockEntity = (ApertureCubeDropperBlockEntity) world
+                        .getBlockEntity(masterPos);
+                masterBlockEntity.setSpawnableEntity(((SpawnEggItem) itemStack.getItem()).getEntityType(null));
+                return ActionResult.success(true);
+            }
+        }
+        return ActionResult.PASS;
     }
 }

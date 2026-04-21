@@ -2,12 +2,12 @@ package com.cemi.block.entity;
 
 import java.util.UUID;
 
-import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.registry.Registries;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import software.bernie.geckolib.animatable.GeoBlockEntity;
@@ -34,6 +34,8 @@ public class ApertureCubeDropperBlockEntity extends BlockEntity implements GeoBl
     private BlockPos masterPos;
     private UUID trackedEntityUuid;
     private boolean triggered = false;
+
+    private EntityType<?> spawnableEntity;
 
     private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
 
@@ -68,24 +70,32 @@ public class ApertureCubeDropperBlockEntity extends BlockEntity implements GeoBl
         nbt.putLong("masterPos", this.masterPos.asLong());
         if (trackedEntityUuid != null)
             nbt.putString("trackedEntity", this.trackedEntityUuid.toString());
+        if (this.spawnableEntity != null) {
+            Identifier id = Registries.ENTITY_TYPE.getId(this.spawnableEntity);
+            nbt.putString("spawnableEntity", id.toString());
+        }
         super.writeNbt(nbt);
     }
 
     @Override
     public void readNbt(NbtCompound nbt) {
+        super.readNbt(nbt);
+        System.out.println("READ NBT for " + this.pos);
         this.masterPos = BlockPos.fromLong(nbt.getLong("masterPos"));
         if (nbt.contains("trackedEntity"))
             this.trackedEntityUuid = UUID.fromString(nbt.getString("trackedEntity"));
-        super.readNbt(nbt);
+        if (nbt.contains("spawnableEntity")) {
+            Identifier id = new Identifier(nbt.getString("spawnableEntity"));
+            this.spawnableEntity = Registries.ENTITY_TYPE.get(id);
+        }
     }
 
-    public void spawnEntity(EntityType<?> spawnableEntity) {
+    public void spawnEntity() {
         var trackedEntityOpt = world
                 .getEntitiesByType(spawnableEntity, Box.enclosing(pos.add(-100, -100, -100), pos.add(100, 100, 100)),
                         en -> en.getUuid().equals(trackedEntityUuid))
                 .stream().findFirst();
         var trackedEntity = trackedEntityOpt.isPresent() ? trackedEntityOpt.get() : null;
-        // var trackedEntity = this.world.getEntityById(trackedEntityUuid);
         if (trackedEntity != null) {
             trackedEntity.kill();
         }
@@ -101,5 +111,9 @@ public class ApertureCubeDropperBlockEntity extends BlockEntity implements GeoBl
 
     public boolean getTriggered() {
         return this.triggered;
+    }
+
+    public void setSpawnableEntity(EntityType<?> entityType) {
+        this.spawnableEntity = entityType;
     }
 }
