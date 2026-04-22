@@ -4,6 +4,7 @@ import com.cemi.block.entity.ApertureBlockEntities;
 import com.cemi.client.render.block.CubeDropperEntityRenderer;
 import com.cemi.client.render.block.DoorBlockEntityRenderer;
 import com.cemi.client.render.block.FloorButtonBlockEntityRenderer;
+import com.cemi.client.render.block.HEPCatcherBlockEntityRenderer;
 import com.cemi.client.render.block.HEPLauncherBlockEntityRenderer;
 import com.cemi.client.render.block.PedestalButtonBlockEntityRenderer;
 import com.cemi.client.render.entity.CompanionCubeRenderer;
@@ -49,6 +50,8 @@ public class ApertureRenderers {
         // Block Entities
         BlockEntityRendererRegistry.register(ApertureBlockEntities.HEP_LAUNCHER,
                 HEPLauncherBlockEntityRenderer::new);
+        BlockEntityRendererRegistry.register(ApertureBlockEntities.HEP_CATCHER,
+                HEPCatcherBlockEntityRenderer::new);
         BlockEntityRendererRegistry.register(ApertureBlockEntities.DOOR,
                 DoorBlockEntityRenderer::new);
         BlockEntityRendererRegistry.register(ApertureBlockEntities.FLOOR_BUTTON,

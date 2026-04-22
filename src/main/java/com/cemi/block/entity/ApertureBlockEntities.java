@@ -20,6 +20,12 @@ public class ApertureBlockEntities {
             BlockEntityType.Builder
                     .create(HEPLauncherBlockEntity::new, ApertureBlocks.HEP_LAUNCHER)
                     .build());
+    public static final BlockEntityType<HEPCatcherBlockEntity> HEP_CATCHER = Registry.register(
+            Registries.BLOCK_ENTITY_TYPE,
+            new Identifier(ApertureCraft.MOD_ID, "hep_catcher_block_entity"),
+            BlockEntityType.Builder
+                    .create(HEPCatcherBlockEntity::new, ApertureBlocks.HEP_CATCHER)
+                    .build());
     public static final BlockEntityType<IndicatorLightBlockEntity> INDICATOR_LIGHT = Registry.register(
             Registries.BLOCK_ENTITY_TYPE,
             new Identifier(ApertureCraft.MOD_ID, "indicator_light_block_entity"),

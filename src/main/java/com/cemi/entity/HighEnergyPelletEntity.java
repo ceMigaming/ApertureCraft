@@ -1,5 +1,11 @@
 package com.cemi.entity;
 
+import com.cemi.block.HEPCatcherBlock;
+import com.cemi.block.entity.HEPCatcherBlockEntity;
+import com.cemi.block.entity.HEPLauncherBlockEntity;
+
+import net.minecraft.block.BlockState;
+import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.data.DataTracker;
@@ -9,12 +15,17 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.util.hit.BlockHitResult;
+import net.minecraft.util.hit.HitResult;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.RaycastContext;
 import net.minecraft.world.World;
 
 public class HighEnergyPelletEntity extends Entity {
 
     private static final TrackedData<Integer> LIFE_TIME;
+    private BlockPos ownerPos;
 
     static {
         LIFE_TIME = DataTracker.registerData(HighEnergyPelletEntity.class,
@@ -39,7 +50,6 @@ public class HighEnergyPelletEntity extends Entity {
 
         this.move(net.minecraft.entity.MovementType.SELF, velocity);
 
-        // ✅ Manual collision detection
         if (!this.getWorld().isClient()) {
             for (PlayerEntity player : this.getWorld().getPlayers()) {
                 if (player.getBoundingBox().intersects(this.getBoundingBox())) {
@@ -66,16 +76,59 @@ public class HighEnergyPelletEntity extends Entity {
         } else {
             this.dataTracker.set(LIFE_TIME, this.getLifeTime() - 1);
         }
+
+        Vec3d start = this.getPos();
+        Vec3d end = start.add(this.getVelocity());
+
+        BlockHitResult hit = this.getWorld().raycast(
+                new RaycastContext(
+                        start,
+                        end,
+                        RaycastContext.ShapeType.OUTLINE,
+                        RaycastContext.FluidHandling.NONE,
+                        this));
+
+        if (hit.getType() == HitResult.Type.BLOCK) {
+            BlockPos pos = hit.getBlockPos();
+            BlockState state = this.getWorld().getBlockState(pos);
+
+            if (state.getBlock() instanceof HEPCatcherBlock) {
+                if (!getWorld().isClient) {
+                    // trigger catcher
+                    BlockEntity be = getWorld().getBlockEntity(pos);
+                    if (be instanceof HEPCatcherBlockEntity catcher) {
+                        catcher.onPelletCaught();
+                    }
+
+                    // notify launcher
+                    if (this.ownerPos != null) {
+                        BlockEntity launcherBe = getWorld().getBlockEntity(this.ownerPos);
+
+                        if (launcherBe instanceof HEPLauncherBlockEntity launcher) {
+                            launcher.onPelletReturned();
+                        }
+                    }
+
+                    this.discard();
+                }
+            }
+        }
     }
 
     @Override
     protected void readCustomDataFromNbt(NbtCompound nbt) {
         this.dataTracker.set(LIFE_TIME, nbt.getInt("LifeTime"));
+        if (nbt.contains("OwnerPos")) {
+            ownerPos = BlockPos.fromLong(nbt.getLong("OwnerPos"));
+        }
     }
 
     @Override
     protected void writeCustomDataToNbt(NbtCompound nbt) {
         nbt.putInt("LifeTime", this.getLifeTime());
+        if (ownerPos != null) {
+            nbt.putLong("OwnerPos", ownerPos.asLong());
+        }
     }
 
     public int getLifeTime() {
@@ -94,5 +147,13 @@ public class HighEnergyPelletEntity extends Entity {
         }
 
         super.remove(reason);
+    }
+
+    public void setOwnerPos(BlockPos pos) {
+        this.ownerPos = pos;
+    }
+
+    public BlockPos getOwnerPos() {
+        return ownerPos;
     }
 }

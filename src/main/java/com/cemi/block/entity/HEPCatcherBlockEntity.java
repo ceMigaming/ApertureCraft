@@ -3,7 +3,6 @@ package com.cemi.block.entity;
 import java.util.UUID;
 
 import com.cemi.block.HEPCatcherBlock;
-import com.cemi.block.HEPLauncherBlock;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
@@ -16,26 +15,24 @@ import software.bernie.geckolib.core.animation.AnimationController;
 import software.bernie.geckolib.core.animation.RawAnimation;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
-public class HEPLauncherBlockEntity extends BlockEntity implements GeoBlockEntity {
+public class HEPCatcherBlockEntity extends BlockEntity implements GeoBlockEntity {
 
-    private UUID activePelletUuid;
-
-    protected static final RawAnimation IDLE = RawAnimation.begin().then("animation.hep_launcher.idle",
-            LoopType.PLAY_ONCE);
-    protected static final RawAnimation SHOOT = RawAnimation.begin().then("animation.hep_launcher.shoot",
-            LoopType.PLAY_ONCE);
+    protected static final RawAnimation IDLE = RawAnimation.begin().then("animation.hep_catcher.idle",
+            LoopType.HOLD_ON_LAST_FRAME);
+    protected static final RawAnimation CATCH = RawAnimation.begin().then("animation.hep_catcher.catch",
+            LoopType.HOLD_ON_LAST_FRAME);
 
     private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
 
-    public HEPLauncherBlockEntity(BlockPos pos, BlockState state) {
-        super(ApertureBlockEntities.HEP_LAUNCHER, pos, state);
+    public HEPCatcherBlockEntity(BlockPos pos, BlockState state) {
+        super(ApertureBlockEntities.HEP_CATCHER, pos, state);
     }
 
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
         controllers.add(
                 new AnimationController<>(this, "controller", event -> event.setAndContinue(IDLE))
-                        .triggerableAnim("shoot", SHOOT));
+                        .triggerableAnim("catch", CATCH));
     }
 
     @Override
@@ -43,24 +40,17 @@ public class HEPLauncherBlockEntity extends BlockEntity implements GeoBlockEntit
         return this.cache;
     }
 
-    public void setActivePellet(UUID uuid) {
-        this.activePelletUuid = uuid;
-    }
-
-    public UUID getActivePelletUuid() {
-        return activePelletUuid;
-    }
-
-    public void clearActivePellet() {
-        this.activePelletUuid = null;
-    }
-
-    public void onPelletReturned() {
-        if (world == null || world.isClient)
+    public void onPelletCaught() {
+        if (this.world == null || this.world.isClient)
             return;
 
         BlockState state = world.getBlockState(pos);
 
-        world.setBlockState(pos, state.with(HEPLauncherBlock.ENABLED, false), 3);
+        if (!state.get(HEPCatcherBlock.TRIGGERED)) {
+            world.setBlockState(pos, state.with(HEPCatcherBlock.TRIGGERED, true), 3);
+
+            // Play animation
+            triggerAnim("controller", "catch");
+        }
     }
 }

@@ -22,9 +22,11 @@ public class HEPLauncherBlock extends ApertureBlock implements BlockEntityProvid
 
     public static final DirectionProperty FACING = Properties.FACING;
     public static final BooleanProperty TRIGGERED = Properties.TRIGGERED;
+    public static final BooleanProperty ENABLED = Properties.ENABLED;
 
     public HEPLauncherBlock(String name, Settings settings) {
         super(name, settings, true);
+        setDefaultState(getDefaultState().with(TRIGGERED, false).with(ENABLED, true));
     }
 
     @Override
@@ -45,7 +47,7 @@ public class HEPLauncherBlock extends ApertureBlock implements BlockEntityProvid
 
     @Override
     protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
-        builder.add(FACING, TRIGGERED);
+        builder.add(FACING, TRIGGERED, ENABLED);
     }
 
     @Override
@@ -68,7 +70,7 @@ public class HEPLauncherBlock extends ApertureBlock implements BlockEntityProvid
     }
 
     private void shootPellet(BlockState state, ServerWorld world, BlockPos pos) {
-        if (world.isClient()) {
+        if (world.isClient() || !state.get(ENABLED)) {
             return;
         }
 
@@ -98,6 +100,8 @@ public class HEPLauncherBlock extends ApertureBlock implements BlockEntityProvid
                 state.get(FACING).getOffsetX() * 0.1,
                 state.get(FACING).getOffsetY() * 0.1,
                 state.get(FACING).getOffsetZ() * 0.1);
+
+        hep.setOwnerPos(pos);
 
         world.spawnEntity(hep);
 
