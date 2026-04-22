@@ -2,6 +2,7 @@ package com.cemi.entity;
 
 import java.util.Comparator;
 
+import com.cemi.particle.ApertureParticleTypes;
 import com.cemi.util.EntityHelper;
 
 import net.minecraft.entity.EntityType;
@@ -11,7 +12,9 @@ import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.particle.ParticleTypes;
 import net.minecraft.registry.tag.DamageTypeTags;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
@@ -37,10 +40,11 @@ public class TurretEntity extends MobEntity implements GeoEntity, Pickable {
 
     private PlayerEntity holder = null;
 
-    private boolean wasOpen = false;
     private boolean isOpen = false;
-    private boolean isShooting = false;
     private int attackCooldown = 0;
+    private int particleCooldown = 0;
+    private static final int PARTICLE_COOLDOWN_TIME = 4;
+    private static final int ATTACK_COOLDOWN_TIME = 10;
 
     public Vec3d laserEnd = null;
     public Vec3d lastLaserEnd = null;
@@ -103,6 +107,10 @@ public class TurretEntity extends MobEntity implements GeoEntity, Pickable {
             openTimer--;
         }
 
+        if (particleCooldown > 0) {
+            particleCooldown--;
+        }
+
         if (holder != null) {
             handlePickedUp(getWorld(), holder, this);
         }
@@ -125,10 +133,16 @@ public class TurretEntity extends MobEntity implements GeoEntity, Pickable {
                 openTimer = OPEN_DURATION;
             }
 
+            // spawn particles every 4 ticks while open
+            if (openTimer == 0 && particleCooldown == 0) {
+                SpawnParticles();
+                particleCooldown = PARTICLE_COOLDOWN_TIME;
+            }
+
             // Attack every 10 ticks (0.5 sec)
             if (attackCooldown == 0 && openTimer == 0) {
                 AttackPlayer(player);
-                attackCooldown = 10;
+                attackCooldown = ATTACK_COOLDOWN_TIME;
                 triggerAnim("controller", "shoot");
             }
 
@@ -153,7 +167,6 @@ public class TurretEntity extends MobEntity implements GeoEntity, Pickable {
                     .add(start);
         }
 
-        // 🔥 Raycast to stop at walls
         BlockHitResult hit = this.getWorld().raycast(new RaycastContext(
                 start,
                 targetPos,
@@ -188,6 +201,40 @@ public class TurretEntity extends MobEntity implements GeoEntity, Pickable {
                     this.getDamageSources().mobAttack(this),
                     damage);
         }
+    }
+
+    private void SpawnParticles() {
+
+        if(this.getWorld().isClient) {
+            return;
+        }
+
+        // spawn particles when shooting
+        Vec3d forward = this.getRotationVec(1.0f);
+        Vec3d right = new Vec3d(-forward.z, 0, forward.x).normalize();
+
+        double sideOffset = 0.25; // distance from center (tweak this)
+        double heightOffset = 0.1; // adjust if guns are higher/lower
+
+        Vec3d basePos = this.getPos().add(0, getEyeHeight(getPose()), 0).add(right.multiply(-0.06))
+                .add(forward.multiply(0.4));
+
+        // Left and right gun positions
+        Vec3d leftGun = basePos.add(right.multiply(-sideOffset));
+        Vec3d rightGun = basePos.add(right.multiply(sideOffset));
+
+        // Spawn particles at BOTH guns
+        ServerWorld world = (ServerWorld) this.getWorld();
+
+        world.spawnParticles(
+                ApertureParticleTypes.TURRET_FIRE,
+                leftGun.x, leftGun.y + heightOffset, leftGun.z,
+                2, 0.01, 0.05, 0.01, 0.0);
+
+        world.spawnParticles(
+                ApertureParticleTypes.TURRET_FIRE,
+                rightGun.x, rightGun.y + heightOffset, rightGun.z,
+                2, 0.01, 0.05, 0.01, 0.0);
     }
 
     @Override

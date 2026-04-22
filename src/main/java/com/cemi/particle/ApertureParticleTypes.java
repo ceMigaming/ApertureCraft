@@ -21,7 +21,9 @@ public class ApertureParticleTypes extends DefaultParticleType {
     public static final DefaultParticleType DRIPPING_NEUROTOXIN = simple("dripping_neurotoxin");
     public static final DefaultParticleType UNDER_NEUROTOXIN = simple("under_neurotoxin");
 
-    private static final DefaultParticleType[] PARTICLES = {DRIPPING_NEUROTOXIN, UNDER_NEUROTOXIN};
+    public static final DefaultParticleType TURRET_FIRE = simple("turret_fire");
+
+    private static final DefaultParticleType[] PARTICLES = {DRIPPING_NEUROTOXIN, UNDER_NEUROTOXIN, TURRET_FIRE};
 
     public static void registerParticles() {
         for (DefaultParticleType particle : PARTICLES) {

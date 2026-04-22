@@ -9,6 +9,8 @@ public class ApertureParticlesClient {
                 NeurotoxinSuspendParticle.UnderNeurotoxinFactory::new);
         ParticleFactoryRegistry.getInstance().register(ApertureParticleTypes.UNDER_NEUROTOXIN,
                 NeurotoxinBubbleParticle.Factory::new);
+        ParticleFactoryRegistry.getInstance().register(ApertureParticleTypes.TURRET_FIRE,
+                TurretFireParticle.TurretFireFactory::new);
     }
 
 }
