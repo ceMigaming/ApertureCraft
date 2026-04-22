@@ -5,6 +5,7 @@ import org.joml.Matrix4f;
 import com.cemi.ApertureCraft;
 import com.cemi.client.render.model.HighEnergyPelletModel;
 import com.cemi.entity.HighEnergyPelletEntity;
+import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext;
@@ -87,30 +88,33 @@ public class HighEnergyPelletRenderer extends EntityRenderer<HighEnergyPelletEnt
         matrix.rotateZ(lifeTime*20);
 
         RenderSystem.enableBlend();
-        RenderSystem.defaultBlendFunc();
+        RenderSystem.blendFunc(GlStateManager.SrcFactor.SRC_ALPHA, GlStateManager.DstFactor.ONE);
         RenderSystem.setShader(GameRenderer::getPositionTexColorProgram);
         RenderSystem.setShaderTexture(0, new Identifier(ApertureCraft.MOD_ID, "textures/entity/hep.png"));
         RenderSystem.disableCull();
+        RenderSystem.depthMask(false);
 
         BufferBuilder buffer = Tessellator.getInstance().getBuffer();
         buffer.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_TEXTURE_COLOR);
 
         float size = 0.25f + (float) Math.sin(lifeTime * 500) * 0.015f;
 
-        float alpha = MathHelper.clamp(1.0f + (float) Math.log10(lifeTime), 0.6f, 1f);
+        float alpha = 1.0f - (float)Math.exp(-(lifeTime) * 5);
         float r = 1.0f;
         float g = (float) Math.cos(lifeTime * 100) * 0.1f + 0.9f;
         float b = (float) Math.sin(lifeTime * 100) * 0.1f + 0.9f;
 
-        buffer.vertex(matrix, -size, -size, 0).texture(0, 1).color(r, g, b, alpha).next();
-        buffer.vertex(matrix, size, -size, 0).texture(1, 1).color(r, g, b, alpha).next();
-        buffer.vertex(matrix, size, size, 0).texture(1, 0).color(r, g, b, alpha).next();
-        buffer.vertex(matrix, -size, size, 0).texture(0, 0).color(r, g, b, alpha).next();
+        buffer.vertex(matrix, -size, -size, 0).texture(0, 1).color(r*alpha, g*alpha, b*alpha, 1.0f).next();
+        buffer.vertex(matrix, size, -size, 0).texture(1, 1).color(r*alpha, g*alpha, b*alpha, 1.0f).next();
+        buffer.vertex(matrix, size, size, 0).texture(1, 0).color(r*alpha, g*alpha, b*alpha, 1.0f).next();
+        buffer.vertex(matrix, -size, size, 0).texture(0, 0).color(r*alpha, g*alpha, b*alpha, 1.0f).next();
 
         BufferRenderer.drawWithGlobalProgram(buffer.end());
+        RenderSystem.defaultBlendFunc();
 
         RenderSystem.disableBlend();
         RenderSystem.enableCull();
+        RenderSystem.depthMask(true);
 
         matrices.pop();
     }

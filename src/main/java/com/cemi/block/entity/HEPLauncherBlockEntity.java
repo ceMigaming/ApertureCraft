@@ -1,5 +1,7 @@
 package com.cemi.block.entity;
 
+import java.util.UUID;
+
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.util.math.BlockPos;
@@ -13,10 +15,12 @@ import software.bernie.geckolib.util.GeckoLibUtil;
 
 public class HEPLauncherBlockEntity extends BlockEntity implements GeoBlockEntity {
 
-    protected static final RawAnimation IDLE =
-            RawAnimation.begin().then("animation.hep_launcher.idle", LoopType.PLAY_ONCE);
-    protected static final RawAnimation SHOOT =
-            RawAnimation.begin().then("animation.hep_launcher.shoot", LoopType.PLAY_ONCE);
+    private UUID activePelletUuid;
+
+    protected static final RawAnimation IDLE = RawAnimation.begin().then("animation.hep_launcher.idle",
+            LoopType.PLAY_ONCE);
+    protected static final RawAnimation SHOOT = RawAnimation.begin().then("animation.hep_launcher.shoot",
+            LoopType.PLAY_ONCE);
 
     private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
 
@@ -34,5 +38,17 @@ public class HEPLauncherBlockEntity extends BlockEntity implements GeoBlockEntit
     @Override
     public AnimatableInstanceCache getAnimatableInstanceCache() {
         return this.cache;
+    }
+
+    public void setActivePellet(UUID uuid) {
+        this.activePelletUuid = uuid;
+    }
+
+    public UUID getActivePelletUuid() {
+        return activePelletUuid;
+    }
+
+    public void clearActivePellet() {
+        this.activePelletUuid = null;
     }
 }

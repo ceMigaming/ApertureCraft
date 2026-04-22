@@ -23,7 +23,6 @@ public class HEPLauncherBlock extends ApertureBlock implements BlockEntityProvid
     public static final DirectionProperty FACING = Properties.FACING;
     public static final BooleanProperty TRIGGERED = Properties.TRIGGERED;
 
-
     public HEPLauncherBlock(String name, Settings settings) {
         super(name, settings, true);
     }
@@ -52,8 +51,8 @@ public class HEPLauncherBlock extends ApertureBlock implements BlockEntityProvid
     @Override
     public void neighborUpdate(BlockState state, World world, BlockPos pos, Block sourceBlock,
             BlockPos sourcePos, boolean notify) {
-        boolean isReceivingRedstonePower =
-                world.isReceivingRedstonePower(pos) || world.isReceivingRedstonePower(pos.up());
+        boolean isReceivingRedstonePower = world.isReceivingRedstonePower(pos)
+                || world.isReceivingRedstonePower(pos.up());
         boolean isTriggered = (Boolean) state.get(TRIGGERED);
         if (isReceivingRedstonePower && !isTriggered) {
             world.scheduleBlockTick(pos, this, 4);
@@ -72,14 +71,37 @@ public class HEPLauncherBlock extends ApertureBlock implements BlockEntityProvid
         if (world.isClient()) {
             return;
         }
+
         HEPLauncherBlockEntity be = (HEPLauncherBlockEntity) world.getBlockEntity(pos);
+
+        // Remove existing pellet if it exists
+        if (be.getActivePelletUuid() != null) {
+            var existing = world.getEntity(be.getActivePelletUuid());
+            if (existing != null) {
+                existing.kill();
+            }
+            be.clearActivePellet();
+        }
+
+        // Play animation
         be.triggerAnim("controller", "shoot");
+
+        // Spawn new pellet
         HighEnergyPelletEntity hep = ApertureEntities.HIGH_ENERGY_PELLET.create(world);
-        hep.setPos(pos.getX() + 0.5 + state.get(FACING).getOffsetX(),
+
+        hep.setPos(
+                pos.getX() + 0.5 + state.get(FACING).getOffsetX(),
                 pos.getY() + 0.3 + state.get(FACING).getOffsetY(),
                 pos.getZ() + 0.5 + state.get(FACING).getOffsetZ());
-        hep.setVelocity(state.get(FACING).getOffsetX() * 0.1, state.get(FACING).getOffsetY() * 0.1,
+
+        hep.setVelocity(
+                state.get(FACING).getOffsetX() * 0.1,
+                state.get(FACING).getOffsetY() * 0.1,
                 state.get(FACING).getOffsetZ() * 0.1);
+
         world.spawnEntity(hep);
+
+        // Save the new pellet's UUID
+        be.setActivePellet(hep.getUuid());
     }
 }

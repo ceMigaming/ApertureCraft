@@ -175,7 +175,6 @@ public class TurretEntity extends MobEntity implements GeoEntity, Pickable {
 
         lastLaserEnd = laserEnd == null ? finalTarget : laserEnd;
 
-        // Different smoothing speeds feel nicer
         double alpha = (player != null && isOpen) ? 0.5 : 0.1;
 
         laserEnd = lastLaserEnd.lerp(finalTarget, alpha);
