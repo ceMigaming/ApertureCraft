@@ -1,5 +1,7 @@
 package com.cemi.entity;
 
+import java.util.UUID;
+
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.mob.MobEntity;
@@ -16,6 +18,12 @@ import software.bernie.geckolib.core.animation.AnimatableManager.ControllerRegis
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 public class RocketTurretEntity extends MobEntity implements GeoEntity {
+
+    private int shootCooldown = 0;
+    private static final int MAX_COOLDOWN = 40; // 2 seconds (20 ticks/sec)
+    private static final float AIM_THRESHOLD = 0.05f; // radians (~3 degrees)
+
+    private UUID rocketUuid;
 
     private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
 
@@ -55,8 +63,12 @@ public class RocketTurretEntity extends MobEntity implements GeoEntity {
     public void tick() {
         super.tick();
 
+        if (shootCooldown > 0) {
+            shootCooldown--;
+        }
+
         PlayerEntity target = getClosestPlayer();
-        if (target == null)
+        if (target == null || rocketUuid != null)
             return;
 
         // Positions
@@ -83,7 +95,7 @@ public class RocketTurretEntity extends MobEntity implements GeoEntity {
         Vec3d targetPos;
         targetPos = this.getRotationVec(1.0f)
                 .rotateY(yaw)
-                .rotateX(-pitch)
+                .rotateX(pitch)
                 .multiply(10.0)
                 .add(start);
 
@@ -112,6 +124,54 @@ public class RocketTurretEntity extends MobEntity implements GeoEntity {
 
         lastYaw = yaw;
         lastPitch = pitch;
+
+        float targetYaw = (float) (Math.atan2(dz, dx) - Math.PI / 2);
+        float targetPitch = (float) (-Math.atan2(dy, distanceXZ));
+
+        float yawDiff = Math.abs(wrapAngle(targetYaw + yaw));
+        float pitchDiff = Math.abs(wrapAngle(targetPitch + pitch));
+
+        boolean isLockedOn = yawDiff < AIM_THRESHOLD && pitchDiff < AIM_THRESHOLD;
+
+        if (isLockedOn && shootCooldown == 0) {
+            shootRocket(target);
+            shootCooldown = MAX_COOLDOWN;
+        }
+    }
+
+    private float wrapAngle(float angle) {
+        while (angle < -Math.PI)
+            angle += Math.PI * 2;
+        while (angle > Math.PI)
+            angle -= Math.PI * 2;
+        return angle;
+    }
+
+    private void shootRocket(PlayerEntity target) {
+        if (this.getWorld().isClient)
+            return;
+
+        RocketEntity rocket = new RocketEntity(ApertureEntities.ROCKET, this.getWorld());
+
+        Vec3d spawnPos = this.getPos().add(0, getEyeHeight(getPose()), 0);
+        rocket.setPosition(spawnPos);
+
+        // Direction toward player's eyes AT FIRE TIME
+        Vec3d targetPos = target.getPos().add(0, target.getEyeHeight(target.getPose()), 0);
+        Vec3d direction = targetPos.subtract(spawnPos).normalize();
+
+        double speed = 0.7; // tweak this
+        rocket.setVelocity(direction.multiply(speed));
+
+        // Rotate rocket to face direction
+        rocket.setYaw((float) (Math.atan2(direction.z, direction.x) * 180 / Math.PI) - 90f);
+        rocket.setPitch((float) (-Math.atan2(direction.y,
+                Math.sqrt(direction.x * direction.x + direction.z * direction.z)) * 180 / Math.PI));
+
+        this.getWorld().spawnEntity(rocket);
+        rocket.setOwner(this);
+        if (!this.getWorld().isClient)
+            rocketUuid = rocket.getUuid();
     }
 
     public PlayerEntity getClosestPlayer() {
@@ -133,5 +193,9 @@ public class RocketTurretEntity extends MobEntity implements GeoEntity {
             delta -= Math.PI * 2;
 
         return current + delta * speed;
+    }
+
+    public void setRocketUuid(UUID uuid) {
+        this.rocketUuid = uuid;
     }
 }

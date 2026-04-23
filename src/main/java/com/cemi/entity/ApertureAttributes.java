@@ -18,5 +18,8 @@ public class ApertureAttributes {
                 RadioEntity.createMobAttributes());
         FabricDefaultAttributeRegistry.register(ApertureEntities.ROCKET_TURRET,
                 RocketTurretEntity.createMobAttributes());
+        FabricDefaultAttributeRegistry.register(ApertureEntities.ROCKET,
+                RocketEntity.createMobAttributes());
+                
     }
 }

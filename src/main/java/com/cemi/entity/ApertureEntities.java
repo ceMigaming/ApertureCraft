@@ -59,6 +59,11 @@ public class ApertureEntities {
             EntityType.Builder.create(RocketTurretEntity::new, SpawnGroup.MISC)
                     .setDimensions(1.0f, 1.0f).build());
 
+    public static final EntityType<RocketEntity> ROCKET = Registry.register(
+            Registries.ENTITY_TYPE, new Identifier(ApertureCraft.MOD_ID, "rocket"),
+            EntityType.Builder.create(RocketEntity::new, SpawnGroup.MISC)
+                    .setDimensions(0.1f, 0.1f).build());
+
     public static final EntityType<PortalProjectileEntity> PORTAL_PROJECTILE = Registry.register(
             Registries.ENTITY_TYPE, new Identifier(ApertureCraft.MOD_ID, "portal_projectile"),
             EntityType.Builder.create(PortalProjectileEntity::new, SpawnGroup.MISC)

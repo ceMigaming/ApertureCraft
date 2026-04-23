@@ -14,6 +14,7 @@ import com.cemi.client.render.entity.HighEnergyPelletRenderer;
 import com.cemi.client.render.entity.OldStorageCubeRenderer;
 import com.cemi.client.render.entity.PortalProjectileRenderer;
 import com.cemi.client.render.entity.RadioRenderer;
+import com.cemi.client.render.entity.RocketRenderer;
 import com.cemi.client.render.entity.RocketTurretRenderer;
 import com.cemi.client.render.entity.RustyStorageCubeRenderer;
 import com.cemi.client.render.entity.StorageCubeRenderer;
@@ -46,6 +47,7 @@ public class ApertureRenderers {
         EntityRendererRegistry.register(ApertureEntities.RADIO, RadioRenderer::new);
         EntityRendererRegistry.register(ApertureEntities.TURRET, TurretRenderer::new);
         EntityRendererRegistry.register(ApertureEntities.ROCKET_TURRET, RocketTurretRenderer::new);
+        EntityRendererRegistry.register(ApertureEntities.ROCKET, RocketRenderer::new);
 
         // Block Entities
         BlockEntityRendererRegistry.register(ApertureBlockEntities.HEP_LAUNCHER,
