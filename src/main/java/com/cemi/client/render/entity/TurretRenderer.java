@@ -55,7 +55,7 @@ public class TurretRenderer extends GeoEntityRenderer<TurretEntity> {
 
         LineRenderer.renderLine(poseStack, bufferSource, new Vec3d(0, 0, 0),
                 dir, 0.02f,
-                packedLight);
+                packedLight, 0xFF0000, 127);
 
         poseStack.pop();
     }
