@@ -31,7 +31,12 @@ public class HEPCatcherBlockEntity extends BlockEntity implements GeoBlockEntity
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
         controllers.add(
-                new AnimationController<>(this, "controller", event -> event.setAndContinue(IDLE))
+                new AnimationController<>(this, "controller", event -> {
+                    if (this.getCachedState().get(HEPCatcherBlock.TRIGGERED)) {
+                        return event.setAndContinue(CATCH);
+                    }
+                    return event.setAndContinue(IDLE);
+                })
                         .triggerableAnim("catch", CATCH));
     }
 
