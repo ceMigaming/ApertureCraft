@@ -31,6 +31,8 @@ public class ApertureBlocks {
             FabricBlockSettings.create().strength(4.f));
     public static final BlockColumn CONCRETE_PILLAR = new BlockColumn("concrete_pillar",
             FabricBlockSettings.create().strength(4.f));
+    public static final SlopeBlock CONCRETE_SLOPE = new SlopeBlock("concrete_slope",
+            FabricBlockSettings.create().strength(4.f));
 
     // metal
     public static final ApertureBlock SMALL_METAL_TILE = new ApertureBlock("metal_tile_small",
@@ -40,6 +42,8 @@ public class ApertureBlocks {
     public static final LargeTileBlock METAL_LARGE_TILE = new LargeTileBlock("metal_tile_large",
             FabricBlockSettings.create().strength(4.f));
     public static final BlockColumn METAL_PILLAR = new BlockColumn("metal_pillar",
+            FabricBlockSettings.create().strength(4.f));
+    public static final SlopeBlock METAL_SLOPE = new SlopeBlock("metal_slope",
             FabricBlockSettings.create().strength(4.f));
 
     // glass
@@ -80,8 +84,8 @@ public class ApertureBlocks {
 
     private static final ApertureBlock[] BLOCKS = { PORTAL1_CONCRETE_TILE, SMALL_CONCRETE_TILE, MEDIUM_CONCRETE_TILE,
             CONCRETE_LARGE_TILE,
-            CONCRETE_PILLAR,
-            SMALL_METAL_TILE, MEDIUM_METAL_TILE, METAL_LARGE_TILE, METAL_PILLAR,
+            CONCRETE_PILLAR, CONCRETE_SLOPE,
+            SMALL_METAL_TILE, MEDIUM_METAL_TILE, METAL_LARGE_TILE, METAL_PILLAR, METAL_SLOPE,
             INDICATOR_LIGHT, GLASS_PANE, GLASS_PANE_SEEMED, GLASS_BLOCK, GLASS_BLOCK_SEEMED,
             HEP_LAUNCHER, INDICATOR, DOOR, FLOOR_BUTTON, PEDESTAL_BUTTON, TODO_BLOCK, CUBE_DROPPER,
             COMPANION_CUBE_DROPPER, HEP_CATCHER };

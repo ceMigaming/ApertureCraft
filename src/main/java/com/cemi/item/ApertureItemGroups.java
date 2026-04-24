@@ -19,6 +19,7 @@ public class ApertureItemGroups {
             .entries((context, entries) -> {
                 entries.add(ApertureBlocks.SMALL_CONCRETE_TILE);
                 entries.add(ApertureBlocks.MEDIUM_CONCRETE_TILE);
+                entries.add(ApertureBlocks.CONCRETE_SLOPE);
                 entries.add(ApertureBlocks.PORTAL1_CONCRETE_TILE);
                 entries.add(ApertureBlocks.CONCRETE_PILLAR);
                 entries.add(ApertureBlocks.CONCRETE_LARGE_TILE);

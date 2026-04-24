@@ -1,6 +1,7 @@
 package com.cemi.client;
 
 import com.cemi.client.fluid.ApertureFluidsClient;
+import com.cemi.client.model.ApertureModelPlugin;
 import com.cemi.client.networking.AperturePacketHandler;
 import com.cemi.client.render.ApertureColorProviders;
 import com.cemi.client.render.ApertureRenderLayers;
@@ -10,6 +11,7 @@ import com.cemi.particle.ApertureParticlesClient;
 import com.cemi.util.ShaderHelper;
 
 import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.fabric.api.client.model.loading.v1.ModelLoadingPlugin;
 import net.fabricmc.fabric.api.client.rendering.v1.CoreShaderRegistrationCallback;
 import net.minecraft.client.render.VertexFormats;
 import net.minecraft.util.Identifier;
@@ -31,5 +33,6 @@ public class ApertureCraftClient implements ClientModInitializer {
         ApertureColorProviders.registerColorProviders();
         AperturePacketHandler.registerPacketHandlers();
         ApertureCraftInput.registerInput();
+        ModelLoadingPlugin.register(new ApertureModelPlugin());
     }
 }

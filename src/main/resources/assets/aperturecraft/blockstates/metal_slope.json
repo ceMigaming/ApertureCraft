@@ -1,0 +1,8 @@
+{
+  "variants": {
+    "facing=north": { "model": "aperturecraft:block/metal_slope" },
+    "facing=south": { "model": "aperturecraft:block/metal_slope", "y": 180 },
+    "facing=west":  { "model": "aperturecraft:block/metal_slope", "y": 270 },
+    "facing=east":  { "model": "aperturecraft:block/metal_slope", "y": 90 }
+  }
+}
