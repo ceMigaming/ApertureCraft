@@ -1,7 +1,10 @@
 package com.cemi.entity;
 
 import java.util.List;
+
 import com.cemi.world.PortalData;
+
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.data.DataTracker;
@@ -111,111 +114,189 @@ public class PortalProjectileEntity extends ProjectileEntity {
         }
     }
 
-    private void spawnPortal(BlockHitResult result) {
-        if (result != null && result.getType() == BlockHitResult.Type.BLOCK
-                && !getWorld().isAir(result.getBlockPos())) {
+    private void spawnPortal(BlockHitResult hit) {
+        if (!isValidHit(hit))
+            return;
 
-            if (getWorld().getEntityById(this.dataTracker.get(SHOOTER)) == null) {
-                this.kill();
-                return;
-            }
-            ItemStack stack = ((PlayerEntity) getWorld().getEntityById(this.dataTracker.get(SHOOTER)))
-                    .getMainHandStack();
-
-            portalData = PortalData.getPortalData(stack, dataTracker.get(IS_MASTER));
-            PortalData otherPortalData = PortalData.getPortalData(stack, !dataTracker.get(IS_MASTER));
-
-            if (!portalData.getUuid().equals("")) {
-                List<? extends AperturePortal> portals = ((ServerWorld) getWorld())
-                        .getEntitiesByType(ApertureEntities.APERTURE_PORTAL, (entity) -> {
-                            return entity.getUuid().toString().equals(portalData.getUuid());
-                        });
-
-                if (portals.size() > 0) {
-                    AperturePortal portal = portals.get(0);
-                    portal.kill();
-                }
-            }
-
-            AperturePortal portal = ApertureEntities.APERTURE_PORTAL.create(getWorld());
-            Direction lookDirection = Direction.fromRotation((float) this.getYaw());
-            if (result.getSide() == Direction.UP || result.getSide() == Direction.DOWN) {
-                Vec3d pos = result.getBlockPos().toCenterPos()
-                        .add(new Vec3d(result.getSide().getUnitVector().mul(0.501f)))
-                        .add(new Vec3d(lookDirection.getUnitVector().mul(0.5f)));
-                if (!getWorld().isAir(BlockPos.ofFloored(pos))) {
-                    if (getWorld().isAir(BlockPos.ofFloored(pos.add(0, 1, 0)))
-                            && getWorld().isAir(result.getBlockPos().up())) {
-                        pos = pos.add(0, 1, 0);
-                    } else {
-                        portal.kill();
-                        this.kill();
-                        return;
-                    }
-                }
-                portal.setOriginPos(pos);
-                int invert = result.getSide() == Direction.UP ? -1 : 1;
-                portal.setOrientationAndSize(
-                        new Vec3d(result.getSide().rotateClockwise(Axis.X).getUnitVector()),
-                        new Vec3d(result.getSide().rotateClockwise(Axis.Z).getUnitVector()
-                                .mul(invert)),
-                        1, 2);
-            } else {
-                portal.setOriginPos(result.getBlockPos().toCenterPos()
-                        .add(new Vec3d(result.getSide().getUnitVector().mul(0.501f)))
-                        .add(0, -0.5, 0));
-                portal.setOrientationAndSize(
-                        new Vec3d(result.getSide().rotateYCounterclockwise().getUnitVector()),
-                        new Vec3d(0, 1, 0), 1, 2);
-            }
-            portal.setDestinationDimension(World.OVERWORLD);
-            portal.setDestination(result.getBlockPos().toCenterPos());
-            portal.setIsVisible(false);
-            portal.setTeleportable(false);
-
-            portalData.setDimension(getWorld().getRegistryKey());
-            portalData.setPos(portal.getPos());
-            portalData.setColor(this.getColor());
-            portalData.setOtherColor(this.getOtherColor());
-
-            if (!otherPortalData.getUuid().equals("")) {
-                portalData.setOther(otherPortalData);
-                otherPortalData.setOther(portalData);
-                PortalManipulation.makePortalRound(portal, 30);
-                portal.setIsVisible(true);
-                portal.setTeleportable(true);
-                portal.setDestinationDimension(otherPortalData.getDimension());
-                portal.setDestination(otherPortalData.getPos());
-                List<? extends AperturePortal> otherPortals = ((ServerWorld) getWorld())
-                        .getEntitiesByType(ApertureEntities.APERTURE_PORTAL, (entity) -> {
-                            return entity.getUuid().toString()
-                                    .equals(otherPortalData.getUuid());
-                        });
-                if (otherPortals.size() > 0) {
-                    AperturePortal otherPortal = otherPortals.get(0);
-
-                    otherPortal.setDestinationDimension(portalData.getDimension());
-                    otherPortal.setDestination(portalData.getPos());
-                    portal.setOtherSideOrientation(otherPortal.getOrientationRotation());
-                    otherPortal.setOtherSideOrientation(portal.getOrientationRotation());
-                    otherPortal.setIsVisible(true);
-                    otherPortal.setTeleportable(true);
-                    PortalManipulation.makePortalRound(otherPortal, 30);
-                }
-            }
-            portalData.setPortalData(portal.getUuid().toString(), "main",
-                    dataTracker.get(IS_MASTER));
-            portal.getWorld().spawnEntity(portal);
-            portal.setNbt(portalData.writeToNBT(new NbtCompound()));
-
-            if (portalData.isMaster())
-                stack.getOrCreateNbt().put("portalDataMaster",
-                        portalData.writeToNBT(new NbtCompound()));
-            else
-                stack.getOrCreateNbt().put("portalDataSlave",
-                        portalData.writeToNBT(new NbtCompound()));
-
+        PlayerEntity shooter = getShooter();
+        if (shooter == null) {
             this.kill();
+            return;
+        }
+
+        ItemStack stack = shooter.getMainHandStack();
+
+        portalData = PortalData.getPortalData(stack, dataTracker.get(IS_MASTER));
+        PortalData otherPortalData = PortalData.getPortalData(stack, !dataTracker.get(IS_MASTER));
+
+        removeExistingPortal(portalData);
+
+        AperturePortal portal = createPortal();
+        if (portal == null)
+            return;
+
+        if (!setupPortalPlacement(hit, portal)) {
+            this.kill();
+            return;
+        }
+
+        configurePortal(portal, hit);
+        linkPortalsIfPossible(portal, otherPortalData);
+
+        savePortalData(stack, portal, otherPortalData);
+
+        getWorld().spawnEntity(portal);
+        this.kill();
+    }
+
+    private boolean isValidHit(BlockHitResult hit) {
+        return hit != null
+                && hit.getType() == BlockHitResult.Type.BLOCK
+                && !getWorld().isAir(hit.getBlockPos());
+    }
+
+    private PlayerEntity getShooter() {
+        Entity entity = getWorld().getEntityById(this.dataTracker.get(SHOOTER));
+        return (entity instanceof PlayerEntity player) ? player : null;
+    }
+
+    private void removeExistingPortal(PortalData data) {
+        if (data.getUuid().equals(""))
+            return;
+
+        List<? extends AperturePortal> portals = ((ServerWorld) getWorld()).getEntitiesByType(
+                ApertureEntities.APERTURE_PORTAL,
+                e -> e.getUuid().toString().equals(data.getUuid()));
+
+        if (!portals.isEmpty()) {
+            portals.get(0).kill();
+        }
+    }
+
+    private AperturePortal createPortal() {
+        return ApertureEntities.APERTURE_PORTAL.create(getWorld());
+    }
+
+    private boolean setupPortalPlacement(BlockHitResult hit, AperturePortal portal) {
+        Direction side = hit.getSide();
+
+        if (side == Direction.UP || side == Direction.DOWN) {
+            return placeOnFloorOrCeiling(hit, portal);
+        } else {
+            return placeOnWall(hit, portal);
+        }
+    }
+
+    private boolean placeOnWall(BlockHitResult hit, AperturePortal portal) {
+        Direction side = hit.getSide();
+
+        BlockPos base = hit.getBlockPos().offset(side);
+
+        Direction right = side.rotateYCounterclockwise();
+        Direction up = Direction.UP;
+
+        if (!canPlacePortal(base, up))
+            return false;
+
+        portal.setOriginPos(Vec3d.ofCenter(base).add(0, -0.5, 0).add(Vec3d.of(side.getVector()).multiply(-0.499)));
+        portal.setOrientationAndSize(
+                new Vec3d(right.getUnitVector()),
+                new Vec3d(0, 1, 0),
+                1, 2);
+
+        return true;
+    }
+
+    private boolean placeOnFloorOrCeiling(BlockHitResult hit, AperturePortal portal) {
+        Direction side = hit.getSide();
+
+        BlockPos base = hit.getBlockPos().offset(side);
+
+        Direction right = side.rotateClockwise(Axis.X);
+        Direction up = side.rotateClockwise(Axis.Z);
+
+        if (side == Direction.UP) {
+            up = up.getOpposite();
+        }
+
+        if (!canPlacePortal(base, up))
+            return false;
+
+        Vec3d pos = Vec3d.ofCenter(base)
+                .add(new Vec3d(side.getUnitVector()).multiply(-0.499));
+
+        portal.setOriginPos(pos);
+        portal.setOrientationAndSize(
+                new Vec3d(right.getUnitVector()),
+                new Vec3d(up.getUnitVector()),
+                1, 2);
+
+        return true;
+    }
+
+    private boolean canPlacePortal(BlockPos base, Direction up) {
+        return isFree(base) && isFree(base.offset(up));
+    }
+
+    private boolean isFree(BlockPos pos) {
+        return getWorld().getBlockState(pos).isReplaceable();
+    }
+
+    private void configurePortal(AperturePortal portal, BlockHitResult hit) {
+        portal.setDestinationDimension(World.OVERWORLD);
+        portal.setDestination(hit.getBlockPos().toCenterPos());
+        portal.setIsVisible(false);
+        portal.setTeleportable(false);
+
+        portalData.setDimension(getWorld().getRegistryKey());
+        portalData.setPos(portal.getPos());
+        portalData.setColor(this.getColor());
+        portalData.setOtherColor(this.getOtherColor());
+    }
+
+    private void linkPortalsIfPossible(AperturePortal portal, PortalData otherData) {
+        if (otherData.getUuid().equals(""))
+            return;
+
+        portalData.setOther(otherData);
+        otherData.setOther(portalData);
+
+        PortalManipulation.makePortalRound(portal, 30);
+
+        portal.setIsVisible(true);
+        portal.setTeleportable(true);
+        portal.setDestinationDimension(otherData.getDimension());
+        portal.setDestination(otherData.getPos());
+
+        List<? extends AperturePortal> others = ((ServerWorld) getWorld()).getEntitiesByType(
+                ApertureEntities.APERTURE_PORTAL,
+                e -> e.getUuid().toString().equals(otherData.getUuid()));
+
+        if (!others.isEmpty()) {
+            AperturePortal other = others.get(0);
+
+            other.setDestinationDimension(portalData.getDimension());
+            other.setDestination(portalData.getPos());
+
+            portal.setOtherSideOrientation(other.getOrientationRotation());
+            other.setOtherSideOrientation(portal.getOrientationRotation());
+
+            other.setIsVisible(true);
+            other.setTeleportable(true);
+
+            PortalManipulation.makePortalRound(other, 30);
+        }
+    }
+
+    private void savePortalData(ItemStack stack, AperturePortal portal, PortalData otherData) {
+        portalData.setPortalData(portal.getUuid().toString(), "main", dataTracker.get(IS_MASTER));
+
+        portal.setNbt(portalData.writeToNBT(new NbtCompound()));
+
+        if (portalData.isMaster()) {
+            stack.getOrCreateNbt().put("portalDataMaster", portalData.writeToNBT(new NbtCompound()));
+        } else {
+            stack.getOrCreateNbt().put("portalDataSlave", portalData.writeToNBT(new NbtCompound()));
         }
     }
 
