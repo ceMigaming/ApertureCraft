@@ -9,7 +9,9 @@
         "CameraAccessor",
         "CameraSubmersionMixin",
         "BackgroundRendererAccessor",
-        "WindowMixin"
+        "WindowMixin",
+        "RendererUsingStencilMixin",
+        "RendererUsingFrameBufferMixin"
     ],
     "injectors": {
         "defaultRequire": 1

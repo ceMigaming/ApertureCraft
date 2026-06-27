@@ -53,6 +53,7 @@ public class CustomPortalEntityRenderer extends PortalEntityRenderer {
     @Override
     public void render(Portal entity, float yaw, float tickDelta, MatrixStack matrixStack,
             VertexConsumerProvider bufferSource, int light) {
+        super.render(entity, yaw, tickDelta, matrixStack, bufferSource, light);
     }
 
 }

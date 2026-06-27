@@ -28,6 +28,10 @@ public class ApertureRenderLayers {
     }
 
     public static RenderLayer getPortalLayer(Identifier texture) {
+        return getPortalLayer(texture, false);
+    }
+
+    public static RenderLayer getPortalLayer(Identifier texture, boolean ignoreDepth) {
         return RenderLayer.of(
                 "portal_layer",
                 VertexFormats.POSITION_COLOR_TEXTURE_OVERLAY_LIGHT_NORMAL,
@@ -40,7 +44,7 @@ public class ApertureRenderLayers {
                                 () -> ShaderHelper.getPortalShader()))
                         .texture(new RenderPhase.Texture(texture, false, false))
                         .transparency(RenderPhase.TRANSLUCENT_TRANSPARENCY)
-                        .depthTest(RenderPhase.LEQUAL_DEPTH_TEST)
+                        .depthTest(ignoreDepth ? RenderPhase.ALWAYS_DEPTH_TEST : RenderPhase.LEQUAL_DEPTH_TEST)
                         .writeMaskState(RenderPhase.COLOR_MASK)
                         .cull(RenderPhase.DISABLE_CULLING)
                         .lightmap(RenderPhase.ENABLE_LIGHTMAP)
