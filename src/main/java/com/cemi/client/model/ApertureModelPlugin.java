@@ -19,10 +19,6 @@ public class ApertureModelPlugin implements ModelLoadingPlugin {
         pluginContext.modifyModelOnLoad().register((original, context) -> {
             // This is called for every model that is loaded, so make sure we only target
             // ours
-            if (context.id().getNamespace().equals(ApertureCraft.MOD_ID)
-                    && context.id().getPath().equals("metal_slope")) {
-                System.out.println("TEST!!!" + context.id());
-            }
             if (context.id() instanceof ModelIdentifier id) {
                 if (id != null && id.getNamespace().equals(ApertureCraft.MOD_ID)
                         && id.getPath().equals("concrete_slope")) {

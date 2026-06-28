@@ -71,13 +71,10 @@ public class RocketEntity extends MobEntity implements GeoEntity {
 
     @Override
     public void remove(RemovalReason reason) {
-        System.out.println("rocket removed");
         if (!this.getWorld().isClient) {
             var owner = ((ServerWorld) this.getWorld()).getEntity(ownerUuid);
-            System.out.println("RocketTurretEntity: ownerUuid = " + ownerUuid);
             if (owner instanceof RocketTurretEntity o) {
                 o.setRocketUuid(null);
-                System.out.println("Removed");
             }
         }
         super.remove(reason);
