@@ -28,6 +28,7 @@ import net.minecraft.client.texture.Sprite;
 import net.minecraft.client.util.SpriteIdentifier;
 import net.minecraft.item.ItemStack;
 import net.minecraft.screen.PlayerScreenHandler;
+import net.minecraft.state.property.Properties;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
@@ -182,10 +183,48 @@ public class SlopeModel implements UnbakedModel, BakedModel, FabricBakedModel {
     @Override
     public void emitBlockQuads(BlockRenderView blockRenderView, BlockState blockState, BlockPos blockPos,
             Supplier<Random> supplier, RenderContext renderContext) {
-        // Render function
+        Direction facing = blockState.get(Properties.HORIZONTAL_FACING);
 
-        // We just render the mesh
+        renderContext.pushTransform(quad -> {
+            // Center of block
+            final float cx = 0.5f;
+            final float cz = 0.5f;
+
+            // Determine rotation (Y axis)
+            float angle;
+            switch (facing) {
+                case SOUTH -> angle = 180f;
+                case WEST -> angle = 270f;
+                case EAST -> angle = 90f;
+                default -> angle = 0f; // NORTH
+            }
+
+            float rad = (float) Math.toRadians(angle);
+            float sin = (float) Math.sin(rad);
+            float cos = (float) Math.cos(rad);
+
+            // Rotate all 4 vertices
+            for (int i = 0; i < 4; i++) {
+                float x = quad.x(i);
+                float y = quad.y(i);
+                float z = quad.z(i);
+
+                // Translate to origin (center)
+                float dx = x - cx;
+                float dz = z - cz;
+
+                // Rotate around Y axis
+                float rx = dx * cos - dz * sin;
+                float rz = dx * sin + dz * cos;
+                // Translate back
+                quad.pos(i, rx + cx, y, rz + cz);
+            }
+
+            return true;
+        });
+
         mesh.outputTo(renderContext.getEmitter());
+        renderContext.popTransform();
     }
 
     // Finally, we can implement the item render function

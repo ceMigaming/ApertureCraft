@@ -2,8 +2,10 @@ package com.cemi.entity;
 
 import java.util.List;
 
+import com.cemi.block.SlopeBlock;
 import com.cemi.world.PortalData;
 
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
@@ -140,6 +142,18 @@ public class PortalProjectileEntity extends ProjectileEntity {
             return;
         }
 
+        if (!otherPortalData.getUuid().equals("")) {
+            portal.disableAttachedSlopeCollision();
+            List<? extends AperturePortal> others = ((ServerWorld) getWorld()).getEntitiesByType(
+                    ApertureEntities.APERTURE_PORTAL,
+                    e -> e.getUuid().toString().equals(otherPortalData.getUuid()));
+
+            if (!others.isEmpty()) {
+                AperturePortal other = others.get(0);
+                other.disableAttachedSlopeCollision();
+            }
+        }
+
         configurePortal(portal, hit);
         linkPortalsIfPossible(portal, otherPortalData);
 
@@ -179,12 +193,79 @@ public class PortalProjectileEntity extends ProjectileEntity {
 
     private boolean setupPortalPlacement(BlockHitResult hit, AperturePortal portal) {
         Direction side = hit.getSide();
-
+        if (isSlope(hit.getBlockPos())) {
+            return tryPlaceDiagonal(hit, portal);
+        }
         if (side == Direction.UP || side == Direction.DOWN) {
             return placeOnFloorOrCeiling(hit, portal);
         } else {
             return placeOnWall(hit, portal);
         }
+    }
+
+    private boolean isSlope(BlockPos pos) {
+        return getWorld().getBlockState(pos).getBlock() instanceof SlopeBlock;
+    }
+
+    private boolean tryPlaceDiagonal(BlockHitResult hit, AperturePortal portal) {
+        BlockPos base = hit.getBlockPos();
+        BlockState state = getWorld().getBlockState(base);
+
+        if (!(state.getBlock() instanceof SlopeBlock))
+            return false;
+
+        Direction facing = state.get(SlopeBlock.FACING);
+
+        // check perpendicular directions
+        for (Direction dir : Direction.Type.HORIZONTAL) {
+            BlockPos neighborPos = base.offset(dir).down();
+            BlockState neighbor = getWorld().getBlockState(neighborPos);
+
+            if (!(neighbor.getBlock() instanceof SlopeBlock))
+                continue;
+
+            Direction neighborFacing = neighbor.get(SlopeBlock.FACING);
+
+            // 🔑 key condition: slopes must form a diagonal plane
+            if (areDiagonalPair(facing, neighborFacing, dir)) {
+                return placeDiagonalPortal(base, neighborPos, portal, facing, neighborFacing);
+            }
+        }
+
+        return false;
+    }
+
+    private boolean areDiagonalPair(Direction a, Direction b, Direction offsetDir) {
+        return a.getAxis() == b.getAxis();
+    }
+
+    private boolean placeDiagonalPortal(BlockPos a, BlockPos b, AperturePortal portal,
+            Direction facingA, Direction facingB) {
+
+        Vec3d center = Vec3d.ofCenter(a).add(Vec3d.ofCenter(b)).multiply(0.5);
+
+        // diagonal normal (average of slope directions)
+        Vec3d normal = new Vec3d(facingA.getOffsetX(), 1, facingA.getOffsetZ())
+                .add(new Vec3d(facingB.getOffsetX(), 1, facingB.getOffsetZ()))
+                .normalize();
+
+        // right vector = perpendicular horizontal
+        Vec3d right = new Vec3d(normal.z, 0, normal.x);
+
+        // up vector = vertical diagonal (optional tweak)
+        Vec3d up = new Vec3d(-normal.x, normal.y, -normal.z);
+
+        portal.setOriginPos(center.add(normal.multiply(0.01)));
+
+        portal.setOrientationAndSize(
+                right,
+                up,
+                1,
+                2);
+
+        portal.setSlopeBlockPos(a, b);
+
+        return true;
     }
 
     private boolean placeOnWall(BlockHitResult hit, AperturePortal portal) {
