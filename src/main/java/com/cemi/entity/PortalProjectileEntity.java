@@ -293,30 +293,41 @@ public class PortalProjectileEntity extends ProjectileEntity {
 
         BlockPos base = hit.getBlockPos().offset(side);
 
-        Direction right = side.rotateClockwise(Axis.X);
-        Direction up = side.rotateClockwise(Axis.Z);
+        PlayerEntity shooter = getShooter();
+        Vec3d forward = shooter != null
+                ? Vec3d.fromPolar(0, shooter.getYaw()).normalize()
+                : new Vec3d(0, 0, -1);
 
+        Vec3d up = forward;
+        Vec3d right;
         if (side == Direction.UP) {
-            up = up.getOpposite();
+            right = new Vec3d(-up.z, 0, up.x);
+        } else {
+            right = new Vec3d(up.z, 0, -up.x);
         }
 
         if (!canPlacePortal(base, up))
             return false;
 
         Vec3d pos = Vec3d.ofCenter(base)
+                .add(up.multiply(0.5))
                 .add(new Vec3d(side.getUnitVector()).multiply(-0.499));
 
         portal.setOriginPos(pos);
-        portal.setOrientationAndSize(
-                new Vec3d(right.getUnitVector()),
-                new Vec3d(up.getUnitVector()),
-                1, 2);
+        portal.setOrientationAndSize(right, up, 1, 2);
 
         return true;
     }
 
     private boolean canPlacePortal(BlockPos base, Direction up) {
         return isFree(base) && isFree(base.offset(up));
+    }
+
+    private boolean canPlacePortal(BlockPos base, Vec3d up) {
+        return isFree(base) && isFree(base.add(
+                (int) Math.round(up.x),
+                (int) Math.round(up.y),
+                (int) Math.round(up.z)));
     }
 
     private boolean isFree(BlockPos pos) {
