@@ -1,0 +1,9 @@
+{
+    "multipart": [
+        {
+            "apply": {
+                "model": "aperturecraft:block/fizzler"
+            }
+        }
+    ]
+}

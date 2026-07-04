@@ -3,6 +3,7 @@ package com.cemi.client.render;
 import com.cemi.block.entity.ApertureBlockEntities;
 import com.cemi.client.render.block.CubeDropperEntityRenderer;
 import com.cemi.client.render.block.DoorBlockEntityRenderer;
+import com.cemi.client.render.block.FizzlerBlockEntityRenderer;
 import com.cemi.client.render.block.FloorButtonBlockEntityRenderer;
 import com.cemi.client.render.block.HEPCatcherBlockEntityRenderer;
 import com.cemi.client.render.block.HEPLauncherBlockEntityRenderer;
@@ -62,6 +63,8 @@ public class ApertureRenderers {
                 CubeDropperEntityRenderer::new);
         BlockEntityRendererRegistry.register(ApertureBlockEntities.PEDESTAL_BUTTON,
                 PedestalButtonBlockEntityRenderer::new);
+        BlockEntityRendererRegistry.register(ApertureBlockEntities.FIZZLER,
+                FizzlerBlockEntityRenderer::new);
 
         // Render Layers
         EntityModelLayerRegistry.registerModelLayer(CustomPortalEntityRenderer.OVERLAY_MODEL_LAYER,

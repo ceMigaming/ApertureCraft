@@ -58,6 +58,13 @@ public class ApertureBlockEntities {
                     .create(PedestalButtonBlockEntity::new, ApertureBlocks.PEDESTAL_BUTTON)
                     .build());
 
+    public static final BlockEntityType<FizzlerBlockEntity> FIZZLER = Registry.register(
+            Registries.BLOCK_ENTITY_TYPE,
+            new Identifier(ApertureCraft.MOD_ID, "fizzler_block_entity"),
+            BlockEntityType.Builder
+                    .create(FizzlerBlockEntity::new, ApertureBlocks.FIZZLER)
+                    .build());
+
     public static void registerBlockEntities() {
     }
 }

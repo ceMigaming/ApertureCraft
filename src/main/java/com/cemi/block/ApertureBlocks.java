@@ -63,6 +63,8 @@ public class ApertureBlocks {
             FabricBlockSettings.copy(Blocks.DISPENSER).nonOpaque());
     public static final HEPCatcherBlock HEP_CATCHER = new HEPCatcherBlock("hep_catcher",
             FabricBlockSettings.copy(Blocks.DISPENSER).nonOpaque().noCollision());
+    public static final FizzlerBlock FIZZLER = new FizzlerBlock("fizzler",
+            FabricBlockSettings.copy(Blocks.DISPENSER).nonOpaque());
 
     public static final ApertureBlock INDICATOR = new IndicatorBlock(
             FabricBlockSettings.copy(Blocks.STONE_BUTTON).nonOpaque());
@@ -88,7 +90,7 @@ public class ApertureBlocks {
             SMALL_METAL_TILE, MEDIUM_METAL_TILE, METAL_LARGE_TILE, METAL_PILLAR, METAL_SLOPE,
             INDICATOR_LIGHT, GLASS_PANE, GLASS_PANE_SEEMED, GLASS_BLOCK, GLASS_BLOCK_SEEMED,
             HEP_LAUNCHER, INDICATOR, DOOR, FLOOR_BUTTON, PEDESTAL_BUTTON, TODO_BLOCK, CUBE_DROPPER,
-            COMPANION_CUBE_DROPPER, HEP_CATCHER };
+            COMPANION_CUBE_DROPPER, HEP_CATCHER, FIZZLER };
 
     public static void registerBlocks() {
         NEUROTOXIN = Registry.register(Registries.BLOCK,
