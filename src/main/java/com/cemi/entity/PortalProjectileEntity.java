@@ -294,9 +294,9 @@ public class PortalProjectileEntity extends ProjectileEntity {
         BlockPos base = hit.getBlockPos().offset(side);
 
         PlayerEntity shooter = getShooter();
-        Vec3d forward = shooter != null
-                ? Vec3d.fromPolar(0, shooter.getYaw()).normalize()
-                : new Vec3d(0, 0, -1);
+        float yaw = shooter != null ? shooter.getYaw() : 0f;
+        yaw = Math.round(yaw / 90f) * 90f;
+        Vec3d forward = Vec3d.fromPolar(0, yaw).normalize();
 
         Vec3d up = forward;
         Vec3d right;
