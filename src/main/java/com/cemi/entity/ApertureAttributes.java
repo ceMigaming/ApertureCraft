@@ -20,6 +20,7 @@ public class ApertureAttributes {
                 RocketTurretEntity.createMobAttributes());
         FabricDefaultAttributeRegistry.register(ApertureEntities.ROCKET,
                 RocketEntity.createMobAttributes());
-                
+        FabricDefaultAttributeRegistry.register(ApertureEntities.CAMERA,
+                CameraEntity.createMobAttributes());
     }
 }

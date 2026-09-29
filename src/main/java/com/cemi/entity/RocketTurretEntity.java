@@ -2,6 +2,7 @@ package com.cemi.entity;
 
 import java.util.UUID;
 
+import com.cemi.util.EntityHelper;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.mob.MobEntity;
@@ -81,11 +82,11 @@ public class RocketTurretEntity extends MobEntity implements GeoEntity {
 
         // Yaw (left/right)
         yaw = (float) (Math.atan2(dz, dx) - Math.PI / 2);
-        yaw = lerpAngle(lastYaw, -yaw, 0.03f);
+        yaw = EntityHelper.lerpAngle(lastYaw, -yaw, 0.03f);
 
         // Pitch (up/down)
         pitch = (float) (-Math.atan2(dy, distanceXZ));
-        pitch = lerpAngle(lastPitch, -pitch, 0.03f);
+        pitch = EntityHelper.lerpAngle(lastPitch, -pitch, 0.03f);
 
         this.setVelocity(0, 0, 0);
 
@@ -128,8 +129,8 @@ public class RocketTurretEntity extends MobEntity implements GeoEntity {
         float targetYaw = (float) (Math.atan2(dz, dx) - Math.PI / 2);
         float targetPitch = (float) (-Math.atan2(dy, distanceXZ));
 
-        float yawDiff = Math.abs(wrapAngle(targetYaw + yaw));
-        float pitchDiff = Math.abs(wrapAngle(targetPitch + pitch));
+        float yawDiff = Math.abs(EntityHelper.wrapAngle(targetYaw + yaw));
+        float pitchDiff = Math.abs(EntityHelper.wrapAngle(targetPitch + pitch));
 
         boolean isLockedOn = yawDiff < AIM_THRESHOLD && pitchDiff < AIM_THRESHOLD;
 
@@ -137,14 +138,6 @@ public class RocketTurretEntity extends MobEntity implements GeoEntity {
             shootRocket(target);
             shootCooldown = MAX_COOLDOWN;
         }
-    }
-
-    private float wrapAngle(float angle) {
-        while (angle < -Math.PI)
-            angle += Math.PI * 2;
-        while (angle > Math.PI)
-            angle -= Math.PI * 2;
-        return angle;
     }
 
     private void shootRocket(PlayerEntity target) {
@@ -181,18 +174,6 @@ public class RocketTurretEntity extends MobEntity implements GeoEntity {
     @Override
     public boolean damage(DamageSource source, float amount) {
         return source.isIn(DamageTypeTags.BYPASSES_INVULNERABILITY) ? super.damage(source, amount) : false;
-    }
-
-    private float lerpAngle(float current, float target, float speed) {
-        float delta = target - current;
-
-        // Wrap into [-PI, PI]
-        while (delta < -Math.PI)
-            delta += Math.PI * 2;
-        while (delta > Math.PI)
-            delta -= Math.PI * 2;
-
-        return current + delta * speed;
     }
 
     public void setRocketUuid(UUID uuid) {

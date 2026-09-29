@@ -69,6 +69,11 @@ public class ApertureEntities {
             EntityType.Builder.create(PortalProjectileEntity::new, SpawnGroup.MISC)
                     .setDimensions(.5f, .5f).build());
 
+    public static final EntityType<CameraEntity> CAMERA = Registry.register(
+            Registries.ENTITY_TYPE, new Identifier(ApertureCraft.MOD_ID, "camera"),
+            EntityType.Builder.create(CameraEntity::new, SpawnGroup.MISC)
+                    .setDimensions(.5f, .5f).build());
+
     public static void registerEntities() {
     }
 }
