@@ -2,6 +2,7 @@ package com.cemi.entity;
 
 import java.util.List;
 
+import com.cemi.block.FizzlerBlock;
 import com.cemi.block.SlopeBlock;
 import com.cemi.world.PortalData;
 
@@ -19,6 +20,7 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Direction.Axis;
 import net.minecraft.util.math.EulerAngle;
@@ -31,6 +33,9 @@ public class PortalProjectileEntity extends ProjectileEntity {
 
     private static final int ORANGE_COLOR = 0xFF9A00;
     private static final int BLUE_COLOR = 0x27A7D8;
+
+    /** Blocks travelled per tick. */
+    private static final double SPEED = 1.0;
 
     private static final TrackedData<Integer> COLOR;
     private static final TrackedData<Integer> OTHER_COLOR;
@@ -101,15 +106,29 @@ public class PortalProjectileEntity extends ProjectileEntity {
         if (getWorld().isClient()) {
             return;
         }
+        // NOTE: DISTANCE is compared against a tick count, not distance travelled.
+        // The two only coincide while SPEED is 1.0; changing SPEED scales max range.
         if (this.age++ > this.dataTracker.get(DISTANCE)) {
             this.kill();
         }
         EulerAngle angle = this.dataTracker.get(VELOCITY);
         this.setRotation(angle.getYaw(), angle.getPitch());
-        Vec3d velocity = Vec3d.fromPolar(angle.getPitch(), angle.getYaw()).normalize();
-        Vec3d newPos = new Vec3d(getX(), getY(), getZ()).add(velocity);
+        Vec3d step = Vec3d.fromPolar(angle.getPitch(), angle.getYaw()).normalize().multiply(SPEED);
+
+        // Tested across the segment actually travelled, and before the raytrace, so
+        // a field can be neither tunnelled through at speed nor lose the race with
+        // this same tick placing the portal. Block entity tickers run before entity
+        // ticks, so a field would otherwise only ever sample the projectile after it
+        // has already moved into it.
+        Box from = this.getBoundingBox();
+        if (FizzlerBlock.isInsideField(getWorld(), from.union(from.offset(step)))) {
+            this.kill();
+            return;
+        }
+
+        Vec3d newPos = new Vec3d(getX(), getY(), getZ()).add(step);
         PortalUtils.PortalAwareRaytraceResult portalResult = PortalUtils.portalAwareRayTrace(this, 1);
-        this.setPos(newPos.getX(), newPos.getY(), newPos.getZ());
+        this.setPosition(newPos.getX(), newPos.getY(), newPos.getZ());
         if (portalResult != null) {
             BlockHitResult result = portalResult.hitResult();
             spawnPortal(result);
@@ -418,7 +437,7 @@ public class PortalProjectileEntity extends ProjectileEntity {
         this.dataTracker.set(COLOR, isMaster ? ORANGE_COLOR : BLUE_COLOR);
         this.dataTracker.set(OTHER_COLOR, isMaster ? BLUE_COLOR : ORANGE_COLOR);
 
-        this.setPos(user.getX(), user.getEyeY() - getHeight() / 2, user.getZ());
+        this.setPosition(user.getX(), user.getEyeY() - getHeight() / 2, user.getZ());
     }
 
 }

@@ -28,8 +28,14 @@
     "block.aperturecraft.cube_dropper": "Cube Dropper",
     "block.aperturecraft.hep_launcher": "High Energy Pellet Launcher",
     "block.aperturecraft.todo": "To-Do Block",
+    "block.aperturecraft.fizzler": "Fizzler",
 
     "item.aperturecraft.neurotoxin_bucket": "Neurotoxin Bucket",
     
-    "subtitles.aperturecraft.radioloop": "Still Alive (Radio Loop)"
+    "subtitles.aperturecraft.radioloop": "Still Alive (Radio Loop)",
+
+    "subtitles.aperturecraft.fizzler.loop": "Fizzler hums",
+    "subtitles.aperturecraft.fizzler.start": "Fizzler field starts up",
+    "subtitles.aperturecraft.fizzler.shutdown": "Fizzler field shuts down",
+    "subtitles.aperturecraft.fizzler.emancipation": "Material emancipation"
 }

@@ -30,6 +30,20 @@ public class RadioSoundInstance extends MovingSoundInstance {
         return true;
     }
 
+    /**
+     * Must stay 0 for the same reason as FizzlerLoopSoundInstance. SoundSystem
+     * treats "repeatable with a delay" and "repeatable instantly" as opposite
+     * requests: a positive delay routes the sound to the engine's re-arm path,
+     * which only fires once a source reports itself stopped, and a static source
+     * that has run out of buffer never does - so radio_loop would play once and
+     * go quiet. A delay of 0 sets AL_LOOPING on the source instead, which repeats
+     * the sample with no seam and is never torn down.
+     */
+    @Override
+    public int getRepeatDelay() {
+        return 0;
+    }
+
     @Override
     public boolean shouldAlwaysPlay() {
         return true;

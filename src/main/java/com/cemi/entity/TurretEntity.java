@@ -31,7 +31,7 @@ import software.bernie.geckolib.core.animation.RawAnimation;
 import software.bernie.geckolib.core.object.PlayState;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
-public class TurretEntity extends MobEntity implements GeoEntity, Pickable {
+public class TurretEntity extends MobEntity implements GeoEntity, Pickable, Fizzlable {
     protected static final RawAnimation OPEN_ANIM = RawAnimation.begin().thenPlayAndHold("open");
     protected static final RawAnimation CLOSE_ANIM = RawAnimation.begin().thenPlayAndHold("close");
     protected static final RawAnimation SHOOT_ANIM = RawAnimation.begin().thenLoop("shoot");

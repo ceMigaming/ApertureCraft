@@ -62,7 +62,7 @@ public class FizzlerBlockEntityRenderer extends GeoBlockRenderer<FizzlerBlockEnt
 
         BlockPos partnerPos = entity.getConnectedPos();
         if (partnerPos == null) {
-            partnerPos = findPartner(entity.getWorld(), pos,
+            partnerPos = FizzlerBlock.findPartner(entity.getWorld(), pos,
                     state.get(FizzlerBlock.FACING));
             if (partnerPos == null)
                 return;
@@ -180,34 +180,6 @@ public class FizzlerBlockEntityRenderer extends GeoBlockRenderer<FizzlerBlockEnt
         RenderSystem.disableBlend();
 
         poseStack.pop();
-    }
-
-    private static BlockPos findPartner(net.minecraft.world.World world, BlockPos pos,
-            Direction facing) {
-        Direction opposite = facing.getOpposite();
-        for (int i = 1; i <= 16; i++) {
-            BlockPos checkPos = pos.offset(facing, i);
-            BlockState checkState = world.getBlockState(checkPos);
-            if (checkState.getBlock() instanceof FizzlerBlock) {
-                if (checkState.get(FizzlerBlock.FACING) == opposite) {
-                    boolean clear = true;
-                    for (int j = 1; j < i; j++) {
-                        BlockPos between = pos.offset(facing, j);
-                        BlockState bs = world.getBlockState(between);
-                        if (!bs.isAir() && !bs.isReplaceable()) {
-                            clear = false;
-                            break;
-                        }
-                    }
-                    if (clear)
-                        return checkPos;
-                }
-                return null;
-            }
-            if (!checkState.isAir() && !checkState.isReplaceable())
-                return null;
-        }
-        return null;
     }
 
     private static void v(BufferBuilder buf, Matrix4f m, float x, float y, float z,

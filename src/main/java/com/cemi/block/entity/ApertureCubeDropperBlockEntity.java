@@ -2,6 +2,8 @@ package com.cemi.block.entity;
 
 import java.util.UUID;
 
+import com.cemi.entity.StorageCubeEntity;
+
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.EntityType;
@@ -110,6 +112,11 @@ public class ApertureCubeDropperBlockEntity extends BlockEntity implements GeoBl
             trackedEntity.kill();
         }
         trackedEntity = spawnableEntity.create(world);
+        // A dropper can be re-pointed at any entity via spawn eggs, so only cubes
+        // that care about being fizzled back here get stamped.
+        if (trackedEntity instanceof StorageCubeEntity cube) {
+            cube.setDropperPos(pos);
+        }
         trackedEntity.refreshPositionAndAngles(pos.getX() + 0.5, pos.getY() + 1, pos.getZ() + 0.5, 0, 0);
         world.spawnEntity(trackedEntity);
         trackedEntityUuid = trackedEntity.getUuid();

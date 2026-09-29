@@ -25,7 +25,7 @@ import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache
 import software.bernie.geckolib.core.animation.AnimatableManager.ControllerRegistrar;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
-public class RadioEntity extends MobEntity implements GeoEntity, Pickable {
+public class RadioEntity extends MobEntity implements GeoEntity, Pickable, Fizzlable {
 
     private PlayerEntity holder = null;
     private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);

@@ -2,6 +2,7 @@ package com.cemi.item;
 
 import java.util.function.Consumer;
 import java.util.function.Supplier;
+import com.cemi.block.FizzlerBlock;
 import com.cemi.client.render.item.PortalGunRenderer;
 import com.cemi.entity.ApertureEntities;
 import com.cemi.entity.PortalProjectileEntity;
@@ -10,6 +11,7 @@ import com.cemi.world.PortalData;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.render.item.BuiltinModelItemRenderer;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.ItemCooldownManager;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -100,24 +102,42 @@ public class PortalGunItem extends ApertureItem implements GeoItem {
     }
 
     public void onResetPortals(World world, PlayerEntity user, Hand hand) {
-        ItemStack stack = user.getStackInHand(hand);
-        PortalData masterData = PortalData.getPortalData(user.getStackInHand(hand), true);
-        PortalData slaveData = PortalData.getPortalData(user.getStackInHand(hand), false);
-        ((ServerWorld) world).getEntitiesByType(ApertureEntities.APERTURE_PORTAL, (entity) -> {
-            return entity.getUuid().toString().equals(masterData.getUuid());
-        }).forEach((entity) -> {
-            entity.kill();
-            stack.getOrCreateNbt().put("portalDataMaster",
-                    masterData.reset().writeToNBT(new NbtCompound()));
-        });
-        ((ServerWorld) world).getEntitiesByType(ApertureEntities.APERTURE_PORTAL, (entity) -> {
-            return entity.getUuid().toString().equals(slaveData.getUuid());
-        }).forEach((entity) -> {
-            entity.kill();
-            stack.getOrCreateNbt().put("portalDataSlave",
-                    slaveData.reset().writeToNBT(new NbtCompound()));
-        });
+        if (!(world instanceof ServerWorld serverWorld)) {
+            return;
+        }
+        resetStackPortals(serverWorld, user.getStackInHand(hand));
+    }
 
+    /**
+     * Removes every portal placed by the portal guns the player currently carries.
+     */
+    public static void resetPortals(ServerWorld world, PlayerEntity user) {
+        for (ItemStack stack : user.getInventory().main) {
+            if (stack.getItem() instanceof PortalGunItem) {
+                resetStackPortals(world, stack);
+            }
+        }
+    }
+
+    private static void resetStackPortals(ServerWorld world, ItemStack stack) {
+        PortalData masterData = PortalData.getPortalData(stack, true);
+        PortalData slaveData = PortalData.getPortalData(stack, false);
+
+        killPortal(world, masterData);
+        killPortal(world, slaveData);
+
+        NbtCompound nbt = stack.getOrCreateNbt();
+        nbt.put("portalDataMaster", masterData.reset().writeToNBT(new NbtCompound()));
+        nbt.put("portalDataSlave", slaveData.reset().writeToNBT(new NbtCompound()));
+    }
+
+    private static void killPortal(ServerWorld world, PortalData data) {
+        if (data.getUuid().isEmpty()) {
+            return;
+        }
+        world.getEntitiesByType(ApertureEntities.APERTURE_PORTAL,
+                entity -> entity.getUuid().toString().equals(data.getUuid()))
+                .forEach(Entity::kill);
     }
 
     @Override
@@ -139,6 +159,12 @@ public class PortalGunItem extends ApertureItem implements GeoItem {
             boolean isMaster) {
         ItemCooldownManager cooldownManager = user.getItemCooldownManager();
         cooldownManager.set(this, 10);
+        // Refused before the projectile exists, because PortalProjectileEntity#tick
+        // places a portal in the same tick it spawns, which a field tick could lose
+        // the race with. The cooldown is still charged so the shot cannot be spammed.
+        if (FizzlerBlock.isInsideField(world, user.getBoundingBox())) {
+            return;
+        }
         PortalProjectileEntity portalProjectileEntity =
                 ApertureEntities.PORTAL_PROJECTILE.create(world);
         portalProjectileEntity.setProperties(user, isMaster);

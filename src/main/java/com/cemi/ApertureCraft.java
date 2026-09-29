@@ -14,6 +14,7 @@ import com.cemi.networking.AperturePacketHandler;
 import com.cemi.particle.ApertureParticleTypes;
 import com.cemi.registry.tag.ApertureFluidTags;
 import com.cemi.server.ApertureCommands;
+import com.cemi.sound.ApertureSoundEvent;
 
 import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.ConfigHolder;
@@ -46,6 +47,7 @@ public class ApertureCraft implements ModInitializer {
         ApertureAttributes.registerAttributes();
         AperturePacketHandler.registerPacketHandlers();
         ApertureCommands.registerCommands();
+        ApertureSoundEvent.registerSoundEvents();
 
         LOGGER.info("Now you're thinking with portals!");
     }

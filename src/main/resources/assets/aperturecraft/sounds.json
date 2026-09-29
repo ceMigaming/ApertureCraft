@@ -7,5 +7,38 @@
                 "stream": true
             }
         ]
+    },
+    "fizzler_lp_01": {
+        "subtitle": "subtitles.aperturecraft.fizzler.loop",
+        "sounds": [
+            {
+                "name": "aperturecraft:fizzler/fizzler_lp_01",
+                "stream": true
+            }
+        ]
+    },
+    "fizzler_start_01": {
+        "subtitle": "subtitles.aperturecraft.fizzler.start",
+        "sounds": [
+            {
+                "name": "aperturecraft:fizzler/fizzler_start_01"
+            }
+        ]
+    },
+    "fizzler_shutdown_01": {
+        "subtitle": "subtitles.aperturecraft.fizzler.shutdown",
+        "sounds": [
+            {
+                "name": "aperturecraft:fizzler/fizzler_shutdown_01"
+            }
+        ]
+    },
+    "material_emancipation_01": {
+        "subtitle": "subtitles.aperturecraft.fizzler.emancipation",
+        "sounds": [
+            {
+                "name": "aperturecraft:fizzler/material_emancipation_01"
+            }
+        ]
     }
 }
