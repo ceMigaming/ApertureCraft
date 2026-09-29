@@ -1,10 +1,4 @@
-// Based on iChun's Portal Gun mod's portal shader
-#version 330
-#ifdef GL_ES
-precision mediump float;
-#endif
-
-uniform vec2 uResolution;
+#version 330 core
 
 uniform sampler2D Sampler0;
 
@@ -21,6 +15,13 @@ out vec4 outColor;
 
 #define PI 3.1415926535897932384626433832795
 
+const float D_INNER_START = 0.165;
+const float D_INNER_FADE  = 0.1725;
+const float D_RING_END    = 0.200;
+const float D_SHADOW_END  = 0.205;
+const float D_SPIN_END    = 0.2375;
+const float D_OUTER_END   = 0.2025;
+
 float rand(vec2 c) {
     return fract(sin(dot(c.xy, vec2(12.9898, 78.233))) * 43758.5453);
 }
@@ -29,7 +30,6 @@ float noise(vec2 p, float freq) {
     float unit = 1.0 / freq;
     vec2 ij = floor(p / unit);
     vec2 xy = mod(p, unit) / unit;
-    //xy = 3.*xy*xy-2.*xy*xy*xy;
     xy = .5 * (1. - cos(PI * xy));
     float a = rand((ij + vec2(0., 0.)));
     float b = rand((ij + vec2(1., 0.)));
@@ -67,9 +67,7 @@ float ripple(vec2 p) {
 
     for(int n = 0; n < 3; n++) {
         float t = time * (1.0 - (0.060 / float(n + 1)));
-
         i = p + vec2(cos(t - i.x) + sin(t + i.y), sin(t - i.y) + cos(t + i.x));
-
         c += 1.0 / length(vec2(p.x / (sin(i.x + t) / inten), p.y / (cos(i.y + t) / inten)));
     }
 
@@ -89,73 +87,76 @@ vec3 rgbToHsv(vec3 c) {
 }
 
 vec3 hsvToRgb(float hue, float saturation, float value) {
-    float h = float(int(hue * 6.0));
+    float h = floor(hue * 6.0);
     float f = hue * 6.0 - h;
     float p = value * (1.0 - saturation);
     float q = value * (1.0 - f * saturation);
     float t = value * (1.0 - (1.0 - f) * saturation);
+    int hi = int(h);
 
-    if(h == 0.0)
-        return vec3(value, t, p);
-    if(h == 1.0)
-        return vec3(q, value, p);
-    if(h == 2.0)
-        return vec3(p, value, t);
-    if(h == 3.0)
-        return vec3(p, q, value);
-    if(h == 4.0)
-        return vec3(t, p, value);
-    if(h == 5.0)
-        return vec3(value, p, q);
+    if(hi == 0) return vec3(value, t, p);
+    if(hi == 1) return vec3(q, value, p);
+    if(hi == 2) return vec3(p, value, t);
+    if(hi == 3) return vec3(p, q, value);
+    if(hi == 4) return vec3(t, p, value);
+    if(hi == 5) return vec3(value, p, q);
     return vec3(1.0);
 }
 
-void main(void) {
+vec2 rotate(vec2 v, float angle)
+{
+    float s = sin(angle);
+    float c = cos(angle);
+    return vec2(
+        c * v.x - s * v.y,
+        s * v.x + c * v.y
+    );
+}
 
+float cubicFade(float x)
+{
+    float t = x + 1.0;
+    return (t*t*t - 1.0) / 7.0;
+}
+
+float animatedNoise(vec2 pos, float scale, float frame, float interp)
+{
+    float f = mod(frame, 10.0);
+
+    return mix(
+        pNoise(pos * scale + 10.0 * f, 4),
+        pNoise(pos * scale + 10.0 * mod(f + 1.0, 10.0), 4),
+        interp
+    );
+}
+
+void main(void) {
     vec2 coord = a_texCoord0;
 
-    float diameters[6];
-    diameters[0] = 0.165;
-    diameters[1] = 0.1725;
-    diameters[2] = 0.2;
-    diameters[3] = 0.205;
-    diameters[4] = 0.2375;
-    diameters[5] = 0.2025;
     float timeMulInner = 2.5;
 
     vec3 theColor = vec3(theColorR, theColorG, theColorB);
 
-    //gl_FragColor = texture(Sampler0, a_texCoord0);
-    outColor = texture(Sampler0, a_texCoord0);
-
-    float w = 1.0, h = 1.0;
-    vec2 sp = (coord - 0.5) / vec2(w, h);// TODO: Change
+    vec2 sp = (coord - 0.5) / vec2(1.0, 1.0);
 
     float realTime = time;
     int tint = int(realTime);
-    float tfl = realTime - float(tint);
+    float tfl = fract(realTime);
     int tintf = int(realTime * timeMulInner);
-    float tflf = realTime * timeMulInner - float(tintf);
+    float tflf = fract(realTime * timeMulInner);
 
-    float d1 = sqrt(dot(sp, sp)) * 5.0 + realTime * -0.015;
-    float c1 = cos(d1), s1 = sin(d1);
-    vec2 p = vec2(sp.x * c1 - sp.y * s1, sp.x * s1 + sp.y * c1);
+    vec2 p = rotate(sp, length(sp) * 5.0 - time * 0.015);
+    vec2 p2 = rotate(sp, length(sp) * 25.0 - time * 0.15);
 
-    float d2 = sqrt(dot(sp, sp)) * 25.0 + realTime * -0.15;
-    float c2 = cos(d2), s2 = sin(d2);
-    vec2 p2 = vec2(sp.x * c2 - sp.y * s2, sp.x * s2 + sp.y * c2);
-
-    float d = sqrt(dot(p, p));
+    float d = length(p);
 
     float rainbowTime = realTime * 0.5;
-    float dist = 75.0;
-    float off = float(int(p.y * dist)) * PI * 0.005;
+    float off = float(int(p.y * 75.0)) * PI * 0.005;
 
     vec4 color = vec4(0.7, 0.7, 0.7, 0.0);
     vec4 portalColor = vec4(theColor, 1.0);
     if(theColor.r < 0.0) {
         portalColor = vec4(hsvToRgb(mod(rainbowTime / 4.0 + p.y + off, 1.0), 1.0, 1.0), 1.0);
-		//vec4(0.996, 0.788, 0.157, 1.0);//vec4(0.992, 0.4, 0.0, 1.0);//vec4(0.0, 0.471, 1.0, 1.0);//vec4(0.184, 0.706, 0.357, 1.0);
     }
     vec4 insideColor = vec4(0.0, 0.0, 0.15 * (1.0 - d * 2.0), 0.0);
     vec4 shadowColor = vec4(0.0, 0.0, 0.0, 0.15);
@@ -163,82 +164,76 @@ void main(void) {
     float noise1 = 10.0;
     float noise2 = 25.0;
 
-	// First pass
+    // First pass
     if(pass == 0) {
-		// Inside
+        // Inside
         if(d < 0.2) {
             color = insideColor;
         }
 
-		// Coloured inner edge
-        float m1 = mix(pNoise(p * noise1 + 10.0 * mod(float(tintf), 10.0), 4), pNoise(p * noise1 + 10.0 * mod(float(tintf) + 1.0, 10.0), 4), tflf) * 0.5 + 0.25;
-        float m2 = mix(pNoise(p * noise2 + 10.0 * mod(float(tintf), 10.0), 4), pNoise(p * noise2 + 10.0 * mod(float(tintf) + 1.0, 10.0), 4), tflf);
+        // Coloured inner edge
+        float m1 = animatedNoise(p, noise1, float(tintf), tflf) * 0.5 + 0.25;
+        float m2 = animatedNoise(p, noise2, float(tintf), tflf);
         float m = mix(m1, m2, 0.5);
-        float n1 = mix(pNoise(p * noise1 / 8.0 + 10.0 * mod(float(tint), 10.0), 4), pNoise(p * noise1 / 8.0 + 10.0 * mod(float(tint) + 1.0, 10.0), 4), tfl) * 0.5 + 0.25;
-        float n2 = mix(pNoise(p * noise2 / 8.0 + 10.0 * mod(float(tint), 10.0), 4), pNoise(p * noise2 / 8.0 + 10.0 * mod(float(tint) + 1.0, 10.0), 4), tfl);
+        float n1 = animatedNoise(p, noise1 / 8.0, float(tint), tfl) * 0.5 + 0.25;
+        float n2 = animatedNoise(p, noise2 / 8.0, float(tint), tfl);
         float n = mix(n1, n2, 0.5);
-        if(closeAlpha > 0.0 && d < diameters[2]) {
+        if(closeAlpha > 0.0 && d < D_RING_END) {
             vec3 hsv = rgbToHsv(theColor);
-            hsv.z *= 1.0 - coord.y * coord.y;
-            hsv.z *= 1.0 - coord.y * coord.y;
+            hsv.z *= (1.0 - coord.y * coord.y);
+            hsv.z *= (1.0 - coord.y * coord.y);
             hsv.z *= 1.125;
             hsv.y += coord.y * coord.y * coord.y;
             float r = 0.0;
             const int amt = 10;
             for(int i = 1; i < amt; i++) {
-                r += sin(ripple(coord * 41.5 * float(i * i * i)) * 10.0) * 0.5;
-                r += sin(ripple(coord * 73.2 * float(i * i * i)) * 10.0) * 0.75;
+                float fi = float(i * i * i);
+                r += sin(ripple(coord * 41.5 * fi) * 10.0) * 0.5;
+                r += sin(ripple(coord * 73.2 * fi) * 10.0) * 0.75;
             }
             hsv.z *= (n / (n * 0.15 + 0.85) + 0.375);
             hsv.z += ((r / 4.0) * (r / 4.0) * 0.0625 * 0.375);
             hsv.z *= 1.25;
             color = insideColor = vec4(hsvToRgb(hsv.x, hsv.y, hsv.z), closeAlpha);
         }
-        if((d > diameters[0] && d < diameters[2])) {
-            float intD = (d - diameters[0]);
-            intD /= (diameters[2] - diameters[1]);
-            float alpha = ((intD + 1.0) * (intD + 1.0) * (intD + 1.0) - 1.0) / 7.0;
+        if((d > D_INNER_START && d < D_RING_END)) {
+            float intD = (d - D_INNER_START) / (D_RING_END - D_INNER_FADE);
+            float alpha = cubicFade(intD);
             alpha *= 0.5 + m * (1.0 + (1.0 - intD) * 0.5);
             if(alpha > 0.0) {
-                float n = 1.0 - sp.y * 3.0 - 1.0;
-                if(n < 0.0)
-                    n = 0.0;
-				//color = mix(color, portalColor, alpha * (1.125 + 1.25 * n));
+                float n = max(1.0 - sp.y * 3.0 - 1.0, 0.0);
                 color = mix(color, mix(mix(vec4(0.0, 0.0, 0.0, 1.0), portalColor, 0.85), portalColor, (-sp.y + 0.5)), alpha * (1.125 + 1.25 * n));
             }
         }
 
-		// Shadow
-        if(d > diameters[2] && d < diameters[3]) {
-            float intD = (d - diameters[2]) / (diameters[3] - diameters[2]);
-            float alpha = 1.0 - ((intD + 1.0) * (intD + 1.0) * (intD + 1.0) - 1.0) / 7.0;
+        // Shadow
+        if(d > D_RING_END && d < D_SHADOW_END) {
+            float intD = (d - D_RING_END) / (D_SHADOW_END - D_RING_END);
+            float alpha = 1.0 - cubicFade(intD);
             color = mix(color, mix(color, shadowColor, shadowColor.a), alpha);
         }
 
-		// Coloured outside ring
-        m = mix(pNoise(p * 10.0 + 15.0 * mod(float(tint), 10.0), 4), pNoise(p * 10.0 + 15.0 * mod(float(tint) + 1.0, 10.0), 10), sin(tfl * PI / 2.0));
-        if((d > diameters[2] && d < diameters[5])) {
-            float intD = 1.0 - (d - diameters[2]) / (diameters[5] - diameters[2]);
-            float alpha = ((intD + 1.0) * (intD + 1.0) * (intD + 1.0) - 1.0) / 7.0;
+        // Coloured outside ring
+        m = animatedNoise(p, 10.0, float(tint), sin(tfl * PI / 2.0));
+        if((d > D_RING_END && d < D_OUTER_END)) {
+            float intD = 1.0 - (d - D_RING_END) / (D_OUTER_END - D_RING_END);
+            float alpha = cubicFade(intD);
             alpha *= 1.0 + m * 2.0;
             if(alpha > 0.0) {
-                float n = 1.0 - sp.y * 5.0 - 1.0;
-                if(n < 0.0)
-                    n = 0.0;
+                float n = max(1.0 - sp.y * 5.0 - 1.0, 0.0);
                 color = mix(color, portalColor * 1.1, alpha * (1.125 + 1.25 * n));
             }
         }
     } else {
-		// Coloured outer spinny thing
-        float m = mix(pNoise(p2 * 10.0 + 15.0 * mod(float(tint), 10.0), 4), pNoise(p2 * 10.0 + 15.0 * mod(float(tint) + 1.0, 10.0), 10), sin(tfl * PI / 2.0));
-        if((d > diameters[2] && d < diameters[4])) {
-            float intD = 1.0 - (d - diameters[2]) / (diameters[4] - diameters[2]);
-            float alpha = ((intD + 1.0) * (intD + 1.0) * (intD + 1.0) - 1.0) / 7.0;
+        // Coloured outer spinny thing
+        float m = animatedNoise(p2, 10.0, float(tint), sin(tfl * PI / 2.0));
+        if((d > D_RING_END && d < D_SPIN_END)) {
+            float intD = 1.0 - (d - D_RING_END) / (D_SPIN_END - D_RING_END);
+            float alpha = cubicFade(intD);
             alpha *= 0.5 + m * 2.0;
             color = mix(color, mix(insideColor, portalColor, d * 5.0), alpha * 0.5);
         }
     }
 
-    // gl_FragColor = color;
     outColor = color;
 }
