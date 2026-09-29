@@ -26,4 +26,14 @@ public class ShaderHelper {
     public static void setPortalShader(ShaderProgram program) {
         portalShader = program;
     }
+
+    private static ShaderProgram fizzlerShader;
+
+    public static ShaderProgram getFizzlerShader() {
+        return fizzlerShader;
+    }
+
+    public static void setFizzlerShader(ShaderProgram program) {
+        fizzlerShader = program;
+    }
 }

@@ -24,6 +24,12 @@ public class ApertureCraftClient implements ClientModInitializer {
                     new Identifier("aperturecraft", "portal"),
                     VertexFormats.POSITION_COLOR_TEXTURE_OVERLAY_LIGHT_NORMAL,
                     ShaderHelper::setPortalShader);
+            // POSITION_COLOR_TEXTURE supplies exactly the Position/Color/UV0 the
+            // fizzler shaders declare, and nothing more.
+            context.register(
+                    new Identifier("aperturecraft", "fizzler"),
+                    VertexFormats.POSITION_COLOR_TEXTURE,
+                    ShaderHelper::setFizzlerShader);
         });
 
         ApertureRenderers.registerRenderers();

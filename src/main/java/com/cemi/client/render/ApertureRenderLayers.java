@@ -52,6 +52,30 @@ public class ApertureRenderLayers {
                         .build(true));
     }
 
+    /**
+     * Field plane between two connected fizzler emitters. No texture phase: the
+     * shader is pure procedural noise and declares no sampler. Culling is off so a
+     * single quad reads from both sides, and depth writes are off so the field
+     * never clips the emitters or anything standing in it.
+     */
+    public static RenderLayer getFizzlerLayer() {
+        return RenderLayer.of(
+                "fizzler_layer",
+                VertexFormats.POSITION_COLOR_TEXTURE,
+                VertexFormat.DrawMode.QUADS,
+                256,
+                false,
+                true,
+                RenderLayer.MultiPhaseParameters.builder()
+                        .program(new RenderPhase.ShaderProgram(
+                                () -> ShaderHelper.getFizzlerShader()))
+                        .transparency(RenderPhase.TRANSLUCENT_TRANSPARENCY)
+                        .depthTest(RenderPhase.LEQUAL_DEPTH_TEST)
+                        .writeMaskState(RenderPhase.COLOR_MASK)
+                        .cull(RenderPhase.DISABLE_CULLING)
+                        .build(false));
+    }
+
     public static final RenderLayer LASER = RenderLayer.of(
             "laser",
             VertexFormats.POSITION_COLOR_TEXTURE,
