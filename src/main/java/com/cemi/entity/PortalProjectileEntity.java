@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.cemi.block.FizzlerBlock;
 import com.cemi.block.SlopeBlock;
+import com.cemi.sound.ApertureSoundEvent;
 import com.cemi.world.PortalData;
 
 import net.minecraft.block.BlockState;
@@ -18,6 +19,7 @@ import net.minecraft.entity.projectile.ProjectileEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.sound.SoundCategory;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
@@ -139,6 +141,7 @@ public class PortalProjectileEntity extends ProjectileEntity {
         if (!isValidHit(hit))
             return;
 
+
         PlayerEntity shooter = getShooter();
         if (shooter == null) {
             this.kill();
@@ -155,6 +158,10 @@ public class PortalProjectileEntity extends ProjectileEntity {
         AperturePortal portal = createPortal();
         if (portal == null)
             return;
+
+        Vec3d openAt = hit.getBlockPos().toCenterPos();
+        getWorld().playSound(null, openAt.x, openAt.y, openAt.z,
+                ApertureSoundEvent.PORTAL_OPEN_EVENT, SoundCategory.BLOCKS, 1.0F, 1.0F);
 
         if (!setupPortalPlacement(hit, portal)) {
             this.kill();

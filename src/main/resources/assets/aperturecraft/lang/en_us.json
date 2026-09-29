@@ -37,5 +37,9 @@
     "subtitles.aperturecraft.fizzler.loop": "Fizzler hums",
     "subtitles.aperturecraft.fizzler.start": "Fizzler field starts up",
     "subtitles.aperturecraft.fizzler.shutdown": "Fizzler field shuts down",
-    "subtitles.aperturecraft.fizzler.emancipation": "Material emancipation"
+    "subtitles.aperturecraft.fizzler.emancipation": "Material emancipation",
+
+    "subtitles.aperturecraft.portal.open": "Portal opens",
+    "subtitles.aperturecraft.portal.fizzle": "Portal closes",
+    "subtitles.aperturecraft.portal.fire": "Portal gun fires"
 }

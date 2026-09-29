@@ -34,6 +34,30 @@ public class ApertureSoundEvent {
             new Identifier(ApertureCraft.MOD_ID, "fizzler_shutdown_01");
     public static final SoundEvent FIZZLER_SHUTDOWN_EVENT = SoundEvent.of(FIZZLER_SHUTDOWN_ID);
 
+    /** Played as a portal comes up on a surface. */
+    public static final Identifier PORTAL_OPEN_ID =
+            new Identifier(ApertureCraft.MOD_ID, "portal_open");
+    public static final SoundEvent PORTAL_OPEN_EVENT = SoundEvent.of(PORTAL_OPEN_ID);
+
+    /** Played as a portal lets go, whether fizzled or reset by hand. */
+    public static final Identifier PORTAL_FIZZLE_ID =
+            new Identifier(ApertureCraft.MOD_ID, "portal_fizzle");
+    public static final SoundEvent PORTAL_FIZZLE_EVENT = SoundEvent.of(PORTAL_FIZZLE_ID);
+
+    /** Gun report for the blue/right portal. */
+    public static final Identifier PORTAL_FIRE_BLUE_ID =
+            new Identifier(ApertureCraft.MOD_ID, "wpn_portal_gun_fire_blue");
+    public static final SoundEvent PORTAL_FIRE_BLUE_EVENT = SoundEvent.of(PORTAL_FIRE_BLUE_ID);
+
+    /**
+     * Gun report for the yellow/left portal. The asset is named "red" upstream but
+     * it is the sound that belongs to the left-click portal, whose colour is the
+     * 0xFF9A00 orange that reads as yellow in game.
+     */
+    public static final Identifier PORTAL_FIRE_YELLOW_ID =
+            new Identifier(ApertureCraft.MOD_ID, "wpn_portal_gun_fire_yellow");
+    public static final SoundEvent PORTAL_FIRE_YELLOW_EVENT = SoundEvent.of(PORTAL_FIRE_YELLOW_ID);
+
     /** Shared by everything a field liberates: cubes, turrets, radios. */
     public static final Identifier MATERIAL_EMANCIPATION_ID =
             new Identifier(ApertureCraft.MOD_ID, "material_emancipation_01");
