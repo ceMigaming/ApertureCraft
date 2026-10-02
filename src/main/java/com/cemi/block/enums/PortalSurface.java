@@ -20,11 +20,8 @@ public enum PortalSurface implements StringIdentifiable {
         return this.name;
     }
 
-    public boolean isConnected() {
-        return this != CONCRETE;
-    }
-
     public PortalSurface next() {
         return this == CONCRETE ? METAL : CONCRETE;
     }
+    
 }
