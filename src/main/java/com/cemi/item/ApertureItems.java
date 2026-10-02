@@ -17,9 +17,11 @@ public class ApertureItems {
     public static final Item LONG_FALL_BOOTS = new ArmorItem(APERTURE_ARMOR_MATERIAL,
             net.minecraft.item.ArmorItem.Type.BOOTS, new Item.Settings());
 
+    public static final ApertureItem WRENCH = new ApertureItem("wrench", new Item.Settings());
+
     public static BucketItem NEUROTOXIN_BUCKET;
     public static PortalGunItem PORTAL_GUN = new PortalGunItem();
-    private static final ApertureItem[] ITEMS = {PORTAL_GUN};
+    private static final ApertureItem[] ITEMS = {PORTAL_GUN, WRENCH};
 
     public static void registerItems() {
         NEUROTOXIN_BUCKET = Registry.register(Registries.ITEM,

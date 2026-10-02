@@ -1,6 +1,7 @@
 package com.cemi.block;
 
 import com.cemi.ApertureCraft;
+import com.cemi.block.enums.PortalSurface;
 import com.cemi.entity.ApertureEntities;
 import com.cemi.fluid.ApertureFluids;
 
@@ -36,7 +37,7 @@ public class ApertureBlocks {
 
     // metal
     public static final ApertureBlock SMALL_METAL_TILE = new ApertureBlock("metal_tile_small",
-            FabricBlockSettings.create().strength(4.f));
+            FabricBlockSettings.create().strength(4.f), PortalSurface.METAL);
     public static final ApertureBlock MEDIUM_METAL_TILE = new ApertureBlock("metal_tile_medium",
             FabricBlockSettings.create().strength(4.f));
     public static final LargeTileBlock METAL_LARGE_TILE = new LargeTileBlock("metal_tile_large",

@@ -1,5 +1,196 @@
 {
-    "variants": {
-        "": {"model": "aperturecraft:block/concrete_tile_small"}
+  "variants": {
+    "portal_surface_north=concrete,portal_surface_east=concrete,portal_surface_south=concrete,portal_surface_west=concrete,portal_surface_up=concrete,portal_surface_down=concrete": {
+      "model": "aperturecraft:block/tile_small_north_concrete_east_concrete_south_concrete_west_concrete_up_concrete_down_concrete"
+    },
+    "portal_surface_north=concrete,portal_surface_east=concrete,portal_surface_south=concrete,portal_surface_west=concrete,portal_surface_up=concrete,portal_surface_down=metal": {
+      "model": "aperturecraft:block/tile_small_north_concrete_east_concrete_south_concrete_west_concrete_up_concrete_down_metal"
+    },
+    "portal_surface_north=concrete,portal_surface_east=concrete,portal_surface_south=concrete,portal_surface_west=concrete,portal_surface_up=metal,portal_surface_down=concrete": {
+      "model": "aperturecraft:block/tile_small_north_concrete_east_concrete_south_concrete_west_concrete_up_metal_down_concrete"
+    },
+    "portal_surface_north=concrete,portal_surface_east=concrete,portal_surface_south=concrete,portal_surface_west=concrete,portal_surface_up=metal,portal_surface_down=metal": {
+      "model": "aperturecraft:block/tile_small_north_concrete_east_concrete_south_concrete_west_concrete_up_metal_down_metal"
+    },
+    "portal_surface_north=concrete,portal_surface_east=concrete,portal_surface_south=concrete,portal_surface_west=metal,portal_surface_up=concrete,portal_surface_down=concrete": {
+      "model": "aperturecraft:block/tile_small_north_concrete_east_concrete_south_concrete_west_metal_up_concrete_down_concrete"
+    },
+    "portal_surface_north=concrete,portal_surface_east=concrete,portal_surface_south=concrete,portal_surface_west=metal,portal_surface_up=concrete,portal_surface_down=metal": {
+      "model": "aperturecraft:block/tile_small_north_concrete_east_concrete_south_concrete_west_metal_up_concrete_down_metal"
+    },
+    "portal_surface_north=concrete,portal_surface_east=concrete,portal_surface_south=concrete,portal_surface_west=metal,portal_surface_up=metal,portal_surface_down=concrete": {
+      "model": "aperturecraft:block/tile_small_north_concrete_east_concrete_south_concrete_west_metal_up_metal_down_concrete"
+    },
+    "portal_surface_north=concrete,portal_surface_east=concrete,portal_surface_south=concrete,portal_surface_west=metal,portal_surface_up=metal,portal_surface_down=metal": {
+      "model": "aperturecraft:block/tile_small_north_concrete_east_concrete_south_concrete_west_metal_up_metal_down_metal"
+    },
+    "portal_surface_north=concrete,portal_surface_east=concrete,portal_surface_south=metal,portal_surface_west=concrete,portal_surface_up=concrete,portal_surface_down=concrete": {
+      "model": "aperturecraft:block/tile_small_north_concrete_east_concrete_south_metal_west_concrete_up_concrete_down_concrete"
+    },
+    "portal_surface_north=concrete,portal_surface_east=concrete,portal_surface_south=metal,portal_surface_west=concrete,portal_surface_up=concrete,portal_surface_down=metal": {
+      "model": "aperturecraft:block/tile_small_north_concrete_east_concrete_south_metal_west_concrete_up_concrete_down_metal"
+    },
+    "portal_surface_north=concrete,portal_surface_east=concrete,portal_surface_south=metal,portal_surface_west=concrete,portal_surface_up=metal,portal_surface_down=concrete": {
+      "model": "aperturecraft:block/tile_small_north_concrete_east_concrete_south_metal_west_concrete_up_metal_down_concrete"
+    },
+    "portal_surface_north=concrete,portal_surface_east=concrete,portal_surface_south=metal,portal_surface_west=concrete,portal_surface_up=metal,portal_surface_down=metal": {
+      "model": "aperturecraft:block/tile_small_north_concrete_east_concrete_south_metal_west_concrete_up_metal_down_metal"
+    },
+    "portal_surface_north=concrete,portal_surface_east=concrete,portal_surface_south=metal,portal_surface_west=metal,portal_surface_up=concrete,portal_surface_down=concrete": {
+      "model": "aperturecraft:block/tile_small_north_concrete_east_concrete_south_metal_west_metal_up_concrete_down_concrete"
+    },
+    "portal_surface_north=concrete,portal_surface_east=concrete,portal_surface_south=metal,portal_surface_west=metal,portal_surface_up=concrete,portal_surface_down=metal": {
+      "model": "aperturecraft:block/tile_small_north_concrete_east_concrete_south_metal_west_metal_up_concrete_down_metal"
+    },
+    "portal_surface_north=concrete,portal_surface_east=concrete,portal_surface_south=metal,portal_surface_west=metal,portal_surface_up=metal,portal_surface_down=concrete": {
+      "model": "aperturecraft:block/tile_small_north_concrete_east_concrete_south_metal_west_metal_up_metal_down_concrete"
+    },
+    "portal_surface_north=concrete,portal_surface_east=concrete,portal_surface_south=metal,portal_surface_west=metal,portal_surface_up=metal,portal_surface_down=metal": {
+      "model": "aperturecraft:block/tile_small_north_concrete_east_concrete_south_metal_west_metal_up_metal_down_metal"
+    },
+    "portal_surface_north=concrete,portal_surface_east=metal,portal_surface_south=concrete,portal_surface_west=concrete,portal_surface_up=concrete,portal_surface_down=concrete": {
+      "model": "aperturecraft:block/tile_small_north_concrete_east_metal_south_concrete_west_concrete_up_concrete_down_concrete"
+    },
+    "portal_surface_north=concrete,portal_surface_east=metal,portal_surface_south=concrete,portal_surface_west=concrete,portal_surface_up=concrete,portal_surface_down=metal": {
+      "model": "aperturecraft:block/tile_small_north_concrete_east_metal_south_concrete_west_concrete_up_concrete_down_metal"
+    },
+    "portal_surface_north=concrete,portal_surface_east=metal,portal_surface_south=concrete,portal_surface_west=concrete,portal_surface_up=metal,portal_surface_down=concrete": {
+      "model": "aperturecraft:block/tile_small_north_concrete_east_metal_south_concrete_west_concrete_up_metal_down_concrete"
+    },
+    "portal_surface_north=concrete,portal_surface_east=metal,portal_surface_south=concrete,portal_surface_west=concrete,portal_surface_up=metal,portal_surface_down=metal": {
+      "model": "aperturecraft:block/tile_small_north_concrete_east_metal_south_concrete_west_concrete_up_metal_down_metal"
+    },
+    "portal_surface_north=concrete,portal_surface_east=metal,portal_surface_south=concrete,portal_surface_west=metal,portal_surface_up=concrete,portal_surface_down=concrete": {
+      "model": "aperturecraft:block/tile_small_north_concrete_east_metal_south_concrete_west_metal_up_concrete_down_concrete"
+    },
+    "portal_surface_north=concrete,portal_surface_east=metal,portal_surface_south=concrete,portal_surface_west=metal,portal_surface_up=concrete,portal_surface_down=metal": {
+      "model": "aperturecraft:block/tile_small_north_concrete_east_metal_south_concrete_west_metal_up_concrete_down_metal"
+    },
+    "portal_surface_north=concrete,portal_surface_east=metal,portal_surface_south=concrete,portal_surface_west=metal,portal_surface_up=metal,portal_surface_down=concrete": {
+      "model": "aperturecraft:block/tile_small_north_concrete_east_metal_south_concrete_west_metal_up_metal_down_concrete"
+    },
+    "portal_surface_north=concrete,portal_surface_east=metal,portal_surface_south=concrete,portal_surface_west=metal,portal_surface_up=metal,portal_surface_down=metal": {
+      "model": "aperturecraft:block/tile_small_north_concrete_east_metal_south_concrete_west_metal_up_metal_down_metal"
+    },
+    "portal_surface_north=concrete,portal_surface_east=metal,portal_surface_south=metal,portal_surface_west=concrete,portal_surface_up=concrete,portal_surface_down=concrete": {
+      "model": "aperturecraft:block/tile_small_north_concrete_east_metal_south_metal_west_concrete_up_concrete_down_concrete"
+    },
+    "portal_surface_north=concrete,portal_surface_east=metal,portal_surface_south=metal,portal_surface_west=concrete,portal_surface_up=concrete,portal_surface_down=metal": {
+      "model": "aperturecraft:block/tile_small_north_concrete_east_metal_south_metal_west_concrete_up_concrete_down_metal"
+    },
+    "portal_surface_north=concrete,portal_surface_east=metal,portal_surface_south=metal,portal_surface_west=concrete,portal_surface_up=metal,portal_surface_down=concrete": {
+      "model": "aperturecraft:block/tile_small_north_concrete_east_metal_south_metal_west_concrete_up_metal_down_concrete"
+    },
+    "portal_surface_north=concrete,portal_surface_east=metal,portal_surface_south=metal,portal_surface_west=concrete,portal_surface_up=metal,portal_surface_down=metal": {
+      "model": "aperturecraft:block/tile_small_north_concrete_east_metal_south_metal_west_concrete_up_metal_down_metal"
+    },
+    "portal_surface_north=concrete,portal_surface_east=metal,portal_surface_south=metal,portal_surface_west=metal,portal_surface_up=concrete,portal_surface_down=concrete": {
+      "model": "aperturecraft:block/tile_small_north_concrete_east_metal_south_metal_west_metal_up_concrete_down_concrete"
+    },
+    "portal_surface_north=concrete,portal_surface_east=metal,portal_surface_south=metal,portal_surface_west=metal,portal_surface_up=concrete,portal_surface_down=metal": {
+      "model": "aperturecraft:block/tile_small_north_concrete_east_metal_south_metal_west_metal_up_concrete_down_metal"
+    },
+    "portal_surface_north=concrete,portal_surface_east=metal,portal_surface_south=metal,portal_surface_west=metal,portal_surface_up=metal,portal_surface_down=concrete": {
+      "model": "aperturecraft:block/tile_small_north_concrete_east_metal_south_metal_west_metal_up_metal_down_concrete"
+    },
+    "portal_surface_north=concrete,portal_surface_east=metal,portal_surface_south=metal,portal_surface_west=metal,portal_surface_up=metal,portal_surface_down=metal": {
+      "model": "aperturecraft:block/tile_small_north_concrete_east_metal_south_metal_west_metal_up_metal_down_metal"
+    },
+    "portal_surface_north=metal,portal_surface_east=concrete,portal_surface_south=concrete,portal_surface_west=concrete,portal_surface_up=concrete,portal_surface_down=concrete": {
+      "model": "aperturecraft:block/tile_small_north_metal_east_concrete_south_concrete_west_concrete_up_concrete_down_concrete"
+    },
+    "portal_surface_north=metal,portal_surface_east=concrete,portal_surface_south=concrete,portal_surface_west=concrete,portal_surface_up=concrete,portal_surface_down=metal": {
+      "model": "aperturecraft:block/tile_small_north_metal_east_concrete_south_concrete_west_concrete_up_concrete_down_metal"
+    },
+    "portal_surface_north=metal,portal_surface_east=concrete,portal_surface_south=concrete,portal_surface_west=concrete,portal_surface_up=metal,portal_surface_down=concrete": {
+      "model": "aperturecraft:block/tile_small_north_metal_east_concrete_south_concrete_west_concrete_up_metal_down_concrete"
+    },
+    "portal_surface_north=metal,portal_surface_east=concrete,portal_surface_south=concrete,portal_surface_west=concrete,portal_surface_up=metal,portal_surface_down=metal": {
+      "model": "aperturecraft:block/tile_small_north_metal_east_concrete_south_concrete_west_concrete_up_metal_down_metal"
+    },
+    "portal_surface_north=metal,portal_surface_east=concrete,portal_surface_south=concrete,portal_surface_west=metal,portal_surface_up=concrete,portal_surface_down=concrete": {
+      "model": "aperturecraft:block/tile_small_north_metal_east_concrete_south_concrete_west_metal_up_concrete_down_concrete"
+    },
+    "portal_surface_north=metal,portal_surface_east=concrete,portal_surface_south=concrete,portal_surface_west=metal,portal_surface_up=concrete,portal_surface_down=metal": {
+      "model": "aperturecraft:block/tile_small_north_metal_east_concrete_south_concrete_west_metal_up_concrete_down_metal"
+    },
+    "portal_surface_north=metal,portal_surface_east=concrete,portal_surface_south=concrete,portal_surface_west=metal,portal_surface_up=metal,portal_surface_down=concrete": {
+      "model": "aperturecraft:block/tile_small_north_metal_east_concrete_south_concrete_west_metal_up_metal_down_concrete"
+    },
+    "portal_surface_north=metal,portal_surface_east=concrete,portal_surface_south=concrete,portal_surface_west=metal,portal_surface_up=metal,portal_surface_down=metal": {
+      "model": "aperturecraft:block/tile_small_north_metal_east_concrete_south_concrete_west_metal_up_metal_down_metal"
+    },
+    "portal_surface_north=metal,portal_surface_east=concrete,portal_surface_south=metal,portal_surface_west=concrete,portal_surface_up=concrete,portal_surface_down=concrete": {
+      "model": "aperturecraft:block/tile_small_north_metal_east_concrete_south_metal_west_concrete_up_concrete_down_concrete"
+    },
+    "portal_surface_north=metal,portal_surface_east=concrete,portal_surface_south=metal,portal_surface_west=concrete,portal_surface_up=concrete,portal_surface_down=metal": {
+      "model": "aperturecraft:block/tile_small_north_metal_east_concrete_south_metal_west_concrete_up_concrete_down_metal"
+    },
+    "portal_surface_north=metal,portal_surface_east=concrete,portal_surface_south=metal,portal_surface_west=concrete,portal_surface_up=metal,portal_surface_down=concrete": {
+      "model": "aperturecraft:block/tile_small_north_metal_east_concrete_south_metal_west_concrete_up_metal_down_concrete"
+    },
+    "portal_surface_north=metal,portal_surface_east=concrete,portal_surface_south=metal,portal_surface_west=concrete,portal_surface_up=metal,portal_surface_down=metal": {
+      "model": "aperturecraft:block/tile_small_north_metal_east_concrete_south_metal_west_concrete_up_metal_down_metal"
+    },
+    "portal_surface_north=metal,portal_surface_east=concrete,portal_surface_south=metal,portal_surface_west=metal,portal_surface_up=concrete,portal_surface_down=concrete": {
+      "model": "aperturecraft:block/tile_small_north_metal_east_concrete_south_metal_west_metal_up_concrete_down_concrete"
+    },
+    "portal_surface_north=metal,portal_surface_east=concrete,portal_surface_south=metal,portal_surface_west=metal,portal_surface_up=concrete,portal_surface_down=metal": {
+      "model": "aperturecraft:block/tile_small_north_metal_east_concrete_south_metal_west_metal_up_concrete_down_metal"
+    },
+    "portal_surface_north=metal,portal_surface_east=concrete,portal_surface_south=metal,portal_surface_west=metal,portal_surface_up=metal,portal_surface_down=concrete": {
+      "model": "aperturecraft:block/tile_small_north_metal_east_concrete_south_metal_west_metal_up_metal_down_concrete"
+    },
+    "portal_surface_north=metal,portal_surface_east=concrete,portal_surface_south=metal,portal_surface_west=metal,portal_surface_up=metal,portal_surface_down=metal": {
+      "model": "aperturecraft:block/tile_small_north_metal_east_concrete_south_metal_west_metal_up_metal_down_metal"
+    },
+    "portal_surface_north=metal,portal_surface_east=metal,portal_surface_south=concrete,portal_surface_west=concrete,portal_surface_up=concrete,portal_surface_down=concrete": {
+      "model": "aperturecraft:block/tile_small_north_metal_east_metal_south_concrete_west_concrete_up_concrete_down_concrete"
+    },
+    "portal_surface_north=metal,portal_surface_east=metal,portal_surface_south=concrete,portal_surface_west=concrete,portal_surface_up=concrete,portal_surface_down=metal": {
+      "model": "aperturecraft:block/tile_small_north_metal_east_metal_south_concrete_west_concrete_up_concrete_down_metal"
+    },
+    "portal_surface_north=metal,portal_surface_east=metal,portal_surface_south=concrete,portal_surface_west=concrete,portal_surface_up=metal,portal_surface_down=concrete": {
+      "model": "aperturecraft:block/tile_small_north_metal_east_metal_south_concrete_west_concrete_up_metal_down_concrete"
+    },
+    "portal_surface_north=metal,portal_surface_east=metal,portal_surface_south=concrete,portal_surface_west=concrete,portal_surface_up=metal,portal_surface_down=metal": {
+      "model": "aperturecraft:block/tile_small_north_metal_east_metal_south_concrete_west_concrete_up_metal_down_metal"
+    },
+    "portal_surface_north=metal,portal_surface_east=metal,portal_surface_south=concrete,portal_surface_west=metal,portal_surface_up=concrete,portal_surface_down=concrete": {
+      "model": "aperturecraft:block/tile_small_north_metal_east_metal_south_concrete_west_metal_up_concrete_down_concrete"
+    },
+    "portal_surface_north=metal,portal_surface_east=metal,portal_surface_south=concrete,portal_surface_west=metal,portal_surface_up=concrete,portal_surface_down=metal": {
+      "model": "aperturecraft:block/tile_small_north_metal_east_metal_south_concrete_west_metal_up_concrete_down_metal"
+    },
+    "portal_surface_north=metal,portal_surface_east=metal,portal_surface_south=concrete,portal_surface_west=metal,portal_surface_up=metal,portal_surface_down=concrete": {
+      "model": "aperturecraft:block/tile_small_north_metal_east_metal_south_concrete_west_metal_up_metal_down_concrete"
+    },
+    "portal_surface_north=metal,portal_surface_east=metal,portal_surface_south=concrete,portal_surface_west=metal,portal_surface_up=metal,portal_surface_down=metal": {
+      "model": "aperturecraft:block/tile_small_north_metal_east_metal_south_concrete_west_metal_up_metal_down_metal"
+    },
+    "portal_surface_north=metal,portal_surface_east=metal,portal_surface_south=metal,portal_surface_west=concrete,portal_surface_up=concrete,portal_surface_down=concrete": {
+      "model": "aperturecraft:block/tile_small_north_metal_east_metal_south_metal_west_concrete_up_concrete_down_concrete"
+    },
+    "portal_surface_north=metal,portal_surface_east=metal,portal_surface_south=metal,portal_surface_west=concrete,portal_surface_up=concrete,portal_surface_down=metal": {
+      "model": "aperturecraft:block/tile_small_north_metal_east_metal_south_metal_west_concrete_up_concrete_down_metal"
+    },
+    "portal_surface_north=metal,portal_surface_east=metal,portal_surface_south=metal,portal_surface_west=concrete,portal_surface_up=metal,portal_surface_down=concrete": {
+      "model": "aperturecraft:block/tile_small_north_metal_east_metal_south_metal_west_concrete_up_metal_down_concrete"
+    },
+    "portal_surface_north=metal,portal_surface_east=metal,portal_surface_south=metal,portal_surface_west=concrete,portal_surface_up=metal,portal_surface_down=metal": {
+      "model": "aperturecraft:block/tile_small_north_metal_east_metal_south_metal_west_concrete_up_metal_down_metal"
+    },
+    "portal_surface_north=metal,portal_surface_east=metal,portal_surface_south=metal,portal_surface_west=metal,portal_surface_up=concrete,portal_surface_down=concrete": {
+      "model": "aperturecraft:block/tile_small_north_metal_east_metal_south_metal_west_metal_up_concrete_down_concrete"
+    },
+    "portal_surface_north=metal,portal_surface_east=metal,portal_surface_south=metal,portal_surface_west=metal,portal_surface_up=concrete,portal_surface_down=metal": {
+      "model": "aperturecraft:block/tile_small_north_metal_east_metal_south_metal_west_metal_up_concrete_down_metal"
+    },
+    "portal_surface_north=metal,portal_surface_east=metal,portal_surface_south=metal,portal_surface_west=metal,portal_surface_up=metal,portal_surface_down=concrete": {
+      "model": "aperturecraft:block/tile_small_north_metal_east_metal_south_metal_west_metal_up_metal_down_concrete"
+    },
+    "portal_surface_north=metal,portal_surface_east=metal,portal_surface_south=metal,portal_surface_west=metal,portal_surface_up=metal,portal_surface_down=metal": {
+      "model": "aperturecraft:block/tile_small_north_metal_east_metal_south_metal_west_metal_up_metal_down_metal"
     }
+  }
 }
