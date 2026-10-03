@@ -22,5 +22,7 @@ public class ApertureAttributes {
                 RocketEntity.createMobAttributes());
         FabricDefaultAttributeRegistry.register(ApertureEntities.CAMERA,
                 CameraEntity.createMobAttributes());
+        FabricDefaultAttributeRegistry.register(ApertureEntities.GLADOS_MAINFRAME,
+                GladosMainframeEntity.createMobAttributes());
     }
 }

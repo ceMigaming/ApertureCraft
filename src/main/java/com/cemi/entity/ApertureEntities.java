@@ -74,6 +74,11 @@ public class ApertureEntities {
             EntityType.Builder.create(CameraEntity::new, SpawnGroup.MISC)
                     .setDimensions(.5f, .5f).build());
 
+    public static final EntityType<GladosMainframeEntity> GLADOS_MAINFRAME = Registry.register(
+            Registries.ENTITY_TYPE, new Identifier(ApertureCraft.MOD_ID, "glados_mainframe"),
+            EntityType.Builder.create(GladosMainframeEntity::new, SpawnGroup.MISC)
+                    .setDimensions(8.0f, 14.0f).build());
+
     public static void registerEntities() {
     }
 }

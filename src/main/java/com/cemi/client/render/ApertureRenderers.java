@@ -12,6 +12,7 @@ import com.cemi.client.render.entity.CameraRenderer;
 import com.cemi.client.render.entity.CompanionCubeRenderer;
 import com.cemi.client.render.entity.CustomPortalEntityRenderer;
 import com.cemi.client.render.entity.GhostBlockRenderer;
+import com.cemi.client.render.entity.GladosMainframeRenderer;
 import com.cemi.client.render.entity.HighEnergyPelletRenderer;
 import com.cemi.client.render.entity.OldStorageCubeRenderer;
 import com.cemi.client.render.entity.PortalProjectileRenderer;
@@ -51,6 +52,7 @@ public class ApertureRenderers {
         EntityRendererRegistry.register(ApertureEntities.ROCKET_TURRET, RocketTurretRenderer::new);
         EntityRendererRegistry.register(ApertureEntities.ROCKET, RocketRenderer::new);
         EntityRendererRegistry.register(ApertureEntities.CAMERA, CameraRenderer::new);
+        EntityRendererRegistry.register(ApertureEntities.GLADOS_MAINFRAME, GladosMainframeRenderer::new);
 
         // Block Entities
         BlockEntityRendererRegistry.register(ApertureBlockEntities.HEP_LAUNCHER,
