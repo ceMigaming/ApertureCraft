@@ -3,6 +3,7 @@ package com.cemi.block.enums;
 import net.minecraft.util.StringIdentifiable;
 
 public enum PortalSurface implements StringIdentifiable {
+    NONE("none"),
     CONCRETE("concrete"),
     METAL("metal");
 
@@ -23,5 +24,4 @@ public enum PortalSurface implements StringIdentifiable {
     public PortalSurface next() {
         return this == CONCRETE ? METAL : CONCRETE;
     }
-    
 }

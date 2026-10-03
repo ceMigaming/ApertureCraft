@@ -25,7 +25,7 @@ public class ApertureBlocks {
     public static final ApertureBlock PORTAL1_CONCRETE_TILE = new ApertureBlock("portal1_concrete_tile",
             FabricBlockSettings.create().strength(4.f));
     public static final ApertureBlock SMALL_CONCRETE_TILE = new ApertureBlock("concrete_tile_small",
-            FabricBlockSettings.create().strength(4.f));
+            FabricBlockSettings.create().strength(4.f), PortalSurface.CONCRETE);
     public static final ApertureBlock MEDIUM_CONCRETE_TILE = new ApertureBlock("concrete_tile_medium",
             FabricBlockSettings.create().strength(4.f));
     public static final LargeTileBlock CONCRETE_LARGE_TILE = new LargeTileBlock("concrete_tile_large",

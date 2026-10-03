@@ -1,0 +1,30 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "texture": "aperturecraft:block/concrete_tile_small",
+    "particle": "aperturecraft:block/concrete_tile_small"
+  },
+  "elements": [
+    {
+      "from": [
+        0,
+        0,
+        0
+      ],
+      "to": [
+        16,
+        0.01,
+        16
+      ],
+      "faces": {
+        "up": {
+          "texture": "#texture"
+        },
+        "down": {
+          "texture": "#texture",
+          "cullface": "down"
+        }
+      }
+    }
+  ]
+}

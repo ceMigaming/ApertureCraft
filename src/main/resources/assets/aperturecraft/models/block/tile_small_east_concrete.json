@@ -1,0 +1,30 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "texture": "aperturecraft:block/concrete_tile_small",
+    "particle": "aperturecraft:block/concrete_tile_small"
+  },
+  "elements": [
+    {
+      "from": [
+        15.99,
+        0,
+        0
+      ],
+      "to": [
+        16,
+        16,
+        16
+      ],
+      "faces": {
+        "east": {
+          "texture": "#texture",
+          "cullface": "east"
+        },
+        "west": {
+          "texture": "#texture"
+        }
+      }
+    }
+  ]
+}

@@ -100,24 +100,8 @@ public class ApertureBlock extends Block {
         }
     }
 
-    public boolean canPlacePortals(Direction side) {
-        return DIRECTION_TO_PORTAL_SURFACE.containsKey(side);
-    }
-
-    @Override
-    public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand,
-            BlockHitResult hit) {
-        if (!world.isClient() && player.getStackInHand(hand).getItem() == ApertureItems.WRENCH) {
-            Direction side = hit.getSide();
-            if (DIRECTION_TO_PORTAL_SURFACE.containsKey(side)) {
-                EnumProperty<PortalSurface> property = DIRECTION_TO_PORTAL_SURFACE.get(side);
-                PortalSurface currentSurface = state.get(property);
-                PortalSurface nextSurface = currentSurface.next();
-                world.setBlockState(pos, state.with(property, nextSurface));
-                return ActionResult.SUCCESS;
-            }
-        }
-        return super.onUse(state, world, pos, player, hand, hit);
+    public boolean canPlacePortals(BlockState state, Direction side) {
+        return state.get(DIRECTION_TO_PORTAL_SURFACE.get(side)) == PortalSurface.CONCRETE;
     }
 
     @Override
